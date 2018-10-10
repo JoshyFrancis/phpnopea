@@ -13,7 +13,7 @@
    viewBox="0 0 240 64"
    version="1.1"
    id="svg3745"
-   sodipodi:docname="laraquick.svg"
+   sodipodi:docname="laranopea.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata3749">
@@ -84,20 +84,20 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:32.61382294px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.8153457"
-       x="53.996906"
-       y="47.839695"
+       x="43.357822"
+       y="49.182011"
        id="text3753"
        transform="scale(1.2304546,0.81270776)"><tspan
          sodipodi:role="line"
          id="tspan3751"
-         x="53.996906"
-         y="47.839695"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;stroke-width:0.8153457">Laraquick</tspan></text>
+         x="43.357822"
+         y="49.182011"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;stroke-width:0.8153457">Laranopea</tspan></text>
     <polygon
        id="polygon4727"
-       points="28.14,35 23.39,56.38 43.92,26 34.66,26 39.6,8 22.08,8 20.08,35 "
+       points="23.39,56.38 43.92,26 34.66,26 39.6,8 22.08,8 20.08,35 28.14,35 "
        class="cls-1"
        style="fill:none;stroke:#ffb90b;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round"
-       transform="translate(4.8338754,-0.58815159)" />
+       transform="translate(-3.6206702,-0.58815159)" />
   </g>
 </svg>

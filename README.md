@@ -1,2 +1,3 @@
 # laraquick
 A laravel alternative. Tuned for performance boost. Includes all basic and necessary classes except Model.
+I am working on the documentation. Please wait...

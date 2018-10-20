@@ -15,6 +15,42 @@ Route::group(['middleware' => ['admin']], function () {
 Route::post('forget_password', ['as'=>'user2.auth_forgot','uses'=>'User2LoginController@forget_password']);
 Route::resource('password_reset', 'password_reset\password_resetController');
 */
+
+Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null,$c = null) {
+	var_dump($name);
+	var_dump($id);
+	var_dump($c);
+    return 'optional'. $name;
+});
+$optional2=function ($name = null,$id = null,$c = null) {
+	var_dump($name);
+	var_dump($id);
+	var_dump($c);
+    return 'optional'. $name;
+};
+Route::get('optional2/arg2/',$optional2);
+Route::get('optional2/arg2/{name}',$optional2);
+Route::get('optional2/arg2/{name}/{id}',$optional2);
+Route::get('optional2/arg2/{name}/{id}/{c}',$optional2);
+
+
+Route::get('/routes', function ( Request $request ){ 
+	 var_dump($request->url());	 
+	return 'routes';
+});
+Route::get('/routes/{id}', function ($id1, Request $request ){
+	var_dump($id1);
+	 var_dump($request->url());	 
+	return 'routes/1';
+});
+Route::get('/routes/{id}/edit', function ($id1, Request $request ){
+	var_dump($id1);
+	 var_dump($request->url());	 
+	return 'routes/1/edit';
+});
+
+//return ;
+
 Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
 	var_dump($id1);
 	var_dump($id2);
@@ -32,7 +68,7 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
     return $view->render();
 });
 
-//return;
+
 
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
     Route::get('admin/news', [
@@ -91,12 +127,7 @@ Route::delete( '/delete', function(Request $request){
 	$url=$request->url();	
 		return 'Deleted<br/><a href="'.$url.'" >Back</a>';
 });
-Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null,$c = null) {
-	var_dump($name);
-	var_dump($id);
-	var_dump($c);
-    return 'optional'. $name;
-});
+
 
 Route::group(['prefix' => 'books'], function () {
 	Route::group(['prefix' => 'shelf'], function () {
@@ -216,14 +247,15 @@ $route->get('photo', function (Request $request ) {
 		'Content-Type' => 'image/jpeg',
 	]);	 
 });
-$route->post('logout', function (Request $request ) {
-	auth()->logout();
-	 
-	return redirect('home');
-});	
+
+	Route::post('logout', function (Request $request ) {
+		auth()->logout();
+		 
+		return redirect('home');
+	});	
 	
-//Route::resource('resource', 'ResourceController');
-//Route::get('API/resource', 'ResourceController@API');
+//Route::resource('rc/resource', 'ResourceController');
+//Route::get('API/rc/resource', 'ResourceController@API');
 
 Route::group(['middleware' => ['web']], function ( ) {
 	
@@ -233,8 +265,8 @@ Route::group(['middleware' => ['web']], function ( ) {
 	
 	
 	Route::get('/home', 'HomeController@index') ;
-	Route::resource('resource', 'ResourceController');
-	Route::get('API/resource', 'ResourceController@API');
+	Route::resource('rc/resource', 'ResourceController');
+	Route::get('API/rc/resource', 'ResourceController@API');
 	Route::get('/test1', function ( Request $request ) {
 		//var_dump($middleware1);
 		//return 'middleware_web_ok' ;

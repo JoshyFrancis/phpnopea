@@ -10,7 +10,8 @@ class ResourceController extends Controller{
         return 'index';
     }
     public function create(Request $request){		 
-        
+		$path=str_replace('/create','', $request->path());
+		
 	  return '<html>
 		<head>
 		<script>
@@ -23,7 +24,7 @@ class ResourceController extends Controller{
 						txtdata.innerHTML = this.responseText;
 					}
 				};
-				xmlhttp.open("GET", "'.url('API/resource').'?_token='.csrf_token().'"  , true);
+				xmlhttp.open("GET", "'.url('API/'.$path).'?_token='.csrf_token().'"  , true);
 				//xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 				xmlhttp.send();
@@ -31,19 +32,19 @@ class ResourceController extends Controller{
 		</script>
 		</head>
 		<body>
-		<form action="'.url('resource').'" method="POST"  >
+		<form action="'.url($path).'" method="POST"  >
 			'.csrf_field().'
 			<input type="hidden" name="field1" value="form_data" /><br/>
 			Post
 			<input type="button" onclick="document.forms[0].submit();" value="submit" />
 	   </form>
-	   <form action="'.url('resource').'/2" method="POST"  >
+	   <form action="'.url($path).'/2" method="POST"  >
 			<input type="hidden" name="_method" value="DELETE">
 			<input type="hidden" name="field2" value="form_data2" /><br/>
 			Delete
 			<input type="button" onclick="document.forms[1].submit();" value="submit" />
 	   </form>
-	   <form action="'.url('resource').'/2" method="POST"  >
+	   <form action="'.url($path).'/2" method="POST"  >
 			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="field2" value="form_data2" /><br/>
 			Update

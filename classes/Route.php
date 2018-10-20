@@ -38,16 +38,11 @@ function add_route($method, $parameters) {
 			$request=$GLOBALS['request'];
 			$route_method=$GLOBALS['route_method'];		
 	switch($method){
-		case 'group':
-			
-			$group=  $parameters[0] ;
-			 
+		case 'group':			
+			$group=  $parameters[0] ;		 
 			Route::$middleware_stack[]= $group ;
-
 			call_user_func($parameters[1], $group);
-			
 			array_pop(Route::$middleware_stack);
-				
 			return;
 		break;
 		case 'match':
@@ -66,8 +61,8 @@ function add_route($method, $parameters) {
 			Route::post($parameters[0], $parameters[1].'@store') ;
 			Route::get($parameters[0].'/{id}', $parameters[1].'@show') ;
 			Route::get($parameters[0].'/{id}/edit', $parameters[1].'@edit') ;
-			Route::put($parameters[0].'/{id}', $parameters[1].'@update') ;
-			Route::delete($parameters[0].'/{id}', $parameters[1].'@destroy') ;
+			//Route::post($parameters[0].'/{id}', $parameters[1].'@update') ;
+			Route::post($parameters[0].'/{id}', $parameters[1].'@destroy') ;
 			return;
 		break;
 	}
@@ -75,25 +70,19 @@ function add_route($method, $parameters) {
 	Route::$group=  Route::$middleware_stack ; 
 		
 		$i=0;
-		
-	
-	
+				
 	//Route::$routes[$method][$parameters[0]]=$parameters;			
 	
 	//if( strpos(strtolower($method) ,$route_method)!==false || $method==='any'){
-	if( strpos( $method  ,$route_method)!==false || $method==='any'){	
-		 			
+	if( strpos( $method  ,$route_method)!==false || $method==='any'){			
 		//$path=strtolower( trim($parameters[0],'/') );
 		$path=  trim($parameters[0] ,'/')  ;
-		 
-		
+				
 		$username_var='';
 		$username=[];
 		$namespace='';
 				$group_count=count(Route::$group);
 			if($group_count>0){
-								
-				$route_domain=$GLOBALS['route_domain'];
 				$domain='';
 				$domain_match=true;
 				
@@ -113,6 +102,7 @@ function add_route($method, $parameters) {
 					}
 				}
 				if($domain!==''){
+					$route_domain=$GLOBALS['route_domain'];
 						$domain_match=false;
 					if(substr_count($route_domain,'.')===substr_count($domain,'.') ){
 							$domain_match=true;
@@ -126,145 +116,34 @@ function add_route($method, $parameters) {
 					return;
 				}
 			}
-			  				
-		$func=$parameters[1];
-		 
-			if(is_array($func)){				 
-				if(isset($func['uses'])){
-					$func=$func['uses'];
-				}else{
-					return;
-				}
-			}
-					
-		if(!is_object ( $func ) ){// handles controller
-			$pos=strpos($func,'@');
-			if($pos!==false){
-				$controller=substr($func,0,$pos);
-				$func=substr($func,$pos+1);
-				
-				
-				//$a_path1=explode('/',$route_path);
-				$a_path1=$GLOBALS['a_path1'];
-				$a_path2=explode('/',$path);
-					 
-					//var_dump($a_path1);
-					//var_dump($a_path2);
-				$match=count($a_path1)===count($a_path2);
-				if($match===true){
-						if($func==='index'){
-							$match=count(array_diff($a_path1,$a_path2))===0;
-						}else{
-							$match=$a_path1[0]===$a_path2[0];
-						}
-				
-					if(count($a_path1)>1){
-						if($a_path1[1]==='create'){							 
-							$func='create'	;		 
-						}
-					}
-					if($request->input('_method')==='DELETE'){//strtoupper('delete')){
-						$func=='destroy';
-					}elseif($request->input('_method')==='PUT'){//strtoupper('put')){
-						$func=='update';
-					}
-				}
-				 
-				 
-				if($match===true  ){// && count($a_path2)==1 && $a_path1[0]==$a_path2[0]){
-					//var_dump($func);
-					//var_dump($a_path1);
-					//var_dump($a_path2);
-					$controllers_path=$GLOBALS['controllers_path'];
-					
-					include  $controllers_path . '/Controller.php';
-
-					
-					$controller_file=$controllers_path.$namespace.$controller.'.php';
-				 
-					include  $controller_file;
-					$class = 'App\\Http\\Controllers\\'.$namespace.$controller;
-					
-					$controller_class=new $class() ;
-					 
-					//$reflection_class = new ReflectionClass($class);
-					//$reflection = $reflection_class->getMethod($func);
-					//var_dump($reflection);
-					$reflection = new ReflectionMethod($class, $func);
-					$func_args=$reflection->getParameters();
-					
-					//var_dump($func_args);
-					$fire_args=array();
-					$request_pos=-1;
-					$username_pos=-1;
-					$count_args=count($func_args);
-					for($i=0;$i<$count_args;$i++){
-						if(strtolower($func_args[$i]->name)==='request'){
-							$request_pos= $i;						 
-						}elseif( $func_args[$i]->name===$username_var){
-							$username_pos= $i;	
-						}else{							 
-							$fire_args[$func_args[$i]->name ]=$a_path1[$i];
-						}
-					}
-					if($request_pos!==-1){
-						//array_insert_assoc($fire_args,$request_pos  ,['request'=> new Illuminate\Http\Request($request) ] );
-						array_insert_assoc($fire_args,$request_pos  ,['request'=> $request ] );	
-					}
-					if(count($username)>0 && $username_pos!==-1){
-						array_insert_assoc($fire_args,$request_pos  ,$username );
-					}
-					
-					//$fire_args = array_values($fire_args);
-					//echo $controller_class->$func(...$fire_args);
-					$current_route=& $GLOBALS['current_route'];
-					$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
-					
-					//var_dump($fire_args);
-							//call_user_func(__CLASS__.'::load_classes');
-								load_classes();
-					if(count(Route::$group)>0){
-						//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
-						echo through_middleware($request, $func, $fire_args,$controller_class );
-					}else{
-						echo call_user_func_array(array($controller_class, $func), $fire_args);
-					}
-				}
-			}
-			return;
-		}else{//handles routes
-			 
-			//$a_path1=explode('/',$route_path);
+			  		
+		//$a_path1=explode('/',$route_path);
 			$a_path1=$GLOBALS['a_path1'];
 			$a_path2=explode('/',$path);
 					 
-				//var_dump($a_path1);
-				//var_dump($a_path2);	
 			 
-				$match=count($a_path1)===count($a_path2) ;
-			
-			if($match===false ){//checking for optional parameters
-					foreach ($a_path2 as $k=>$v) {
+				$fire_args=array();
+				$match=count($a_path1)===count($a_path2);
+					/* //Optional parameters avoided to gain performance
+				$has_optional=false;
+					foreach($a_path2 as $k=>$v){
 						if( strpos($v,'?}' )!==false){//optional parameter
 							$match=true;
 							break;
 						}
 					}
-			}
-			
-			if($match==true){
-				$fire_args=array();
-				$match=false;
-				$has_optional=false;
+					*/
+			if($match===true){
+					//$has_optional=false;
 				foreach($a_path2 as $k=>$v){
-					if( strpos($v,'?}' )!==false){//optional parameter
-						$has_optional=true;
-					}				
+					//if( strpos($v,'?}' )!==false){//optional parameter
+					//	$has_optional=$match;
+					//}
 					if(!isset($a_path1[$k])){ 
-						$match=$has_optional;
+					//	$match=$has_optional;
 						break;
 					}
-					if($v===$a_path1[$k] || $has_optional===true  || strpos($v,'{' )!==false   ){
+					if($v===$a_path1[$k] || strpos($v,'{' )!==false){// || $has_optional===true     ){
 							$match=true;
 						if( strpos($v,'{' )!==false){					
 							$fire_args[$k]=$a_path1[$k];
@@ -274,52 +153,138 @@ function add_route($method, $parameters) {
 						break;
 					}
 				}
-			}	
-			if($match===true){
+			}
+			if($match===true ){
+									
 				//var_dump($a_path1);
 				//var_dump($a_path2);	
 				
-					
-				$reflection = new ReflectionFunction( $func);
-				$func_args=$reflection->getParameters();				
-				$request_pos=-1;
-				$username_pos=-1;
-				$count_args=count($func_args);
-					//var_dump($func_args);
-					
-				for($i=0;$i<$count_args;$i++){ 
-					if(strtolower($func_args[$i]->name)==='request'){
-						$request_pos= $i; 
-					}elseif( $func_args[$i]->name===$username_var){
-						$username_pos= $i;
-					}
-				}
+					$func=$parameters[1];
+						if(is_array($func)){				 
+							if(isset($func['uses'])){
+								$func=$func['uses'];
+							}else{
+								return;
+							}
+						}
 				
-				if($request_pos!=-1){
-					array_insert_assoc($fire_args,$request_pos  ,['request'=> $request ] );
-				}
-				if(count($username)>0 && $username_pos!==-1){
-					array_insert_assoc($fire_args,$request_pos  ,$username );
-				}
-				//var_dump($fire_args);	
-						//call_user_func(__CLASS__.'::load_classes');
-				
-				  
-				$current_route=& $GLOBALS['current_route'];
-				$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
-				
-					 
+				//if(!is_object($func)){// handles controller
+				if(is_string($func)){// handles controller
+					$pos=strpos($func,'@');
+					if($pos!==false){
+						$controller=substr($func,0,$pos);
+						$func=substr($func,$pos+1);
+								
+						$name=array_shift($a_path1);
+						$action=array_pop($a_path1);
+						
+						if(!empty($action) ){
+							if($action==='create'){							 
+								$func='create';
+							}
+						}
+						 
+						if($method==='post'){
+							if($request->input('_method')==='DELETE'){//strtoupper('delete')){
+								$func=='destroy';
+							}elseif($request->input('_method')==='PUT'){//strtoupper('put')){
+								$func=='update';
+							}
+						}
+						 
+						$controllers_path=$GLOBALS['controllers_path'];
+						
+						include  $controllers_path . '/Controller.php';
 
-						load_classes();
-				if(count(Route::$group)>0){
-					//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args );
-					echo through_middleware($request, $func, $fire_args );
-				}else{
-					echo call_user_func_array($func, $fire_args);
+						$controller_file=$controllers_path.$namespace.$controller.'.php';
+					 
+						include  $controller_file;
+						$class = 'App\\Http\\Controllers\\'.$namespace.$controller;
+						
+						$controller_class=new $class() ;
+						 
+						//$reflection_class = new ReflectionClass($class);
+						//$reflection = $reflection_class->getMethod($func);
+						//var_dump($reflection);
+						$reflection = new ReflectionMethod($class, $func);
+						$func_args=$reflection->getParameters();
+						
+						//var_dump($func_args);
+						$fire_args=array();
+						$request_pos=-1;
+						$username_pos=-1;
+						$count_args=count($func_args);
+						for($i=0;$i<$count_args;$i++){
+							if(strtolower($func_args[$i]->name)==='request'){
+								$request_pos= $i;						 
+							}elseif( $func_args[$i]->name===$username_var){
+								$username_pos= $i;	
+							}else{								 						 
+								$fire_args[$func_args[$i]->name ]=$action;
+							}
+						}
+						if($request_pos!==-1){
+							//array_insert_assoc($fire_args,$request_pos  ,['request'=> new Illuminate\Http\Request($request) ] );
+							array_insert_assoc($fire_args,$request_pos  ,['request'=> $request ] );	
+						}
+						if(count($username)>0 && $username_pos!==-1){
+							array_insert_assoc($fire_args,$request_pos  ,$username );
+						}
+						
+						//$fire_args = array_values($fire_args);
+						//echo $controller_class->$func(...$fire_args);
+						$current_route=& $GLOBALS['current_route'];
+						$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
+						
+						//var_dump($fire_args);
+								//call_user_func(__CLASS__.'::load_classes');
+									load_classes();
+						if(count(Route::$group)>0){
+							//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
+							echo through_middleware($request, $func, $fire_args,$controller_class );
+						}else{
+							echo call_user_func_array(array($controller_class, $func), $fire_args);
+						}
+						 
+					}
+					return;
+				}else{//handles routes
+					 
+						$reflection = new ReflectionFunction( $func);
+						$func_args=$reflection->getParameters();				
+						$request_pos=-1;
+						$username_pos=-1;
+						$count_args=count($func_args);
+							//var_dump($func_args);
+							
+						for($i=0;$i<$count_args;$i++){ 
+							if(strtolower($func_args[$i]->name)==='request'){
+								$request_pos= $i; 
+							}elseif( $func_args[$i]->name===$username_var){
+								$username_pos= $i;
+							}
+						}
+						
+						if($request_pos!=-1){
+							array_insert_assoc($fire_args,$request_pos  ,['request'=> $request ] );
+						}
+						if(count($username)>0 && $username_pos!==-1){
+							array_insert_assoc($fire_args,$request_pos  ,$username );
+						}
+						 						  
+						$current_route=& $GLOBALS['current_route'];
+						$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
+										 
+								load_classes();
+						if(count(Route::$group)>0){
+							//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args );
+							echo through_middleware($request, $func, $fire_args );
+						}else{
+							echo call_user_func_array($func, $fire_args);
+						}
 				}
+				
 			}
-			
-		}
 	}
 }
 function load_classes(){

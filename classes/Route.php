@@ -121,7 +121,6 @@ function add_route($method, $parameters) {
 			$a_path1=$GLOBALS['a_path1'];
 			$a_path2=explode('/',$path);
 					 
-			 
 				$fire_args=array();
 				$match=count($a_path1)===count($a_path2);
 					/* //Optional parameters avoided to gain performance
@@ -174,16 +173,11 @@ function add_route($method, $parameters) {
 					if($pos!==false){
 						$controller=substr($func,0,$pos);
 						$func=substr($func,$pos+1);
-								
-						$name=array_shift($a_path1);
-						$action=array_pop($a_path1);
 						
-						if(!empty($action) ){
-							if($action==='create'){							 
-								$func='create';
-							}
-						}
-						 
+						//$action=end($a_path1);
+						//$action=$a_path1[count($a_path1) - 1];	
+						$action=array_pop($a_path1);//fastest method
+												
 						if($method==='post'){
 							switch($request->input('_method')){
 								case 'DELETE':
@@ -192,6 +186,10 @@ function add_route($method, $parameters) {
 								case 'PUT':
 									$func=='update';
 								break;
+							}
+						}else{
+							if($action==='create'){							 
+								$func='create';
 							}
 						}
 						 

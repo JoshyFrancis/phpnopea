@@ -12,11 +12,27 @@ Route::group(['middleware' => ['admin']], function () {
 	});
 	
 });
-Route::match(['get', 'post'],'directory/1' , function (Request $request) {
-});
 Route::post('forget_password', ['as'=>'user2.auth_forgot','uses'=>'User2LoginController@forget_password']);
 Route::resource('password_reset', 'password_reset\password_resetController');
 */
+Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
+	var_dump($id1);
+	var_dump($id2);
+	var_dump($id3);
+	//var_dump($request->url());
+	//var_dump($request->session->getId() );
+	//var_dump($request->session->token() );
+	//var_dump($request->session->get('asd',null) );
+	//var_dump($request->session->get('arr',null) );
+	
+	return 'ok';
+	$request->session->save( );
+	
+	$view = View::make('home',['test'=>$request->url(),'arr'=>[1,2,3,4] ]);
+    return $view->render();
+});
+
+//return;
 
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
     Route::get('admin/news', [
@@ -28,7 +44,7 @@ Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
     ]);
 
 });
-//return;
+
 
 Route::match(['get', 'post'], '/match', function(Request $request){
 	$url=$request->url();
@@ -75,7 +91,7 @@ Route::delete( '/delete', function(Request $request){
 	$url=$request->url();	
 		return 'Deleted<br/><a href="'.$url.'" >Back</a>';
 });
-Route::get('optional/arg2/{name?}/', function ($name = null,$id = null,$c = null) {
+Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null,$c = null) {
 	var_dump($name);
 	var_dump($id);
 	var_dump($c);
@@ -131,20 +147,7 @@ Route::get('/files2/{id}', function (Request $request,$id) {
 	 
     return $id;
 });
-Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
-	//var_dump($id1);
-	//var_dump($id2);
-	//var_dump($id3);
-	//var_dump($request->url());
-	//var_dump($request->session->getId() );
-	//var_dump($request->session->token() );
-	//var_dump($request->session->get('asd',null) );
-	//var_dump($request->session->get('arr',null) );
-	$request->session->save( );
-	
-	$view = View::make('home',['test'=>$request->url(),'arr'=>[1,2,3,4] ]);
-    return $view->render();
-});
+
 
 Route::get('/data', function (Request $request ) {
 $url=$request->url();
@@ -374,6 +377,7 @@ Route::get('/', function (Request $request) {
 HTML;
 });
 
+//return ;
 
 for($i=0;$i<10000;$i++){
 	//route999/asd/test/123/test2/qwe

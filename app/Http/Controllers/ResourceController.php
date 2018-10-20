@@ -39,12 +39,14 @@ class ResourceController extends Controller{
 			<input type="button" onclick="document.forms[0].submit();" value="submit" />
 	   </form>
 	   <form action="'.url($path).'/2" method="POST"  >
+			'.csrf_field().'
 			<input type="hidden" name="_method" value="DELETE">
 			<input type="hidden" name="field2" value="form_data2" /><br/>
 			Delete
 			<input type="button" onclick="document.forms[1].submit();" value="submit" />
 	   </form>
 	   <form action="'.url($path).'/2" method="POST"  >
+			'.csrf_field().'
 			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="field2" value="form_data2" /><br/>
 			Update

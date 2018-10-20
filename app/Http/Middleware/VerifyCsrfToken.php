@@ -17,7 +17,8 @@ class VerifyCsrfToken{
 		$session_csrf_name= $request->session()->session_name.'_csrf';
 	
 		if(!in_array($request->method(), ['HEAD', 'GET', 'OPTIONS'])  ){
-			$token = $request->has('_token') ?$request->input('_token'): $request->cookies->get($session_csrf_name);
+			//$token = $request->has('_token') ?$request->input('_token'): $request->cookies->get($session_csrf_name);
+			$token = $request->has('_token') ?$request->input('_token'): '';
 				if($request->has('_token') && $request->cookies->has($session_csrf_name) && $request->input('_token')!==$request->cookies->get($session_csrf_name)){
 					$token='';
 				}

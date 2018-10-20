@@ -185,10 +185,13 @@ function add_route($method, $parameters) {
 						}
 						 
 						if($method==='post'){
-							if($request->input('_method')==='DELETE'){//strtoupper('delete')){
-								$func=='destroy';
-							}elseif($request->input('_method')==='PUT'){//strtoupper('put')){
-								$func=='update';
+							switch($request->input('_method')){
+								case 'DELETE':
+									$func=='destroy';
+								break;
+								case 'PUT':
+									$func=='update';
+								break;
 							}
 						}
 						 

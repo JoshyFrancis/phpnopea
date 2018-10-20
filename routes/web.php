@@ -38,6 +38,14 @@ Route::get('/routes', function ( Request $request ){
 	 var_dump($request->url());	 
 	return 'routes';
 });
+Route::get('/routes/index', function ( Request $request ){ 
+	 var_dump($request->url());	 
+	return 'routes/index';
+});
+Route::get('/routes/create', function ( Request $request ){ 
+	 var_dump($request->url());	 
+	return 'routes/create';
+});
 Route::get('/routes/{id}', function ($id1, Request $request ){
 	var_dump($id1);
 	 var_dump($request->url());	 
@@ -157,7 +165,7 @@ Route::group(['prefix' => 'books'], function () {
 Route::get('/files/{id}', function ($id) {
 	
 	var_dump($id);
-	var_dump( asset('storage/file.txt'));
+	//var_dump( asset('storage/file.txt'));
 	
 	Storage::disk('local')->put('file.txt', 'Contents');
 	Storage::put('files/file.txt', 'Contents2');

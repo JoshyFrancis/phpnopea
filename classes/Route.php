@@ -154,7 +154,10 @@ function add_route($method, $parameters) {
 				}
 			}
 			if($match===true ){
-									
+				$current_route=& $GLOBALS['current_route'];
+				if($current_route!==null){
+					return;
+				}
 				//var_dump($a_path1);
 				//var_dump($a_path2);	
 				
@@ -234,11 +237,11 @@ function add_route($method, $parameters) {
 						
 						//$fire_args = array_values($fire_args);
 						//echo $controller_class->$func(...$fire_args);
-						$current_route=& $GLOBALS['current_route'];
+						
 						$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
 						
 						//var_dump($fire_args);
-								//call_user_func(__CLASS__.'::load_classes');
+								 
 									load_classes();
 						if(count(Route::$group)>0){
 							//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );

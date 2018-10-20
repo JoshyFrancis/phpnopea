@@ -161,7 +161,7 @@ include __DIR__ . '/../classes/View.php';
 
 		$route=null;
 		
-			if($current_route==null){
+			if($current_route===null){
 				page_not_found();
 				
 			}

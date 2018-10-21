@@ -14,6 +14,7 @@ class Route{
 	public static $routes=[];
 	public static $middleware_stack=[];
 	public static $group;
+	public static $pattern=[];
     function __construct() {
     }
 	public static function __callStatic($method, $parameters)    {
@@ -32,6 +33,9 @@ class Route{
 			$routes=& $GLOBALS['routes'];
 		$routes=self::$routes;
     }
+    public static function pattern($key, $pattern)    {
+		Route::$pattern[$key]=$pattern ;
+	}
 }
 function add_route($method, $parameters) {
 	global $GLOBALS;
@@ -129,6 +133,7 @@ function add_route($method, $parameters) {
 				}
 				*/
 		if($match===true){
+			
 			$fire_args=[];
 				//$has_optional=false;
 			foreach($a_path2 as $k=>$v){
@@ -143,8 +148,8 @@ function add_route($method, $parameters) {
 				if($v===$a_path1[$k] || $pos!==false){// || $has_optional===true     ){
 						$match=true;
 					if( $pos!==false){					
-						$fire_args[$k]=$a_path1[$k];
-						//$fire_args[str_replace(['{','}'],'',$v)]=$a_path1[$k];//named arguments now not necessary
+						//$fire_args[$k]=$a_path1[$k];
+						$fire_args[str_replace(['{','}'],'',$v)]=$a_path1[$k];//named arguments. now not necessary						
 					}
 				}else{
 					$match=false;
@@ -212,7 +217,8 @@ function add_route($method, $parameters) {
 				$func_args=$reflection->getParameters();				
 				
 			}
-						 
+			$pattern_count=count(Route::$pattern);
+					 
 			$count_args=count($func_args);
 			for($i=0;$i<$count_args;$i++){
 				//if(strtolower($func_args[$i]->name)==='request'){
@@ -222,6 +228,20 @@ function add_route($method, $parameters) {
 				}elseif($func_args[$i]->name===$username_var){
 					//$username_pos= $i;
 					array_insert_assoc($fire_args,$i,$username);
+				}else{
+					if($pattern_count>0){
+						//var_dump(Route::$pattern);
+						foreach(Route::$pattern as $k=>$v){
+							//var_dump($k);
+							//var_dump($v);
+							if($k===$func_args[$i]->name){
+								if(!preg_match('/^'.$v.'$/', $fire_args[$k], $matches)){
+									//var_dump($matches);
+									return;
+								}
+							}
+						}
+					}
 				}
 			}
 						

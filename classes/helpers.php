@@ -124,6 +124,11 @@ function public_path($path='') {
 	$public_path=$GLOBALS['public_path'];
 	return $public_path .($path!=''? '/'. $path:'') ;
 }
+function app_path($path='') {
+	global $GLOBALS;
+	$public_path=$GLOBALS['public_path'];
+	return $public_path .'/../app' .($path!=''? '/'. $path:'') ;
+}
 function array_insert_assoc (&$array, $position, $insert_array) { 
   $first_array = array_splice ($array, 0, $position); 
   $array = array_merge ($first_array, $insert_array, $array); 

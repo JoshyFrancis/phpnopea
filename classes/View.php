@@ -49,6 +49,7 @@ class View {
     protected $sections = [];
     protected $sectionStack = [];
     protected $contents='';
+    public static $shared_data=[];
     public function __construct($view=null,$data = [],$sections=null,$sectionStack=null,$inner_view=false){
         $this->view = $view;
         $this->data = $data;
@@ -86,6 +87,9 @@ class View {
     }
     public static function make($view,$data = [],$inner_view=false){
 		return new View($view,$data,null,null,$inner_view);
+	}
+	public static function share($key,$val){
+		self::$shared_data=array_merge(self::$shared_data,[$key=>$val]);
 	}
 	public function view_make($view,$inner_view=false )    {
 		return new View($view, $this->data ,$this->sections,$this->sectionStack,$inner_view) ;
@@ -216,9 +220,12 @@ class View {
 
         ob_start();
 
-        
+        //$data=array_merge($this->data,self::$shared_data);
 		//extract($this->data, EXTR_SKIP);//Import variables from an array into the current symbol table.
 		foreach($this->data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
+		    $$key = $value; 
+		}
+		foreach(self::$shared_data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
 		    $$key = $value; 
 		}
         // We'll evaluate the contents of the view inside a try/catch block so we can

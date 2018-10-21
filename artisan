@@ -132,7 +132,7 @@ switch (strtolower($argv[1])){
 			Console::log('storage:link failed!', 'red'); 
 		}
 	break;
-	case 'cache:clear':
+	case 'view:clear':
 		$dir= $public_path. '/../storage/views/' ;
 		if ($handle = opendir($dir)) {
 			while (false !== ($entry = readdir($handle))) {
@@ -145,7 +145,7 @@ switch (strtolower($argv[1])){
 			}
 			closedir($handle);
 		}
-		Console::log('cache cleared', 'light_green'); 
+		Console::log('view cleared', 'light_green'); 
 	break;
 	default:
 		Console::log('Not a valid command', 'black', 'yellow');

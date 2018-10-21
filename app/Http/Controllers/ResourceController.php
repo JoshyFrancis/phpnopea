@@ -81,4 +81,9 @@ class ResourceController extends Controller{
 		
         return  'API';
     }
+    public function method_test(Request $request,$id2,$id){
+			var_dump($id);		 
+			var_dump($id2);
+        return  'method_test : ' ;
+    }
 }

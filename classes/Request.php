@@ -177,7 +177,8 @@ class Request{
             } while ($last > $index && (false !== $pos = strpos($path, $baseUrl)) && 0 != $pos);
         }
         // Does the baseUrl have anything in common with the request_uri?
-        $requestUri = $this->getRequestUri();
+        //$requestUri = $this->getRequestUri();
+        $requestUri =$_SERVER['REQUEST_URI'];
         if ('' !== $requestUri && '/' !== $requestUri[0]) {
             $requestUri = '/'.$requestUri;
         }
@@ -207,7 +208,8 @@ class Request{
         return rtrim($baseUrl, '/'.\DIRECTORY_SEPARATOR);
     }
     public function getPathInfo(){
-        if (null === ($requestUri = $this->getRequestUri())) {
+        //if (null === ($requestUri = $this->getRequestUri())) {
+        if (null === ($requestUri = $_SERVER['REQUEST_URI'])) {
             return '/';
         }
         // Remove the query string from REQUEST_URI

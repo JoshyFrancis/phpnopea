@@ -315,7 +315,7 @@ Route::group(['middleware' => ['web']], function ( ) {
 		
 		http://www.w3programmers.com/laravel-route-groups/
 		
-file: C: \ Windows \ System32 \ Drivers \ etc \ hosts
+file: C:\Windows\System32\Drivers\etc\hosts
 	127.0.0.1       fakebook.dev
 	127.0.0.1       asd.fakebook.dev
 	127.0.0.1       qwe.fakebook.dev
@@ -323,9 +323,9 @@ file: C: \ Windows \ System32 \ Drivers \ etc \ hosts
 File Path : /apache/conf/extra/httpd-vhosts.conf or httpd.conf
   
 <VirtualHost *:80>
-DocumentRoot "C:\xampp\htdocs\laraquick\public"
+DocumentRoot "C:\xampp\htdocs\laranopea\public"
 ServerName fakebook.dev
-<directory "C:\xampp\htdocs\laraquick\public">
+<directory "C:\xampp\htdocs\laranopea\public">
     Options Indexes FollowSymLinks
     AllowOverride all
     Order Deny,Allow

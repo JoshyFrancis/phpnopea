@@ -36,38 +36,7 @@ class Route{
 function add_route($method, $parameters) {
 	global $GLOBALS;
 			$request=$GLOBALS['request'];
-			$route_method=$GLOBALS['route_method'];		
-	/*
-	switch($method){
-		case 'group':			
-			$group=  $parameters[0] ;		 
-			Route::$middleware_stack[]= $group ;
-			call_user_func($parameters[1], $group);
-			array_pop(Route::$middleware_stack);
-			return;
-		break;
-		case 'match':
-			$method=implode(',',array_shift($parameters));
-		break;
-		case 'delete':case 'put': case 'patch':
-			if($request->input('_method')===strtoupper($method)){
-				$method='post';
-			}else{
-				return;
-			}
-		break;
-		case 'resource':			 
-			Route::get($parameters[0], $parameters[1].'@index') ;
-			//Route::get($parameters[0].'/create', $parameters[1].'@create') ;
-			Route::post($parameters[0], $parameters[1].'@store') ;
-			Route::get($parameters[0].'/{id}', $parameters[1].'@show') ;
-			Route::get($parameters[0].'/{id}/edit', $parameters[1].'@edit') ;
-			//Route::post($parameters[0].'/{id}', $parameters[1].'@update') ;
-			Route::post($parameters[0].'/{id}', $parameters[1].'@destroy') ;
-			return;
-		break;
-	}
-	*/
+			$route_method=$GLOBALS['route_method'];
 	if($method==='group'){
 		$group=  $parameters[0] ;		 
 		Route::$middleware_stack[]= $group ;
@@ -76,6 +45,8 @@ function add_route($method, $parameters) {
 		return;	
 	}elseif($method==='match'){
 		$method=implode(',',array_shift($parameters));
+	}elseif($method==='any'){
+		$method=$route_method;
 	}elseif($method==='delete' || $method==='put' || $method==='patch'){
 		if($request->input('_method')===strtoupper($method)){
 			$method='post';
@@ -93,14 +64,15 @@ function add_route($method, $parameters) {
 		return;
 	}
 	
-	Route::$group=  Route::$middleware_stack ; 
+	Route::$group=Route::$middleware_stack; 
 		
 		$i=0;
 				
 	//Route::$routes[$method][$parameters[0]]=$parameters;			
 	
 	//if( strpos(strtolower($method) ,$route_method)!==false || $method==='any'){
-	if(strpos($method,$route_method)!==false || $method==='any'){			
+	//if(strpos($method,$route_method)!==false || $method==='any'){			
+	if(strpos($method,$route_method)!==false ){
 		//$path=strtolower( trim($parameters[0],'/') );
 		$path=trim($parameters[0] ,'/');
 				
@@ -145,8 +117,7 @@ function add_route($method, $parameters) {
 	//$a_path1=explode('/',$route_path);
 		$a_path1=$GLOBALS['a_path1'];
 		$a_path2=explode('/',$path);
-				 
-			$fire_args=array();
+				 			
 			$match=count($a_path1)===count($a_path2);
 				/* //Optional parameters avoided to gain performance
 			$has_optional=false;
@@ -158,6 +129,7 @@ function add_route($method, $parameters) {
 				}
 				*/
 		if($match===true){
+			$fire_args=[];
 				//$has_optional=false;
 			foreach($a_path2 as $k=>$v){
 				//if( strpos($v,'?}' )!==false){//optional parameter
@@ -240,24 +212,19 @@ function add_route($method, $parameters) {
 				$func_args=$reflection->getParameters();				
 				
 			}
-			
-			$request_pos=-1;
-			$username_pos=-1;
+						 
 			$count_args=count($func_args);
 			for($i=0;$i<$count_args;$i++){
-				if(strtolower($func_args[$i]->name)==='request'){
-					$request_pos= $i;						 
-				}elseif( $func_args[$i]->name===$username_var){
-					$username_pos= $i;
+				//if(strtolower($func_args[$i]->name)==='request'){
+				if($func_args[$i]->name==='request'){
+					//$request_pos= $i;						 
+					array_insert_assoc($fire_args,$i,['request'=>$request ]);	
+				}elseif($func_args[$i]->name===$username_var){
+					//$username_pos= $i;
+					array_insert_assoc($fire_args,$i,$username);
 				}
 			}
-			if($request_pos!==-1){
-				array_insert_assoc($fire_args,$request_pos  ,['request'=> $request ] );	
-			}
-			if(count($username)>0 && $username_pos!==-1){
-				array_insert_assoc($fire_args,$username_pos  ,$username );
-			}
-			
+						
 			//$fire_args = array_values($fire_args);
 			//echo $controller_class->$func(...$fire_args);
 			
@@ -276,7 +243,7 @@ function add_route($method, $parameters) {
 				}				 
 			}else{
 				if(isset($controller_class)){
-					echo call_user_func_array(array($controller_class, $func), $fire_args);
+					echo call_user_func_array([$controller_class, $func], $fire_args);
 				}else{
 					echo call_user_func_array($func, $fire_args);
 				}
@@ -344,7 +311,7 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 	$middleware_args[]= function($request) use($func, $fire_args,& $res,$controller_class){//, &$called){
 							if($res===null){// && $called===false){
 								if($controller_class!==null){
-									$res= call_user_func_array(array($controller_class, $func), $fire_args);
+									$res= call_user_func_array([$controller_class, $func], $fire_args);
 								}else{
 									$res= call_user_func_array($func, $fire_args);
 								}
@@ -354,21 +321,22 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 						};
 			//$middleware_args[]= Route::$group[count(Route::$group)-1]['middleware'][0] ;
 			$middleware_args[]=null;
-			//var_dump($middleware_args);
-	
-	//var_dump(Route::$group);
-	$middleware_groups=[];
-		$middleware_groups[]='_default';
+			 
+	//$middleware_groups=[];
+	//	$middleware_groups[]='_default';
+	$middleware_groups='_default,';
 	//foreach(Route::$group as $items){
 	foreach(Route::$group as $items){
 		foreach($items as $key=>$val){
 			if($key==='middleware'){
 				if(is_array($val)){
 					foreach($val as  $item){
-						$middleware_groups[]=$item;
+						//$middleware_groups[]=$item;
+						$middleware_groups.=$item.',';
 					}
 				}else{
-					$middleware_groups[]=$val;
+					//$middleware_groups[]=$val;
+					$middleware_groups.=$val.',';
 				}
 			}
 		}
@@ -397,7 +365,7 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 				$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
 					include  $middleware_file;	
 				$class=new $class() ;	
-			$res2= call_user_func_array(array($class, 'handle'), $middleware_args);
+			$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 		if($res!==$res2){
 			//$called=true; 
 			$res=$res2;
@@ -405,13 +373,14 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 	}
 		foreach($kernel_class->middlewareGroups as $group=>$classes){
 			//var_dump($group);
-			if(in_array($group,$middleware_groups)){
+			//if(in_array($group,$middleware_groups)){
+			if(strpos($middleware_groups,$group.',')!==false){
 					$middleware_args[2]=$group;
 				foreach($classes as $class){
 					$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
 						include  $middleware_file;	
 					$class=new $class() ;
-						$res2= call_user_func_array(array($class, 'handle'), $middleware_args);
+						$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 					if($res!==$res2){
 						//$called=true;
 						$res=$res2;
@@ -419,13 +388,14 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 				}
 			}
 		}
-	foreach($kernel_class->routeMiddleware as $key=>$class){
-		if(in_array($key,$middleware_groups)){
+	foreach($kernel_class->routeMiddleware as $group=>$class){
+		//if(in_array($group,$middleware_groups)){
+		if(strpos($middleware_groups,$group.',')!==false){
 				$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
 					include  $middleware_file;	
 				$class=new $class() ;
-			$middleware_args[2]=$key;
-				$res2= call_user_func_array(array($class, 'handle'), $middleware_args);
+			$middleware_args[2]=$group;
+				$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 			if($res!==$res2){
 				//$called=true; 
 				$res=$res2;

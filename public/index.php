@@ -91,7 +91,7 @@ $current_route=null;
 	$GLOBALS['request']=$request;
 	$GLOBALS['current_route']=$current_route;
 	$GLOBALS['app_key']=$app_key;
-	$GLOBALS['route_method']=strtolower($request->method());
+	$GLOBALS['route_method']=strtolower($_SERVER['REQUEST_METHOD']);//strtolower($request->method());
 	//$GLOBALS['route_path']=strtolower(trim($request->getPathInfo(),'/'));
 	$GLOBALS['route_path']= trim($request->getPathInfo(),'/') ;	
 	//$GLOBALS['route_path']= $request->path()  ;
@@ -156,7 +156,6 @@ include __DIR__ . '/../classes/View.php';
 		page_not_found();
 	}else{
 		
-			
 		include __DIR__ . '/../routes/web.php' ;	
 
 		$route=null;

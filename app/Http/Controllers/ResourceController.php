@@ -84,6 +84,6 @@ class ResourceController extends Controller{
     public function method_test(Request $request,$id2,$id){
 			var_dump($id);		 
 			var_dump($id2);
-        return  'method_test : ' ;
+        return  'method_test' ;
     }
 }

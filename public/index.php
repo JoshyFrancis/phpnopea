@@ -72,9 +72,8 @@ $env_data=parse_ini_file($file_env,false,INI_SCANNER_RAW ) ;
 
 
 		$GLOBALS['env']=$env_data;
-//var_dump(env('DB_HOST','127.0.0.1'));
-//var_dump(env('DB_DATABASE' ));
-$app_key= env('APP_KEY');
+
+$app_key=isset($env['APP_KEY'])?$env['APP_KEY']:'';// env('APP_KEY');
 if(strpos($app_key,'base64:')!==false){
 	//$app_key=base64_decode(explode('base64:',$app_key)[1]);	
 	$app_key=base64_decode(substr( $app_key,7) );	
@@ -93,16 +92,47 @@ $current_route=null;
 	$GLOBALS['app_key']=$app_key;
 	$GLOBALS['route_method']=strtolower($_SERVER['REQUEST_METHOD']);//strtolower($request->method());
 	//$GLOBALS['route_path']=strtolower(trim($request->getPathInfo(),'/'));
-	$GLOBALS['route_path']= trim($request->getPathInfo(),'/') ;	
-	//$GLOBALS['route_path']= $request->path()  ;
+	//$GLOBALS['route_path']= trim($request->getPathInfo(),'/') ;	
+	//$GLOBALS['route_path']= $request->path();
+	$GLOBALS['route_path']=$request->getCurrentUri();//fastest
 	$GLOBALS['a_path1']=explode('/',$GLOBALS['route_path']);
 	$GLOBALS['route_domain']=$request->getHost();
-	
+
+/*
+var_dump($request->getCurrentUri() );	
+var_dump($request->path() );
+var_dump($request->getPathInfo() );
+$s = microtime(true);
+for($i=0;$i<10000;$i++){
+	$x=$request->getCurrentUri();
+}
+$e = microtime(true)-$s;
+var_dump($e);
+
+$s = microtime(true);
+for($i=0;$i<10000;$i++){
+	$x=$request->path();
+}
+$e = microtime(true)-$s;
+var_dump($e);
+
+
+$s = microtime(true);
+for($i=0;$i<10000;$i++){
+	$x=$request->getPathInfo();
+}
+$e = microtime(true)-$s;
+var_dump($e);
+*/
+
 $cookie_vars= decrypt_coookies();
  
 	$request->set_cookies($cookie_vars);
 
-if( $request->headers->get('Accept')=='*/*' && $request->headers->get('Cookie',null)===null ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+//var_dump($_SERVER);
+
+//if( $request->headers->get('Accept')==='*/*' && $request->headers->get('Cookie',null)===null ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
 	//header("404 not found",true,404);
 	header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
 	exit();	

@@ -1,22 +1,22 @@
 <?php
 class Request{
 	//public $server;
-	public $request ;
+	//public $request ;
 	public $files;
 	public $cookies;
 	public $session;
-	public $headers;
+	//public $headers;
 	function __construct(){
 		//$server=[];
 		//foreach($_SERVER as $key => $value)    {
 		//  $server{$this->toCamelCase($key)} = $value;
 		//}
 		//$this->server=new ParameterBag($server);  
-		$this->request  = new ParameterBag($_REQUEST);
+		//$this->request  = new ParameterBag($_REQUEST);
 		if(count($_FILES)>0){
 			$this->files = new FileBag($_FILES);
 		}
-		$this->headers = new ParameterBag(getallheaders ()); 
+		//$this->headers = new ParameterBag(getallheaders ()); 
 	}
 	public function set_cookies($data){
 		$this->cookies=new ParameterBag($data);
@@ -24,13 +24,32 @@ class Request{
 	public function set_session($session){
 		$this->session=$session;
 	}
-	private function getCurrentUri(){
-		$basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
+	public function getCurrentUri(){
+		//$basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
+		//$path=explode('/', $_SERVER['SCRIPT_NAME']);
+		//	array_pop($path);
+		//$basepath = implode('/', $path) . '/';
+		$basepath =substr( $_SERVER['SCRIPT_NAME'],0,strpos($_SERVER['SCRIPT_NAME'],'index.php')-1);
 		$uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
-		if (strstr($uri, '?')) $uri = substr($uri, 0, strpos($uri, '?'));
-		$uri = '/' . trim($uri, '/');
-		return $uri;
+		if (strpos($uri, '?')!==false) $uri = substr($uri, 0, strpos($uri, '?'));
+		return trim($uri, '/');
 	}
+	public function path(){
+        //$uri=explode('/', strtolower(explode('?', $_SERVER['REQUEST_URI'])[0])) ;
+		//$doc_root= explode('/',strtolower($_SERVER['SCRIPT_FILENAME'])) ;
+        $uri=explode('/',  explode('?', $_SERVER['REQUEST_URI'])[0])  ;
+		$doc_root= explode('/', $_SERVER['SCRIPT_FILENAME'])  ;
+			foreach($doc_root as $item){
+				foreach($uri as $key=>$val){
+					if($item===$val){
+						unset($uri[$key]);
+						break;
+					}
+				}
+			}
+			$uri=ltrim( implode('/',$uri),'/');
+		return $uri;
+    }
 	private function toCamelCase($string){
 		$result = strtolower($string);
 		preg_match_all('/_[a-z]/', $result, $matches);
@@ -230,22 +249,7 @@ class Request{
         //return (string) $pathInfo;
         return $pathInfo;
     }
-    public function path(){
-        //$uri=explode('/', strtolower(explode('?', $_SERVER['REQUEST_URI'])[0])) ;
-		//$doc_root= explode('/',strtolower($_SERVER['SCRIPT_FILENAME'])) ;
-        $uri=explode('/',  explode('?', $_SERVER['REQUEST_URI'])[0])  ;
-		$doc_root= explode('/', $_SERVER['SCRIPT_FILENAME'])  ;
-			foreach($doc_root as $item){
-				foreach($uri as $key=>$val){
-					if($item===$val){
-						unset($uri[$key]);
-						break;
-					}
-				}
-			}
-			$uri=ltrim( implode('/',$uri),'/');
-		return $uri;
-    }
+    
     public function getUri(){
         if (null !== $qs = $this->getQueryString()) {
             $qs = '?'.$qs;
@@ -280,7 +284,8 @@ class Request{
         return  $this->session->get('_previous_url')  ;
     }
     public function isXmlHttpRequest(){
-        return 'XMLHttpRequest' == $this->headers->get('X-Requested-With');
+        //return 'XMLHttpRequest' == $this->headers->get('X-Requested-With');
+        return 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'];
     }
     public function ajax(){
         return $this->isXmlHttpRequest();

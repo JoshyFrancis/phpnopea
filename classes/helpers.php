@@ -143,7 +143,7 @@ function parse_ini_file_ext($file, $sections = false,$scanner_mode=INI_SCANNER_R
 function env($key,$def=null){
 	global $GLOBALS;
 		$env=$GLOBALS['env'];	 
-	return isset($env[$key])?$env[$key]:$def;;
+	return isset($env[$key])?$env[$key]:$def;
 }
 function url($route=null){
 	global $GLOBALS;

@@ -51,6 +51,7 @@ class Auth{
 				//}
 			}
 			$request->session->put('_login',$login);
+			$request->session->save();
 		}
 		return $login;
 	}

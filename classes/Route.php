@@ -39,7 +39,6 @@ class Route{
 }
 function add_route($method, $parameters) {
 	global $GLOBALS;
-			$request=$GLOBALS['request'];
 			$route_method=$GLOBALS['route_method'];
 	if($method==='group'){
 		$group=  $parameters[0] ;		 
@@ -52,7 +51,8 @@ function add_route($method, $parameters) {
 	}elseif($method==='any'){
 		$method=$route_method;
 	}elseif($method==='delete' || $method==='put' || $method==='patch'){
-		if($request->input('_method')===strtoupper($method)){
+		//if($request->input('_method')===strtoupper($method)){
+		if(isset($_REQUEST['_method']) && $_REQUEST['_method']===strtoupper($method)){
 			$method='post';
 		}else{
 			return;
@@ -67,10 +67,7 @@ function add_route($method, $parameters) {
 		Route::post($parameters[0].'/{id}', $parameters[1].'@destroy') ;
 		return;
 	}
-	
-	Route::$group=Route::$middleware_stack; 
-		
-		$i=0;
+				
 				
 	//Route::$routes[$method][$parameters[0]]=$parameters;			
 	
@@ -79,6 +76,10 @@ function add_route($method, $parameters) {
 	if(strpos($method,$route_method)!==false ){
 		//$path=strtolower( trim($parameters[0],'/') );
 		$path=trim($parameters[0] ,'/');
+		
+		Route::$group=Route::$middleware_stack; 
+		$i=0;
+			
 				
 		$username_var='';
 		$username=[];
@@ -142,6 +143,7 @@ function add_route($method, $parameters) {
 				//}
 				if(!isset($a_path1[$k])){ 
 				//	$match=$has_optional;
+					$match=false;
 					break;
 				}
 					$pos=strpos($v,'{' );
@@ -157,11 +159,13 @@ function add_route($method, $parameters) {
 				}
 			}
 		}
+		
 		if($match===true){
 			$current_route=& $GLOBALS['current_route'];
 			if($current_route!==null){
 				return;
 			}
+			
 			//var_dump($a_path1);
 			//var_dump($a_path2);	
 			
@@ -173,7 +177,8 @@ function add_route($method, $parameters) {
 							return;
 						}
 					}
-				 
+			$request=$GLOBALS['request'];	
+			 
 			//if(!is_object($func)){// handles controller
 			if(is_string($func)){// handles controller
 				$pos=strpos($func,'@');
@@ -183,9 +188,9 @@ function add_route($method, $parameters) {
 				}	
 																	
 					if($method==='post'){
-						if($request->input('_method')==='DELETE'){
+						if(isset($_REQUEST['_method']) && $_REQUEST['_method']==='DELETE'){
 							$func='destroy';
-						}elseif($request->input('_method')==='PUT')	{
+						}elseif(isset($_REQUEST['_method']) && $_REQUEST['_method']==='PUT')	{
 							$func='update';
 						}
 					}else{
@@ -249,7 +254,8 @@ function add_route($method, $parameters) {
 			//$fire_args = array_values($fire_args);
 			//echo $controller_class->$func(...$fire_args);
 			
-			$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
+			//$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
+			$current_route=$path;
 			
 			//var_dump($fire_args);
 					 

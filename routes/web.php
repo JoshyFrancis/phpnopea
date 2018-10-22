@@ -279,7 +279,7 @@ Route::group(['middleware' => ['web']], function ( ) {
 	//Route::get('/home', 'HomeController@index') ;
 	Route::resource('rc/resource', 'ResourceController',['parameters' => [ "extra" => 'template_1' ]]);
 	Route::get('API/rc/resource', 'ResourceController@API');
-	Route::get('rc/resourcem/{id}/{id2}', 'ResourceController@method_test');
+	Route::get('rc/resource/{id}/{id2}/m', 'ResourceController@method_test');
 	
 	Route::get('/test1', function ( Request $request ) {
 		//var_dump($middleware1);

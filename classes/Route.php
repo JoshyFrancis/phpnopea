@@ -38,8 +38,7 @@ class Route{
 	}
 }
 function add_route($method, $parameters) {
-	global $GLOBALS;
-			$route_method=$GLOBALS['route_method'];
+	
 	if($method==='group'){
 		$group=  $parameters[0] ;		 
 		Route::$middleware_stack[]= $group ;
@@ -48,8 +47,6 @@ function add_route($method, $parameters) {
 		return;	
 	}elseif($method==='match'){
 		$method=implode(',',array_shift($parameters));
-	}elseif($method==='any'){
-		$method=$route_method;
 	}elseif($method==='delete' || $method==='put' || $method==='patch'){
 		//if($request->input('_method')===strtoupper($method)){
 		if(isset($_REQUEST['_method']) && $_REQUEST['_method']===strtoupper($method)){
@@ -67,7 +64,11 @@ function add_route($method, $parameters) {
 		Route::post($parameters[0].'/{id}', $parameters[1].'@destroy') ;
 		return;
 	}
-				
+	global $GLOBALS;
+			$route_method=$GLOBALS['route_method'];
+	if($method==='any'){
+		$method=$route_method;
+	}			
 				
 	//Route::$routes[$method][$parameters[0]]=$parameters;			
 	
@@ -285,6 +286,10 @@ function load_classes($request){
 		$session_name=$GLOBALS['session_name'];
 	
 	include $public_path . '/../classes/SessionManager.php';	
+
+		$cookie_vars= decrypt_coookies();
+		 
+			$request->set_cookies($cookie_vars);
 
 		$session=new SessionManager($public_path . '/../storage/sessions' , $lifetime,$session_name );
 		$session->setId($request->cookies->get($session_name )  );

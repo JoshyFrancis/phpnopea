@@ -29,7 +29,8 @@ class Request{
 		//$path=explode('/', $_SERVER['SCRIPT_NAME']);
 		//	array_pop($path);
 		//$basepath = implode('/', $path) . '/';
-		$basepath =substr( $_SERVER['SCRIPT_NAME'],0,strpos($_SERVER['SCRIPT_NAME'],'index.php')-1);
+		//$basepath =substr( $_SERVER['SCRIPT_NAME'],0,strpos($_SERVER['SCRIPT_NAME'],'index.php')-1);
+		$basepath =substr( $_SERVER['SCRIPT_NAME'],0,strrpos($_SERVER['SCRIPT_NAME'],'/'));
 		$uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
 		if (strpos($uri, '?')!==false) $uri = substr($uri, 0, strpos($uri, '?'));
 		return trim($uri, '/');

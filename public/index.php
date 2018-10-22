@@ -98,36 +98,6 @@ $current_route=null;
 	$GLOBALS['a_path1']=explode('/',$GLOBALS['route_path']);
 	$GLOBALS['route_domain']=$request->getHost();
 
-/*
-var_dump($request->getCurrentUri() );	
-var_dump($request->path() );
-var_dump($request->getPathInfo() );
-$s = microtime(true);
-for($i=0;$i<10000;$i++){
-	$x=$request->getCurrentUri();
-}
-$e = microtime(true)-$s;
-var_dump($e);
-
-$s = microtime(true);
-for($i=0;$i<10000;$i++){
-	$x=$request->path();
-}
-$e = microtime(true)-$s;
-var_dump($e);
-
-
-$s = microtime(true);
-for($i=0;$i<10000;$i++){
-	$x=$request->getPathInfo();
-}
-$e = microtime(true)-$s;
-var_dump($e);
-*/
-
-$cookie_vars= decrypt_coookies();
- 
-	$request->set_cookies($cookie_vars);
 
 //var_dump($_SERVER);
 

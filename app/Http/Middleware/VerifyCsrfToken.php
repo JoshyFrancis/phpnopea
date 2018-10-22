@@ -15,10 +15,10 @@ class VerifyCsrfToken{
 		$csrf=true;
 		
 		$session_csrf_name= $request->session()->session_name.'_csrf';
-	
-		if(!in_array($request->method(), ['HEAD', 'GET', 'OPTIONS'])  ){
+		//if(!in_array($request->method(), ['HEAD', 'GET', 'OPTIONS'])  ){
+		if(!in_array($_SERVER['REQUEST_METHOD'], ['HEAD', 'GET', 'OPTIONS'])  ){
 			//$token = $request->has('_token') ?$request->input('_token'): $request->cookies->get($session_csrf_name);
-			$token = $request->has('_token') ?$request->input('_token'): '';
+			$token =  $request->input('_token') ;
 				if($request->has('_token') && $request->cookies->has($session_csrf_name) && $request->input('_token')!==$request->cookies->get($session_csrf_name)){
 					$token='';
 				}
@@ -33,12 +33,9 @@ class VerifyCsrfToken{
 			//echo 'token mismatch';
 			return token_mismatch();
 		}else{
-			set_cookie($session_csrf_name , $request->session()->token() ,time()+$request->session()->seconds);
-			
+			set_cookie($session_csrf_name , $request->session()->token() ,time()+$request->session()->seconds);	
 			return $next($request);
-		} 
-
-		 
+		}		 
     }
     
 }

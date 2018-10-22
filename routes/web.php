@@ -427,7 +427,7 @@ HTML;
 
 for($i=0;$i<10000;$i++){
 	//route999/asd/test/123/test2/qwe
-	Route::get('/route'.$i .'/{id1}/test/{id3}/test2/{id2}', function ($id3,Request $request ) use($i) {
-		return $i .':' .  $id3;
+	Route::get('/route'.$i .'/{id}/test/{id3}/test2/{id2}', function ($id,Request $request ) use($i) {
+		return $i .':' .  $id;
 	});
 }

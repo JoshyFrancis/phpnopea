@@ -149,7 +149,7 @@ function add_route($method, $parameters) {
 						$match=true;
 					if( $pos!==false){					
 						//$fire_args[$k]=$a_path1[$k];
-						$fire_args[str_replace(['{','}'],'',$v)]=$a_path1[$k];//named arguments. now not necessary						
+						$fire_args[str_replace(['{','}'],'',$v)]=$a_path1[$k];//named arguments					
 					}
 				}else{
 					$match=false;
@@ -181,10 +181,7 @@ function add_route($method, $parameters) {
 					$controller=substr($func,0,$pos);
 					$func=substr($func,$pos+1);
 				}	
-					//$action=end($a_path1);
-					//$action=$a_path1[count($a_path1) - 1];	
-					$action=array_pop($a_path1);//fastest method
-																			
+																	
 					if($method==='post'){
 						if($request->input('_method')==='DELETE'){
 							$func='destroy';
@@ -192,7 +189,10 @@ function add_route($method, $parameters) {
 							$func='update';
 						}
 					}else{
-						if($action==='create'){							 
+						//$action=end($a_path1);
+						//$action=$a_path1[count($a_path1) - 1];	
+						//$action=array_pop($a_path1);//fastest method
+						if(array_pop($a_path1)==='create'){							 
 							$func='create';
 						}
 					}
@@ -228,18 +228,19 @@ function add_route($method, $parameters) {
 				}elseif($func_args[$i]->name===$username_var){
 					//$username_pos= $i;
 					array_insert_assoc($fire_args,$i,$username);
-				}else{
+				}else{				
 					if($pattern_count>0){
-						//var_dump(Route::$pattern);
+						/*	
 						foreach(Route::$pattern as $k=>$v){
-							//var_dump($k);
-							//var_dump($v);
 							if($k===$func_args[$i]->name){
 								if(!preg_match('/^'.$v.'$/', $fire_args[$k], $matches)){
-									//var_dump($matches);
 									return;
 								}
 							}
+						}
+						*/
+						if(isset(Route::$pattern[$func_args[$i]->name]) && !preg_match('/^'.Route::$pattern[$func_args[$i]->name].'$/', $fire_args[$func_args[$i]->name], $matches)){
+							return;
 						}
 					}
 				}

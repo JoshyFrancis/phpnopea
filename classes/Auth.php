@@ -4,37 +4,28 @@ class Auth{
 	public $name;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public static function __callStatic($method, $parameters){
-		global $GLOBALS;
-			$auth=$GLOBALS['auth'];
-		$auth->guard();
-		return $auth->$method($parameters);
+			Route::$auth->guard();
+		return Route::$auth;
 	}
 	public function __call($method, $parameters){
-		global $GLOBALS;
-			$auth=$GLOBALS['auth'];
-		$auth->guard();
-		return $auth;
+			Route::$auth->guard();
+		return Route::$auth;
     }
 	public function guest(){
-		global $GLOBALS;
-			$request=$GLOBALS['request'];
-				$this->check();
-		return !$request->session->get('_login',false);
+			$this->check();
+		return !Route::$request->session->get('_login',false);
 	}
 	public function guard(){
-		global $GLOBALS;
-			$request=$GLOBALS['request'];
-		$this->id= $request->session->get('_userID',null);
-		$this->name=$request->session->get('_userName',null);
+		$this->id=Route::$request->session->get('_userID',null);
+		$this->name=Route::$request->session->get('_userName',null);
 		return $this;
 	}
 	public function check(){
 		global $GLOBALS;
-			$request=$GLOBALS['request'];
 			$session_name=$GLOBALS['session_name'];
 		$remember_cookie=$session_name.'_remember';
-		$cookie=$request->cookies->get($remember_cookie);
-		$login=$request->session->get('_login',false);
+		$cookie=Route::$request->cookies->get($remember_cookie);
+		$login=Route::$request->session->get('_login',false);
 		if($cookie){
 			$login=false;
 			list($token,$time)=explode('_',$cookie);
@@ -44,33 +35,32 @@ class Auth{
 				//if(time()<=(int)$time){
 					 $login=true;
 						$ID=$rows[0]->ID;
-					 $request->session->put('_userID',$ID);
-					 $request->session->put('_userName',$rows[0]->username );
+					 Route::$request->session->put('_userID',$ID);
+					 Route::$request->session->put('_userName',$rows[0]->username );
 				//}else{
 				//	remove_cookie($remember_cookie);
 				//}
 			}
-			$request->session->put('_login',$login);
-			$request->session->save();
+			Route::$request->session->put('_login',$login);
+			Route::$request->session->save();
 		}
 		return $login;
 	}
-	public function attempt($credentials,$remember){
+	public function attempt($credentials,$remember=''){
 		global $GLOBALS;
 			$app_key=$GLOBALS['app_key'];
 			$env=$GLOBALS['env'];
-			$request=$GLOBALS['request'];
 			$session_name=$GLOBALS['session_name'];
+			$remember_cookie=$session_name.'_remember';
 		$login=false;
-		$request->session->put('_login',false);
+		Route::$request->session->put('_login',false);
 			$email=$credentials['email'];
 			$password=$credentials['password'];
 			$active= isset($credentials['active'])?$credentials['active']:null;
 			//var_dump($remember);
-			$remember_cookie=$session_name.'_remember';
-				remove_cookie($remember_cookie);
-				
 			
+				remove_cookie($remember_cookie);
+							
 				DB::setFetchMode(\PDO::FETCH_ASSOC);
 				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!=null ?' and active=?':''),[$email,$active ] );
 				DB::setFetchMode(\PDO::FETCH_OBJ);
@@ -108,10 +98,10 @@ class Auth{
 					// 301 Moved Permanently
 					//header("Location: /foo.php",TRUE,301);
 					 $login=true;
-					 $request->session->put('_userID',$ID);
-					 $request->session->put('_userName',$rows[0]['username']);
+					 Route::$request->session->put('_userID',$ID);
+					 Route::$request->session->put('_userName',$rows[0]['username']);
 					 
-					if($remember=='on'){
+					if($remember==='on'){
 						$time=time()+$this->remember_time;
 						$token=bin2hex(openssl_random_pseudo_bytes(32)).'_'.$time;
 						
@@ -123,23 +113,20 @@ class Auth{
 				}
 			}
 		 
-		$request->session->put('_login',$login);
-		$request->session->save();
+		Route::$request->session->put('_login',$login);
+		Route::$request->session->save();
 		return $login;
 	}
 	public function logout(){
 		global $GLOBALS;
-			$request=$GLOBALS['request'];
 		$session_name=$GLOBALS['session_name'];
 		$remember_cookie=$session_name.'_remember';
 			remove_cookie($remember_cookie);
-		//$request->session()->destroy_current();
-		$request->session->restart();
+		//Route::$request->session()->destroy_current();
+		Route::$request->session->restart();
 	}
 }
 function auth(){
-	global $GLOBALS;
-		$auth=$GLOBALS['auth'];
-	$auth->guard();	
-	return $auth;
+	Route::$auth->guard();	
+	return Route::$auth;
 }

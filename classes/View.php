@@ -8,7 +8,7 @@ class View {
     protected $sectionStack = [];
     protected $contents='';
     public static $shared_data=[];
-    public static $use_array_merge=false;//false is better speed
+    public static $use_array_merge=false;//false better speed
     public function __construct($view=null,$data = [],$sections=null,$sectionStack=null,$inner_view=false){
         $this->view = $view;
         $this->data = $data;
@@ -24,12 +24,12 @@ class View {
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];
 				$view_path=$GLOBALS['view_path'];  
-				$request=$GLOBALS['request'];
+				 
 			$storage_view_path= $public_path. '/../storage/views/' ;
 					
 				if($inner_view==false){
 				
-					$request->session->put('_view',$view);
+					Route::$request->session->put('_view',$view);
 				}
 				
 				$view2=str_replace('.','/',$view);
@@ -259,19 +259,15 @@ class View {
 		return $this;
 	}
 	public function withInput(){
-		global $GLOBALS;
-			$request=$GLOBALS['request'];
 		if(self::$use_array_merge===true){
-			$data=array_merge($request->all(),$request->session->get('_request_data',[]) );
+			$data=array_merge(Route::$request->all(),Route::$request->session->get('_request_data',[]) );
 		}else{
-			$data= $request->all() + $request->session->get('_request_data',[]);
+			$data= Route::$request->all() + Route::$request->session->get('_request_data',[]);
 		}
-		$request->setInput($data);
+		Route::$request->setInput($data);
 		return $this;
 	}
-	public function with($data){
-		global $GLOBALS;
-			$request=$GLOBALS['request'];	 
+	public function with($data){ 
 		if(self::$use_array_merge===true){ 
 			$this->data=array_merge($this->data,$data);
 		}else{
@@ -318,10 +314,8 @@ class View {
 	}
 }
 function back(){
-	global $GLOBALS;
-			$request=$GLOBALS['request'];
-	if($request->session->get('_view')){		
-		$view = View::make($request->session->get('_view'));
+	if(Route::$request->session->get('_view')){		
+		$view = View::make(Route::$request->session->get('_view'));
 		return $view;
 	}	
 }
@@ -335,26 +329,21 @@ function response($content,$code=null){
 }
 function redirect($route=null){
 	global $GLOBALS;
-			$request=$GLOBALS['request'];
 			$routes=$GLOBALS['routes'];
 			$current_route=$GLOBALS['current_route'];
 			
-				//if($request->session->get('_previous_url')!==$request->getUri()){
-				//	$request->session->put('_request_data',$_REQUEST);
-				//	$request->session->put('_previous_url',$request->getUri());			 
-				//}
-		$request->session->save();	
+		Route::$request->session->save();	
 	if($route===null){
 		return  new View();
 	}
 	$url=url($route);
 	
-		if($url===$request->getUri() && $request->session->get('_view')){
+		if($url===Route::$request->getUri() && Route::$request->session->get('_view')){
 			//var_dump($request->session->get('_request_data'));
 			//var_dump($current_route);
 			//exit;
 			//var_dump($request->session->get('_view')); 
-			$view = View::make($request->session->get('_view'));
+			$view = View::make(Route::$request->session->get('_view'));
 			return $view;
 		}
 		

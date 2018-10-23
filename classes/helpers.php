@@ -148,27 +148,25 @@ function env($key,$def=null){
 }
 function url($route=null){
 	global $GLOBALS;
-		$request=$GLOBALS['request'];	
 		$routes=$GLOBALS['routes'];
-	if(strpos($route,$request->getBaseUri())!==false){
+	if(strpos($route,Route::$request->getBaseUri())!==false){
 		return $route;
 	}
 	if($route!==null  ){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
 		//}
-		return $request->getBaseUri().'/'. trim( $route,'/');
+		return Route::$request->getBaseUri().'/'. trim( $route,'/');
 	}
-	return $request;
+	return Route::$request;
 }
 function route($route ){
 	global $GLOBALS;
-		$request=$GLOBALS['request'];	
 		$routes=$GLOBALS['routes'];
 	if(isset($routes['get'][$route])){
 		$route= $routes['get'][$route][0];
 	}
-	return $request->getBaseUri().'/'. trim( $route,'/');
+	return Route::$request->getBaseUri().'/'. trim( $route,'/');
 }
 function encrypt($data,$key,$cipher='AES-256-CBC'){
 	$iv=random_bytes(openssl_cipher_iv_length($cipher));
@@ -197,10 +195,8 @@ function asset($path){
 	return  url('/')  . trim( $path,'/') . '?t=' . filemtime($file) ;
 }
 function csrf_token(){
-	global $GLOBALS;
-		$request=$GLOBALS['request'];
-			$request->session->save();
-	return $request->session->token();
+		Route::$request->session->save();
+	return Route::$request->session->token();
 }
 function csrf_field(){
 	return  '<input type="hidden" name="_token" value="'.csrf_token().'">' ;
@@ -210,10 +206,7 @@ function view($view,$data=[]){
 	return $view;
 }
 function old($key, $default = ''){
-	global $GLOBALS;
-		$request=$GLOBALS['request'];
-	//return $request->session->get($key);
-	return $request->input($key);
+	return Route::$request->input($key);
 }
 function human_filesize($bytes, $decimals = 2) {
   $sz = 'BKMGTP';
@@ -238,32 +231,26 @@ function bytes_formatted($size){
 function create_nonce($optional_salt=''){//https://stackoverflow.com/a/20039787/6417678
 	global $GLOBALS;
 		$salt=$GLOBALS['app_key'];
-		$request=$GLOBALS['request'];
-    return hash_hmac('sha256', $request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']);
+    return hash_hmac('sha256', Route::$request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']);
 }
 function check_nonce($nonce, $optional_salt='',$hour=1){
 	global $GLOBALS;
 		$salt=$GLOBALS['app_key'];
-		$request=$GLOBALS['request'];
     $lasthour = date('G')-$hour<0 ? date('Ymd').(24-$hour) : date('YmdG')-$hour;   
-    if (hash_hmac('sha256', $request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']) == $nonce || 
-        hash_hmac('sha256', $request->session->getId().$optional_salt, $lasthour.$salt.$_SERVER['REMOTE_ADDR']) == $nonce){
+    if (hash_hmac('sha256', Route::$request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']) == $nonce || 
+        hash_hmac('sha256', Route::$request->session->getId().$optional_salt, $lasthour.$salt.$_SERVER['REMOTE_ADDR']) == $nonce){
         return true;
     } else {
         return false;
     }
 }
 function ajax_csrf_token( ){
-	global $GLOBALS;
-		$request=$GLOBALS['request'];
-		$request->session->put('_current_page',$_SERVER['SCRIPT_NAME']);
-		$request->session->save();
+		Route::$request->session->put('_current_page',$_SERVER['SCRIPT_NAME']);
+		Route::$request->session->save();
 	return create_nonce($_SERVER['SCRIPT_NAME'] );
 }
 function check_ajax_csrf_token($nonce,$hour=1){
-	global $GLOBALS;
-		$request=$GLOBALS['request'];
-	return check_nonce($nonce, $request->session->get('_current_page'),$hour); 
+	return check_nonce($nonce, Route::$request->session->get('_current_page'),$hour); 
 }
 function load_middleware_class($public_path,$class){
 	$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 

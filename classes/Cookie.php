@@ -29,7 +29,8 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 		}
 	}
 	$secure=false;
-	if ( (isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" )		{
+//	if ( (isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" )		{
+	if((isset($_SERVER['HTTPS']) && strpos('on,1,ssl', strtolower($_SERVER['HTTPS']) )!==false ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" ){
 		$secure=true;
 	}
 	$secureOnly=$secure;
@@ -41,7 +42,7 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 		}
 	}
 	$forceShowExpiry = false;
-	if (is_null($value) || $value === false || $value === '') {
+	if (empty($value)  ) {
 		$value = 'deleted';
 		$expiryTime = 0;
 		$forceShowExpiry = true;
@@ -146,8 +147,6 @@ function cookie_exists($name){
 	return $found;
 }
 function remove_cookie($name){
-	global $GLOBALS;
-		$request=$GLOBALS['request'];
 			$cookies=[];
 	set_cookie($name ,'' ,-1);
 	unset($_COOKIE[$name]);
@@ -173,7 +172,7 @@ function remove_cookie($name){
 				header($cookie, false );
 			}
 		}
-	$request->set_cookies($_COOKIE);
+	Route::$request->set_cookies($_COOKIE);
 }
 function encrypt_coookies(){
 	global $GLOBALS;

@@ -38,9 +38,12 @@ if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Micros
 	header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
 	exit();	
 }
-if(isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
-	$_POST=json_decode(file_get_contents('php://input'),true);
-	$_REQUEST+=$_POST;
+$method=strtolower($_SERVER['REQUEST_METHOD']);
+if($method==='post' && isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
+		$_POST=json_decode(file_get_contents('php://input'),true);
+	if($_POST!==null){
+		$_REQUEST+=$_POST;
+	}
 }
 
 $public_path=__DIR__;
@@ -100,10 +103,9 @@ $request = new Illuminate\Http\Request;
 
 $current_route=null;
 
-	$GLOBALS['request']=$request;
 	$GLOBALS['current_route']=$current_route;
 	$GLOBALS['app_key']=$app_key;
-	$GLOBALS['route_method']=strtolower($_SERVER['REQUEST_METHOD']);//strtolower($request->method());
+	$GLOBALS['route_method']=$method;//strtolower($request->method());
 	//$GLOBALS['route_path']=strtolower(trim($request->getPathInfo(),'/'));
 	//$GLOBALS['route_path']= trim($request->getPathInfo(),'/') ;	
 	//$GLOBALS['route_path']= $request->path();
@@ -128,7 +130,7 @@ $current_route=null;
 
 $routes=[];
 $GLOBALS['routes']=$routes;
-	$route = new Route();
+	$route = new Route($request);
 
 include __DIR__ . '/../classes/View.php';
 
@@ -174,6 +176,7 @@ include __DIR__ . '/../classes/View.php';
 		$db=null;		
 	}
 //}
+
 
 //var_dump($request->headers->all());
 //var_dump($request->session->get('_request_data'));

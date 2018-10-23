@@ -15,7 +15,10 @@ class Route{
 	public static $middleware_stack=[];
 	public static $group;
 	public static $pattern=[];
-    function __construct() {
+	public static $request;
+	public static $auth;
+    function __construct($request) {
+		Route::$request=$request;
     }
 	public static function __callStatic($method, $parameters)    {
 		//return call_user_func(__CLASS__.'::add_route', $method, $parameters );
@@ -178,7 +181,6 @@ function add_route($method, $parameters) {
 							return;
 						}
 					}
-			$request=$GLOBALS['request'];	
 			 
 			//if(!is_object($func)){// handles controller
 			if(is_string($func)){// handles controller
@@ -230,7 +232,7 @@ function add_route($method, $parameters) {
 				//if(strtolower($func_args[$i]->name)==='request'){
 				if($func_args[$i]->name==='request'){
 					//$request_pos= $i;						 
-					array_insert_assoc($fire_args,$i,['request'=>$request ]);	
+					array_insert_assoc($fire_args,$i,['request'=>Route::$request ]);	
 				}elseif($func_args[$i]->name===$username_var){
 					//$username_pos= $i;
 					array_insert_assoc($fire_args,$i,$username);
@@ -260,14 +262,14 @@ function add_route($method, $parameters) {
 			
 			//var_dump($fire_args);
 					 
-						load_classes($request);
+						load_classes();
 			
 			if($group_count>0){
 				//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
 				if(isset($controller_class)){
-					echo through_middleware($request, $func, $fire_args,$controller_class );
+					echo through_middleware($func, $fire_args,$controller_class );
 				}else{
-					echo through_middleware($request, $func, $fire_args );
+					echo through_middleware($func, $fire_args );
 				}				 
 			}else{
 				if(isset($controller_class)){
@@ -279,7 +281,7 @@ function add_route($method, $parameters) {
 		}
 	}
 }
-function load_classes($request){
+function load_classes(){
 	global $GLOBALS;
 		$public_path=$GLOBALS['public_path'];
 		$lifetime=$GLOBALS['lifetime'];
@@ -289,12 +291,12 @@ function load_classes($request){
 
 		$cookie_vars= decrypt_coookies();
 		 
-			$request->set_cookies($cookie_vars);
+			Route::$request->set_cookies($cookie_vars);
 
 		$session=new SessionManager($public_path . '/../storage/sessions' , $lifetime,$session_name );
-		$session->setId($request->cookies->get($session_name )  );
+		$session->setId(Route::$request->cookies->get($session_name )  );
 		$session->start(); 
-		$request->set_session($session);
+		Route::$request->set_session($session);
 			
 	
 	include $public_path . '/../classes/Storage.php';	
@@ -303,11 +305,9 @@ function load_classes($request){
 		//$db=new DB();
 		//$GLOBALS['db']=$db;
 	include $public_path . '/../classes/Auth.php';
-		$auth=new Auth();
-		$GLOBALS['auth']=$auth;
-
+		Route::$auth=new Auth();
 }
-function through_middleware($request,$func, $fire_args,$controller_class=null){
+function through_middleware($func, $fire_args,$controller_class=null){
 	global $GLOBALS;
 	
 	include $GLOBALS['http_path'] . 'Kernel.php' ;
@@ -339,7 +339,7 @@ function through_middleware($request,$func, $fire_args,$controller_class=null){
 	$res=null;
 	//$called=false;
 	$middleware_args=[];
-	$middleware_args[]= $request ;
+	$middleware_args[]= Route::$request ;
 	$middleware_args[]= function($request) use($func, $fire_args,& $res,$controller_class){//, &$called){
 							if($res===null){// && $called===false){
 								if($controller_class!==null){

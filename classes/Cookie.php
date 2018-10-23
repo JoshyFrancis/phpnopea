@@ -115,8 +115,8 @@ function decrypt_coookies(){
 	global $GLOBALS;
 	$app_key=$GLOBALS['app_key'];
 	$cookie_vars=[];
-	foreach($_COOKIE as  $key=>&$val){
-		$value=decrypt(  $val ,$app_key);
+	foreach($_COOKIE as $key=>&$val){
+		$value=decrypt($val,$app_key);
 		//if($value!==$val){
 			$val=$value;
 			$cookie_vars[$key]=$value;
@@ -136,7 +136,6 @@ function cookie_exists($name){
 						$found=true;
 						break;
 					}
-					 
 				}
 			}
 		}
@@ -150,7 +149,6 @@ function remove_cookie($name){
 	global $GLOBALS;
 		$request=$GLOBALS['request'];
 			$cookies=[];
-	
 	set_cookie($name ,'' ,-1);
 	unset($_COOKIE[$name]);
 		foreach(headers_list() as $header){
@@ -158,9 +156,7 @@ function remove_cookie($name){
 				$cookies[]=$header;
 			}
 		}
-	 	
-			header_remove('Set-Cookie');			 
-			
+			header_remove('Set-Cookie');
 		foreach($cookies as $cookie){
 			$add=true;
 			$parts=explode(';',$cookie);
@@ -170,15 +166,13 @@ function remove_cookie($name){
 					if( $keypair[0] ===$name){
 						$add=false;
 						break;
-					}
-					 
+					}	 
 				}
 			}
 			if($add==true){
 				header($cookie, false );
 			}
 		}
-	
 	$request->set_cookies($_COOKIE);
 }
 function encrypt_coookies(){
@@ -188,21 +182,20 @@ function encrypt_coookies(){
 	$date_found=false;
 	$Content_Type='';
 		foreach(headers_list() as $header){
-			if (strpos($header, 'X-Powered-By:') !== false) {
+			if (strpos($header, 'X-Powered-By:')!==false) {
 				header_remove('X-Powered-By');
 			}
 			if(stripos($header,'set-cookie')!==false){
 				$cookies[]=$header;
 			}
-			if (strpos($header, 'Date:') !== false) {
+			if (strpos($header, 'Date:')!==false) {
 				$date_found=true;
 			}
-			if (strpos($header, 'Content-Type:') !== false) {
+			if (strpos($header, 'Content-Type:')!==false) {
 				//$Content_Type=trim( explode(':',$header)[0]);
-				$Content_Type= $header ;
+				$Content_Type=$header;
 			}
 		}
-		
 			// prevent clickjacking
 			header('X-Frame-Options: sameorigin');	//SAMEORIGIN		
 		if(strpos($Content_Type ,'text/html')!==false){
@@ -210,14 +203,13 @@ function encrypt_coookies(){
 			header('X-Content-Type-Options: nosniff');// when content-type is image IE will reject with this header
 		}
 			// disable caching of potentially sensitive data
-			header('Cache-Control: no-store, no-cache, must-revalidate', true);
-			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT', true);
-			header('Pragma: no-cache', true);
-			
+			header('Cache-Control: no-store, no-cache, must-revalidate',true);
+			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT',true);
+			header('Pragma: no-cache',true);			
 			if($date_found==false){
-				$now = DateTime::createFromFormat('U', time());
+				$now = DateTime::createFromFormat('U',time());
 				$now->setTimezone(new \DateTimeZone('UTC'));
-				header('Date: '.$now->format('D, d M Y H:i:s').' GMT', true);
+				header('Date: '.$now->format('D, d M Y H:i:s').' GMT',true);
 			}
 		header_remove('Set-Cookie');			 
 		//$options=strtolower( 'expires,Max-Age,path,domain,secure,httponly,SameSite');
@@ -235,7 +227,7 @@ function encrypt_coookies(){
 			}
 			$cookie=implode(';',$parts);
 			//if (!headers_sent()) {
-				header($cookie, false );
+				header($cookie,false);
 			//}
 		}
 }

@@ -1,8 +1,9 @@
 <?php
 class ParameterBag implements \IteratorAggregate, \Countable{
     protected $parameters;
-    public function __construct(array $parameters = array())    {
-        $this->parameters = $parameters;
+    //public function __construct(array $parameters = array())    {
+    public function __construct( $data = [] ){
+        $this->parameters = $data;
     }
     public function all()    {
         return $this->parameters;
@@ -17,16 +18,30 @@ class ParameterBag implements \IteratorAggregate, \Countable{
         $this->parameters = array_replace($this->parameters, $parameters);
     }
     public function get($key, $default = null)    {
-        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
+        //return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
+        return isset($this->parameters[$key]) ? $this->parameters[$key] : $default;
     }
     public function set($key, $value)    {
         $this->parameters[$key] = $value;
     }
+    public function put($key, $value)    {
+        $this->parameters[$key] = $value;
+        return $this;
+    }
     public function has($key)    {
-        return array_key_exists($key, $this->parameters);
+        //return array_key_exists($key, $this->parameters);
+        return isset($this->parameters[$key]);
     }
     public function remove($key)    {
         unset($this->parameters[$key]);
+        return $this;
+    }
+    public function any(){
+        return count($this->parameters) > 0;
+    }
+    public function __call($method, $parameters){
+        //return $this->$method(...$parameters);
+        return $this->get(...$parameters);
     }
     public function getAlpha($key, $default = '')    {
         return preg_replace('/[^[:alpha:]]/', '', $this->get($key, $default));

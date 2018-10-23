@@ -170,19 +170,19 @@ function route($route ){
 	return $request->getBaseUri().'/'. trim( $route,'/');
 }
 function encrypt($data,$key,$cipher='AES-256-CBC'){
-	$iv = random_bytes(openssl_cipher_iv_length($cipher));
+	$iv=random_bytes(openssl_cipher_iv_length($cipher));
 	$value=openssl_encrypt($data,$cipher,$key,0,$iv);
 	$iv=base64_encode($iv);
-	$mac=hash_hmac('sha256', $iv.$value, $key);
-	$json=base64_encode( json_encode(  ['iv'=>  $iv ,'value'=> $value ,'mac'=>$mac]  ) ) ;
-	return  rawurlencode( $json) ;
+	$mac=hash_hmac('sha256',$iv.$value,$key);
+	$json=base64_encode( json_encode(['iv'=>$iv,'value'=>$value,'mac'=>$mac]));
+	return rawurlencode( $json) ;
 }
 function decrypt($json_data,$key,$cipher='AES-256-CBC'){
-	$json= json_decode( base64_decode( rawurldecode( $json_data ) ));
+	$json= json_decode( base64_decode( rawurldecode( $json_data)));
 	if($json===null){
 		return $json_data;
 	}
-	$data = openssl_decrypt( $json->value   , $cipher, $key, 0, base64_decode($json->iv));
+	$data=openssl_decrypt( $json->value,$cipher,$key,0,base64_decode($json->iv));
 	return $data;
 }
 function is_encrypted($json_data){

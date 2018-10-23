@@ -1,46 +1,4 @@
 <?php
-class ViewData implements Countable{
-    protected $data = [];
-    public function __construct( $data = [] ){
-		$this->data=$data;
-	}
-    public function has($key = 'default'){
-        return isset($this->data[$key]);
-    }
-    public function get($key)    {
-        return  $this->data[$key] ;
-    }
-    public function put($key, $val)    {
-        $this->data[$key] = $val;
-        return $this;
-    }
-    public function remove($key )    {
-        unset($this->data[$key]);
-        return $this;
-    }
-    public function any(){
-        return count($this->data) > 0;
-    }
-    public function count() {
-        return count($this->data);
-    }
-	public function all() {
-		return $this->data ;
-    }
-    public function __call($method, $parameters){
-        //return $this->$method(...$parameters);
-        return $this->get(...$parameters);
-    }
-    public function __get($key){
-        return $this->get($key);
-    }
-    public function __set($key, $value){
-        $this->put($key, $value);
-    }
-	public function __unset($key){
-        $this->remove($key);
-    }
-}
 class View {
     protected $view;
     protected $data;
@@ -55,7 +13,7 @@ class View {
         $this->data = $data;
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 			unset($this->data['errors']);
-		$this->data=array_merge($this->data,$data,['errors'=>new ViewData($erros)]); 
+		$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]); 
 		
         if($view!==null){
 			global $GLOBALS;
@@ -285,7 +243,7 @@ class View {
 		//var_dump($data);
 		$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
 		
-		$this->data=array_merge($this->data,['errors'=>new ViewData($data)]); 
+		$this->data=array_merge($this->data,['errors'=>new ParameterBag($data)]); 
 		return $this;
 	}
 	public function withInput(){
@@ -293,7 +251,7 @@ class View {
 			$request=$GLOBALS['request'];
 		$erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 			unset($this->data['errors']);
-		$this->data=array_merge($this->data,['errors'=>new ViewData($erros)]);
+		$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]);
 		$data=array_merge($request->all(),$request->session->get('_request_data',[]) );
 		$request->setInput($data);
 			//var_dump($data);
@@ -305,7 +263,7 @@ class View {
 		 
 		$erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 			unset($this->data['errors']);
-		$this->data=array_merge($this->data,$data,['errors'=>new ViewData($erros)]); 
+		$this->data=array_merge($this->data,$data,['errors'=>new ParameterBag($erros)]); 
 		return $this;
 	}
 	public function intended($route){

@@ -98,7 +98,6 @@ $current_route=null;
 	$GLOBALS['a_path1']=explode('/',$GLOBALS['route_path']);
 	$GLOBALS['route_domain']=$request->getHost();
 
-
 //var_dump($_SERVER);
 
 //if( $request->headers->get('Accept')==='*/*' && $request->headers->get('Cookie',null)===null ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
@@ -119,15 +118,12 @@ if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Micros
 //	storage_link(storage_path('app/public'),public_path('storage'));
 //}
 
-	
 $routes=[];
 $GLOBALS['routes']=$routes;
 	$route = new Route();
 
 include __DIR__ . '/../classes/View.php';
 
-	
-	
 /*
 	$csrf=true;
 	$session_csrf_name= $request->session()->session_name.'_csrf';

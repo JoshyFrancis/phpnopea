@@ -177,7 +177,6 @@ include __DIR__ . '/../classes/View.php';
 	}
 //}
 
-
 //var_dump($request->headers->all());
 //var_dump($request->session->get('_request_data'));
 //var_dump($routes);

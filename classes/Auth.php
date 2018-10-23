@@ -62,7 +62,7 @@ class Auth{
 				remove_cookie($remember_cookie);
 							
 				DB::setFetchMode(\PDO::FETCH_ASSOC);
-				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!=null ?' and active=?':''),[$email,$active ] );
+				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!==null ?' and active=?':''),[$email] + ($active!==null ?[$active]:[]) );
 				DB::setFetchMode(\PDO::FETCH_OBJ);
 				
 			if(count($rows)>0){

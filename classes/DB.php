@@ -2,6 +2,8 @@
 class DB{
 	private static $DBH=null;
 	private static $fetchMode = \PDO::FETCH_OBJ;//\PDO::FETCH_ASSOC
+	//private static $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
+    //private static $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
 	function __construct(){
 		self::createDB();
 	}
@@ -16,18 +18,19 @@ class DB{
         if(self::$DBH===null){
 			global $GLOBALS;
 			$env=$GLOBALS['env'];
-			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'];
+			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].';charset=utf8';
 			$user=$env['DB_USERNAME'];
 			$pass=$env['DB_PASSWORD'];
 			$DBH = new \PDO($connection, $user, $pass);
-			$DBH->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,false);
+			$DBH->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
 			self::$DBH=$DBH;
 		}
     }
     public static function setFetchMode ( $mode) {
         self::$fetchMode=$mode; 
     }
-    public static function getPdo () {
+    public static function getPdo(){
 			self::createDB();
         return self::$DBH; 
     }
@@ -35,15 +38,22 @@ class DB{
 			self::createDB();
         return self::$DBH->lastInsertId(); 
     }
+    //private static function escape($value){
+    //    return str_replace(self::$search, self::$replace, $value);
+    //}
     public static function prepareBindings ($bindings){
 			$out=[];
 		foreach ($bindings as $value) {
-            if ($value instanceof DateTimeInterface){
+            if($value instanceof DateTimeInterface){
                 $value = $value->format('Y-m-d H:i:s');
-            } elseif (is_bool($value)){
+            }elseif (is_bool($value)){
                 $value = (int) $value;
-            } elseif ($value===null){
-				continue;
+            //}elseif (is_string($value)){
+				//$value=PDO::quote($value);
+				//$value=self::$DBH->quote($value);
+			//	$value=self::escape($value);
+            //}elseif ($value===null){
+				//continue;		
 			}
 			$out[]=$value;
         }

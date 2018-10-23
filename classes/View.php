@@ -8,13 +8,18 @@ class View {
     protected $sectionStack = [];
     protected $contents='';
     public static $shared_data=[];
+    public static $use_array_merge=false;//false is better speed
     public function __construct($view=null,$data = [],$sections=null,$sectionStack=null,$inner_view=false){
         $this->view = $view;
         $this->data = $data;
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
-			unset($this->data['errors']);
-		$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]); 
-		
+				
+			if(self::$use_array_merge===true){
+				$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]);
+			}else{
+				unset($this->data['errors']);
+				$this->data= $this->data + ['errors'=>new ParameterBag($erros)] ; 
+			}
         if($view!==null){
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];
@@ -47,7 +52,11 @@ class View {
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
-		self::$shared_data=array_merge(self::$shared_data,[$key=>$val]);
+		if(self::$use_array_merge===true){
+			self::$shared_data=array_merge(self::$shared_data,[$key=>$val]);
+		}else{
+			self::$shared_data= self::$shared_data + [$key=>$val];
+		}
 	}
 	public function view_make($view,$inner_view=false )    {
 		return new View($view, $this->data ,$this->sections,$this->sectionStack,$inner_view) ;
@@ -178,7 +187,6 @@ class View {
 
         ob_start();
 
-        //$data=array_merge($this->data,self::$shared_data);
 		//extract($this->data, EXTR_SKIP);//Import variables from an array into the current symbol table.
 		foreach($this->data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
 		    $$key = $value; 
@@ -240,30 +248,35 @@ class View {
 		return $this->contents;
 	}
 	public function withErrors($data){
-		//var_dump($data);
-		$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
-		
-		$this->data=array_merge($this->data,['errors'=>new ParameterBag($data)]); 
+		if(self::$use_array_merge===true){
+			$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
+			$this->data=array_merge($this->data,['errors'=>new ParameterBag($data)]); 
+		}else{
+			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
+				unset($this->data['errors']);
+			$this->data= $this->data+['errors'=>new ParameterBag($data)];
+		}
 		return $this;
 	}
 	public function withInput(){
 		global $GLOBALS;
 			$request=$GLOBALS['request'];
-		$erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
-			unset($this->data['errors']);
-		$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]);
-		$data=array_merge($request->all(),$request->session->get('_request_data',[]) );
+		if(self::$use_array_merge===true){
+			$data=array_merge($request->all(),$request->session->get('_request_data',[]) );
+		}else{
+			$data= $request->all() + $request->session->get('_request_data',[]);
+		}
 		$request->setInput($data);
-			//var_dump($data);
 		return $this;
 	}
 	public function with($data){
 		global $GLOBALS;
-			$request=$GLOBALS['request'];
-		 
-		$erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
-			unset($this->data['errors']);
-		$this->data=array_merge($this->data,$data,['errors'=>new ParameterBag($erros)]); 
+			$request=$GLOBALS['request'];	 
+		if(self::$use_array_merge===true){ 
+			$this->data=array_merge($this->data,$data);
+		}else{
+			$this->data= $this->data+$data;
+		}
 		return $this;
 	}
 	public function intended($route){

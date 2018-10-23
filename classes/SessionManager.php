@@ -22,10 +22,8 @@ class SessionManager{// implements SessionHandlerInterface{
     }
     public function read($sessionId){
         $path = $this->path.'/'.$sessionId;
-        if (file_exists($path)) {
-            //if (filemtime($path) >= (time()-($this->seconds )) ) {		 
+        if (file_exists($path)) {		 
             //    return file_get_contents($path );
-            //}
             $contents='';
 			$fp = fopen($path, 'rb');
 			//$contents = fread($fp, filesize($path));
@@ -64,7 +62,7 @@ class SessionManager{// implements SessionHandlerInterface{
 			$Resource = opendir($this->path);
 			$Found = array();
 			while(false !== ($Item = readdir($Resource))) {
-				if($Item == "." || $Item == "..") {
+				if($Item === "." || $Item === "..") {
 					continue;
 				}
 				//if($Recursive === true && is_dir($Item)) {
@@ -144,12 +142,8 @@ class SessionManager{// implements SessionHandlerInterface{
         $this->put('_token', $this->random(40));
     }
     public function start(){
-		//$data=self::read($this->getId());
 		$data=$this->read($this->getId());
-		//var_dump($data);
 		if($data!==''){
-			//$this->attributes = array_merge($this->attributes, unserialize($data ) );			 
-			//$this->attributes = array_merge($this->attributes, json_decode($data,true ) );
 			$this->attributes =   unserialize($data ) ;
 		}
 		if (! $this->has('_token')) {
@@ -157,14 +151,11 @@ class SessionManager{// implements SessionHandlerInterface{
         }
          
 			set_cookie( $this->session_name , $this->getId() ,time()+$this->seconds);
-        
-        
+   
         return $this->started = true;
     }
     public function save(){	
 		//$this->write($this->getId(),   @serialize($this->attributes)  );
-		//self::write($this->getId(),   json_encode($this->attributes)  );
-		//self::write($this->getId(),  json_encode_fast($this->attributes)  );
 		$this->write($this->getId(),   serialize_fast($this->attributes)  );
     }
     public function destroy_current( ){

@@ -131,7 +131,8 @@ function app_path($path='') {
 }
 function array_insert_assoc (&$array, $position, $insert_array) { 
   $first_array = array_splice ($array, 0, $position); 
-  $array = array_merge ($first_array, $insert_array, $array); 
+  //$array = array_merge ($first_array, $insert_array, $array); 
+  $array = $first_array + $insert_array + $array;//better speed
 }
 function parse_ini_file_ext($file, $sections = false,$scanner_mode=INI_SCANNER_RAW) {
     ob_start();

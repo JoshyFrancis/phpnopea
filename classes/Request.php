@@ -273,7 +273,8 @@ class Request{
         return  $this->session  ;
     }
     public function all(){
-        return array_merge($_REQUEST,$_FILES);
+        //return array_merge($_REQUEST,$_FILES);
+        return  $_REQUEST+$_FILES;//better speed
     }
     public function setInput($data=null){
 		if($data!==null){

@@ -31,6 +31,18 @@ function exception_handler($exception) {
 }
 //set_exception_handler('exception_handler');
 
+//var_dump($_SERVER);
+
+if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+	//header("404 not found",true,404);
+	header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
+	exit();	
+}
+if(isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
+	$_POST=json_decode(file_get_contents('php://input'),true);
+	$_REQUEST+=$_POST;
+}
+
 $public_path=__DIR__;
 	$GLOBALS['public_path']=$public_path;
 	$GLOBALS['http_path']=$public_path. '/../app/Http/';
@@ -82,6 +94,7 @@ if(strpos($app_key,'base64:')!==false){
 
 include __DIR__ . '/../classes/Cookie.php';	
 
+
 //$request = new Request;
 $request = new Illuminate\Http\Request;
 
@@ -98,14 +111,9 @@ $current_route=null;
 	$GLOBALS['a_path1']=explode('/',$GLOBALS['route_path']);
 	$GLOBALS['route_domain']=$request->getHost();
 
-//var_dump($_SERVER);
 
-//if( $request->headers->get('Accept')==='*/*' && $request->headers->get('Cookie',null)===null ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
-if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
-	//header("404 not found",true,404);
-	header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
-	exit();	
-}
+
+
 	$session_name='laraquick_session';	
 	//$lifetime=(60*60)*2;//in seconds
 	$lifetime= 60 ;//in seconds

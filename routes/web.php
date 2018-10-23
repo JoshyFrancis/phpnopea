@@ -266,7 +266,7 @@ View::share('shared_data', 'shared accross all views');
 Route::pattern('id', '[0-9]+');// Only called if {id} is numeric.
 
 //Route::resource('rc/resource', 'ResourceController');
-//Route::get('API/rc/resource', 'ResourceController@API');
+//Route::any('API/rc/resource', 'ResourceController@API');
 Route::get('/home', 'HomeController@index') ;
 
 Route::group(['middleware' => ['web']], function ( ) {
@@ -278,7 +278,7 @@ Route::group(['middleware' => ['web']], function ( ) {
 	
 	//Route::get('/home', 'HomeController@index') ;
 	Route::resource('rc/resource', 'ResourceController',['parameters' => [ "extra" => 'template_1' ]]);
-	Route::get('API/rc/resource', 'ResourceController@API');
+	Route::any('API/rc/resource', 'ResourceController@API');
 	Route::get('rc/resource/{id}/{id2}/m', 'ResourceController@method_test');
 	
 	Route::get('/test1', function ( Request $request ) {

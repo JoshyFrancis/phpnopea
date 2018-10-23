@@ -29,6 +29,20 @@ class ResourceController extends Controller{
 				xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 				xmlhttp.send();
 			}
+			function json() {
+				var txtdata=document.getElementById("txtdata");
+					txtdata.innerHTML = "";
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						txtdata.innerHTML = this.responseText;
+					}
+				};
+				xmlhttp.open("POST", "'.url('API/'.$path).'?_token='.csrf_token().'" , true);
+				xmlhttp.setRequestHeader("Content-type", "application/json");
+				xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+				xmlhttp.send(JSON.stringify({a: "a", b: "b"}));
+			}
 		</script>
 		</head>
 		<body>
@@ -54,6 +68,10 @@ class ResourceController extends Controller{
 	   </form>
 	   <p>Ajax Data: <span id="txtdata"></span></p>
 	   <input type="button" onclick="ajax();" value="Ajax" />
+	   <p></p>
+	   <input type="button" onclick="json();" value="Json" />
+	   <p></p>
+	   <input type="button" onclick="location=\''.url($path).'/1/something/m\';" value="Method test" />
 	   </body>
 		</html>
 	';

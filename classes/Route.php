@@ -40,8 +40,7 @@ class Route{
 		Route::$pattern[$key]=$pattern ;
 	}
 }
-function add_route($method, $parameters) {
-	
+function add_route($method, $parameters){
 	if($method==='group'){
 		$group=  $parameters[0] ;		 
 		Route::$middleware_stack[]= $group ;
@@ -306,6 +305,7 @@ function load_classes(){
 		//$GLOBALS['db']=$db;
 	include $public_path . '/../classes/Auth.php';
 		Route::$auth=new Auth();
+	include $public_path . '/../classes/Validator.php';
 }
 function through_middleware($func, $fire_args,$controller_class=null){
 	global $GLOBALS;

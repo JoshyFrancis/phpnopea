@@ -371,6 +371,9 @@ Route::group(['domain' => '{username}.fakebook.dev'], function(){
 	}); 
 });
 
+Route::get('validatortest/create', 'ValidatorTestController@create');
+Route::post('validatortest', 'ValidatorTestController@store');
+
 //return;
 
 Route::get('/', function (Request $request) {

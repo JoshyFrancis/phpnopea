@@ -88,6 +88,7 @@ class View {
 					,'@endif'
 					,'@guest'
 					,'@endguest'
+					,'@endforeach'
 					];
 			$changes=[
 					'<?php echo ',';?>'
@@ -96,6 +97,7 @@ class View {
 					,'<?php }else{ ?>'
 					,'<?php } ?>'
 					,'<?php if(auth()->guard()->guest()){ ?>'
+					,'<?php } ?>'
 					,'<?php } ?>'
 					];
 			//ini_set("auto_detect_line_endings", true);
@@ -133,7 +135,12 @@ class View {
 							$line=str_replace( '@elseif' , '<?php }elseif' ,$line) . '{ ?>';
 							$contents.=$line.PHP_EOL;
 							continue;
-						} 
+						}
+						if(strpos($line,'@foreach')!==false){
+							$line=str_replace( '@foreach' , '<?php foreach' ,$line) . '{ ?>';
+							$contents.=$line.PHP_EOL;
+							continue;
+						}
 						//if(strpos($line,'{{{')!==false){
 						//	$line=str_replace('{{{' ,'<@' ,$line);
 						//}
@@ -248,6 +255,9 @@ class View {
 		return $this->contents;
 	}
 	public function withErrors($data){
+		if($data instanceof Validator){
+			$data=$data->errors();
+		}
 		if(self::$use_array_merge===true){
 			$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
 			$this->data=array_merge($this->data,['errors'=>new ParameterBag($data)]); 
@@ -338,7 +348,7 @@ function redirect($route=null){
 	}
 	$url=url($route);
 	
-		if($url===Route::$request->getUri() && Route::$request->session->get('_view')){
+		if($url===Route::$request->getUri() || str_replace('.','/', Route::$request->session->get('_view'))===$route ){
 			//var_dump($request->session->get('_request_data'));
 			//var_dump($current_route);
 			//exit;

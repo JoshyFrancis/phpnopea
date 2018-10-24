@@ -5,8 +5,16 @@ class ParameterBag implements \IteratorAggregate, \Countable{
     public function __construct( $data = [] ){
         $this->parameters = $data;
     }
-    public function all()    {
-        return $this->parameters;
+    public function all(){
+		$arr=[];
+		foreach($this->parameters as $val){
+			if(is_array($val)){
+				$arr+=$val;
+			}else{
+				$arr[]=$val;
+			}
+		}
+        return $arr;
     }
     public function keys()    {
         return array_keys($this->parameters);
@@ -31,6 +39,10 @@ class ParameterBag implements \IteratorAggregate, \Countable{
     public function has($key)    {
         //return array_key_exists($key, $this->parameters);
         return isset($this->parameters[$key]);
+    }
+	public function first($key, $default = null)    {
+        //return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
+        return isset($this->parameters[$key]) ? is_array( $this->parameters[$key])?$this->parameters[$key][0]: $this->parameters[$key] : $default;
     }
     public function remove($key)    {
         unset($this->parameters[$key]);

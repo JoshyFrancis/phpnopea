@@ -1,7 +1,7 @@
 <p align="center"><img src="laranopea.svg"></p>
 
 <p align="center">
- 
+ <a href="https://github.com/JoshyFrancis/laranopea"><img src="https://img.shields.io/github/downloads/JoshyFrancis/laranopea/total.svg" alt="Total Downloads"></a>
  <img src="MIT.svg" alt="License"> 
 </p>
 

@@ -10,7 +10,7 @@ class Kernel{
      */
     public $middleware = [
 		\App\Http\Middleware\VerifyCsrfToken::class,
-		//\App\Http\Middleware\ValidatePostSize::class,
+		\App\Http\Middleware\ValidatePostSize::class,
     ];
 
     /**

@@ -7,11 +7,15 @@ class View {
     protected $sections = [];
     protected $sectionStack = [];
     protected $contents='';
+    public $status=200;
+    protected $header='';
+    protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false better speed
     public function __construct($view=null,$data = [],$sections=null,$sectionStack=null,$inner_view=false){
         $this->view = $view;
         $this->data = $data;
+        /*
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 				
 			if(self::$use_array_merge===true){
@@ -20,6 +24,16 @@ class View {
 				unset($this->data['errors']);
 				$this->data= $this->data + ['errors'=>new ParameterBag($erros)] ; 
 			}
+			*/
+			if(Route::$request->session->has('_input')){
+				Route::$request->setInput(Route::$request->session->get('_input'));
+			}
+			$this->data+=Route::$request->session->get('_data',[]);
+			$this->data+=['errors'=>new ParameterBag(Route::$request->session->get('_errors',[]))];
+				Route::$request->session->remove('_input');
+				Route::$request->session->remove('_data');
+				Route::$request->session->remove('_errors');
+			 
         if($view!==null){
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];
@@ -248,10 +262,23 @@ class View {
     public function setContents($contents){
 		$this->contents=$contents;
 	}
+	private function setStatus(){
+		//header($_SERVER['SERVER_PROTOCOL']." 301 Moved Permanently",true,301);
+		//header('Status: 301 Moved Permanently', false, 301); 
+		
+		  
+		//header( 'refresh:0;url='.$url);//,true,302
+		//header('Connection: close');
+		//header_remove('Cache-Control');
+		if($this->status===302){
+			header('Location: '.$this->url,true,302 );
+		}
+	}
     public function __tostring(){
 		if($this->contents==='' && $this->view!==null){
 			$this->contents=$this->render();
 		}
+			$this->setStatus();
 		return $this->contents;
 	}
 	public function withErrors($data){
@@ -260,29 +287,26 @@ class View {
 		}
 		if(self::$use_array_merge===true){
 			$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
-			$this->data=array_merge($this->data,['errors'=>new ParameterBag($data)]); 
 		}else{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
-				unset($this->data['errors']);
-			$this->data= $this->data+['errors'=>new ParameterBag($data)];
 		}
+		Route::$request->session->set('_errors',$data);
+		Route::$request->session->save();
 		return $this;
 	}
 	public function withInput(){
-		if(self::$use_array_merge===true){
-			$data=array_merge(Route::$request->all(),Route::$request->session->get('_request_data',[]) );
-		}else{
-			$data= Route::$request->all() + Route::$request->session->get('_request_data',[]);
-		}
-		Route::$request->setInput($data);
+		Route::$request->session->set('_input',Route::$request->all_input());
+		Route::$request->session->save();
 		return $this;
 	}
-	public function with($data){ 
+	public function with($data){
 		if(self::$use_array_merge===true){ 
-			$this->data=array_merge($this->data,$data);
+			$data=array_merge($this->data,$data);
 		}else{
-			$this->data= $this->data+$data;
+			$data= $this->data+$data;
 		}
+		Route::$request->session->set('_data',$data);
+		Route::$request->session->save();
 		return $this;
 	}
 	public function intended($route){
@@ -300,14 +324,8 @@ class View {
 		return $this;
 	}
 	public function redirect_url($url){
-		//header($_SERVER['SERVER_PROTOCOL']." 301 Moved Permanently",true,301);
-		//header('Status: 301 Moved Permanently', false, 301); 
-		header('Location: '.$url,true,302 );
-		  
-		//header( 'refresh:0;url='.$url);//,true,302
-		//header('Connection: close');
-		//header_remove('Cache-Control');
-		
+		$this->status=302;
+		$this->url=$url;
 		$this->setContents(sprintf('<!DOCTYPE html>
 			<html>
 				<head>
@@ -322,6 +340,10 @@ class View {
 			</html>', htmlspecialchars($url, ENT_QUOTES, 'UTF-8')) );
 		
 	}
+}
+function http_response_status($code,$text){
+	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+	header($protocol . ' ' . $code . ' ' . $text);
 }
 function back(){
 	if(Route::$request->session->get('_view')){		
@@ -341,13 +363,14 @@ function redirect($route=null){
 	global $GLOBALS;
 			$routes=$GLOBALS['routes'];
 			$current_route=$GLOBALS['current_route'];
-			
-		Route::$request->session->save();	
+					
+		//Route::$request->session->save();	
 	if($route===null){
 		return  new View();
 	}
 	$url=url($route);
 	
+		/*
 		if($url===Route::$request->getUri() || str_replace('.','/', Route::$request->session->get('_view'))===$route ){
 			//var_dump($request->session->get('_request_data'));
 			//var_dump($current_route);
@@ -356,16 +379,16 @@ function redirect($route=null){
 			$view = View::make(Route::$request->session->get('_view'));
 			return $view;
 		}
+		*/
 		
 	$view=new View();
 	
 	$view->redirect_url($url);
 	
+	//var_dump($view);
+	//exit;
+	
 	return  $view;	
-}
-function http_response_status($code,$text){
-	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-	header($protocol . ' ' . $code . ' ' . $text);
 }
 function send_file($path){
 	$out = fopen('php://output', 'wb');

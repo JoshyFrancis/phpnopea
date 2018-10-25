@@ -17,11 +17,12 @@ class ValidatePostSize{
         $max = $this->getPostMaxSize();
 		//	var_dump($max);
 		//var_dump($request->server('CONTENT_LENGTH'));
-		 
+		///	exit;
 		//$error = 'PostTooLargeException';
 		//throw new \Exception($error);
         if ($max > 0 && $request->server('CONTENT_LENGTH') > $max) {
-            throw new \Exception('PostTooLargeException') ; 
+            throw new \Exception('PostTooLargeException') ;
+           // exit;
         }
 
         return $next($request);

@@ -119,6 +119,9 @@ class SessionManager{// implements SessionHandlerInterface{
     public function put($key, $value = null){
         $this->attributes[$key]=$value;
     }
+    public function set($key, $value = null){
+        $this->put($key,$value);
+    }
     public function remove($key){
         unset ($this->attributes[$key]);
     }

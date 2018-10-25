@@ -46,6 +46,9 @@ class Storage{
         }
         return mkdir($path, $mode, $recursive);
     }
+    public static function deleteDirectory($path ){
+        
+    }
     public static function delete($path){
 		//$path=storage_path($path);
 		$path=Storage::default_disk($path);
@@ -53,15 +56,15 @@ class Storage{
 			unlink($path);
 		}
     }
-    public static function default_disk($path){
+    public static function default_disk($path,$disk=''){
 		global $GLOBALS;
 		$public_path=$GLOBALS['public_path'];
 		$storage_config= require( $public_path . '/../config/filesystems.php');	
-		$default=$storage_config['default'];
-		$path=$storage_config['disks'][$default]['root']  .($path!=''? '/'. $path:'') ;
+		$disk=$disk===''?$storage_config['default']:$disk;
+		$path=$storage_config['disks'][$disk]['root']  .($path!=''? '/'. $path:'') ;
 		return $path;
 	}
-    public static function put($path,$data){
+    public static function put($path,$data,$flags = 0){
 		//$path=storage_path($path);
 		$path=Storage::default_disk($path);
 		
@@ -69,8 +72,28 @@ class Storage{
 		if(!file_exists($dir)){
 			Storage::makeDirectory($dir,0755,true,true);
 		}
-		return file_put_contents($path,$data);
+		return file_put_contents($path,$data,$flags);
     }
+    public static function append($path,$data){
+		Storage::put($path,$data,FILE_APPEND);
+	}
+	public static function prepend($path,$data){
+		$file=Storage::default_disk($path);
+		$handle = fopen($file, "r+");
+		$len = strlen($data);
+		$final_len = filesize($file) + $len;
+		$cache_old = fread($handle, $len);
+		rewind($handle);
+		$i = 1;
+		while (ftell($handle) < $final_len) {
+		  fwrite($handle, $data);
+		  $cache_new = $cache_old;
+		  $cache_old = fread($handle, $len);
+		  fseek($handle, $i * $len);
+		  $i++;
+		}
+		fclose($handle);
+	}
     public static function get($path){
 		//$path=storage_path($path);
 		$path=Storage::default_disk($path);
@@ -109,6 +132,26 @@ class Storage{
 		$path=$path.'/'.$filename;
 		return $path;
     }
+    public static function move($path,$new_path){
+		$path=Storage::default_disk($path);
+		$new_path=Storage::default_disk($new_path);
+		
+		$dir=dirname($new_path);
+		if(!file_exists($dir)){
+			Storage::makeDirectory($dir,0755,true,true);
+		}
+		return rename($path,$new_path );
+    }
+    public static function copy($path,$new_path){
+		$path=Storage::default_disk($path);
+		$new_path=Storage::default_disk($new_path);
+		
+		$dir=dirname($new_path);
+		if(!file_exists($dir)){
+			Storage::makeDirectory($dir,0755,true,true);
+		}
+		return copy($path,$new_path);
+    }
 }
 class disk{
 	//public $storage_path;
@@ -131,23 +174,3 @@ class disk{
 		return file_exists($this->path.$file );
     }    
 }
-//Storage::disk('public')->put("test.txt", "contents");
-//Storage::disk('local')->put("test2.txt", "contents2");
-//Storage::put('files/file3.txt', 'Contents3');
-
-/*
-Storage::disk('public')->put($newfilename, $filedata);
-if( Storage::disk('public')->exists($FilePath)){
-	Storage::delete($FilePath);
-}
-Storage::move($newfilename, $newfilename.$fileext);
-$path = Storage::putFileAs('member_photo', $doc ,$filename );
-Storage::disk('public')->put($newfilename, $image);
-$size = Storage::size($filepath);
-$contents = Storage::get('avatars/'.$filename);
-$time = Storage::lastModified($filepath); 
-
- 
-
-
-*/

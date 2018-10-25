@@ -276,6 +276,9 @@ class Request{
         //return array_merge($_REQUEST,$_FILES);
         return  $_REQUEST+$_FILES;//better speed
     }
+    public function all_input(){
+        return $_REQUEST;
+    }
     public function setInput($data=null){
 		if($data!==null){
 			$_REQUEST=$data;

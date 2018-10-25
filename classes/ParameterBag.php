@@ -9,7 +9,9 @@ class ParameterBag implements \IteratorAggregate, \Countable{
 		$arr=[];
 		foreach($this->parameters as $val){
 			if(is_array($val)){
-				$arr+=$val;
+				foreach($val as $val2){
+					$arr[]=$val2;
+				}
 			}else{
 				$arr[]=$val;
 			}

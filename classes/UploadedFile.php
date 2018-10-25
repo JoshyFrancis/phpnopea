@@ -114,4 +114,18 @@ class UploadedFile extends \SplFileInfo {
     function check_file_uploaded_name ($filename){
 		return (bool) ((preg_match("`^[-0-9A-Z_\.]+$`i",$filename)) ? true : false);
 	}
+	function store($path='',$disk=''){
+		//$newfilename = $doc->store('docs');
+				//$newfilename = $request->file('avatar')->store(    'avatars/'.$request->user()->id, 's3');//Specifying A Disk
+		//		$newfilename = $doc->store('docs', 'public');//Specifying A Disk // docs is folder
+		//$filename=$this->originalName;
+		$filename=uniqid().'.'.$this->getClientOriginalExtension();
+		$path2=Storage::default_disk($path,$disk).'/'.$filename;
+		$dir=dirname($path2);
+		if(!file_exists($dir)){
+			Storage::makeDirectory($dir,0755,true,true);
+		}
+		$this->move($dir,$filename);
+		return ($path!=''?$path.'/':'').$filename;
+	}
 }

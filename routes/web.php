@@ -217,15 +217,22 @@ Route::post('/data', function (Request $request ) {
 				//$doc->move(__DIR__ . '/../storage/app/public',$filename);
 				//$path = Storage::putFileAs('avatars', $doc ,$filename );
 				$filename=uniqid().'.'.$file->getClientOriginalExtension() ;
-				$path = Storage::putFileAs(  $doc ,$filename );
+				//$path = Storage::putFileAs(  $doc ,$filename );
+				$newfilename = $doc->store( );
+				//var_dump($newfilename);
 			}else{
 				foreach($doc as $file){
 					$filename=$file->getClientOriginalName() ;
 					var_dump($filename);
 					//$file->move(__DIR__ . '/../storage/app/public',$filename);
-					$path = Storage::putFileAs('avatars', $file ,$filename );
+					//$path = Storage::putFileAs('avatars', $file ,$filename );
 					$filename=uniqid().'.'.$file->getClientOriginalExtension() ;
 					//$path = Storage::putFileAs(  $file ,$filename );
+					//$newfilename = $file->store( );
+					//$newfilename = $file->store('docs' );
+					$newfilename = $file->store('docs', 'public' );//path,disk
+					Storage::move($newfilename,  'docs/moved.'.$file->getClientOriginalExtension());
+					var_dump($newfilename);
 				}
 			}
 		}
@@ -271,6 +278,9 @@ Route::get('/home', 'HomeController@index') ;
 
 Route::group(['middleware' => ['web']], function ( ) {
 	
+	Route::get('validatortest/create', 'ValidatorTestController@create');
+	Route::post('validatortest', 'ValidatorTestController@store');
+
 
 	Route::get('/login', 'Auth\\LoginController@index') ;
 	Route::post('/login', 'Auth\\LoginController@login') ;
@@ -371,8 +381,6 @@ Route::group(['domain' => '{username}.fakebook.dev'], function(){
 	}); 
 });
 
-Route::get('validatortest/create', 'ValidatorTestController@create');
-Route::post('validatortest', 'ValidatorTestController@store');
 
 //return;
 

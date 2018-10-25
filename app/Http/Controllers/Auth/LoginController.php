@@ -16,7 +16,7 @@ class LoginController extends Controller{
 //		if ( auth()->guard('user2')->attempt(['email' => $request->input('email'), 'password' => $request->input('password'),'active' => 1] ,$request->input('remember'))) {	
 		if ( auth()->guard('user2')->attempt( $request->all() ,$request->input('remember'))) {	
 			$locked=$request->session()->get('locked');
-			$backUrl=$request->session()->has('backUrl')?$request->session()->get('backUrl'):'';
+			$backUrl=$request->session()->has('backUrl')?$request->session()->get('backUrl'):'home';
 				$request->session()->put('locked', false);
 				$request->session()->put('backUrl', '');
 			if($locked === true ){

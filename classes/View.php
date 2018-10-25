@@ -363,13 +363,13 @@ function redirect($route=null){
 	global $GLOBALS;
 			$routes=$GLOBALS['routes'];
 			$current_route=$GLOBALS['current_route'];
-					
-		//Route::$request->session->save();	
+		
 	if($route===null){
 		return  new View();
 	}
 	$url=url($route);
-	
+		//Route::$request->session()->set('backUrl',$url);
+		//Route::$request->session->save();	
 		/*
 		if($url===Route::$request->getUri() || str_replace('.','/', Route::$request->session->get('_view'))===$route ){
 			//var_dump($request->session->get('_request_data'));

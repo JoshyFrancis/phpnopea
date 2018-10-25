@@ -36,9 +36,10 @@ class RedirectIfAuthenticated{
 			if (!auth()->guard('user2')->check() && $request->path()!=='login') {
 				//if($request->session()->get('backUrl','')===''){
 					$request->session()->put('backUrl',url()->current());
+					$request->session->save();
 				//}
 				//return redirect('user2/login')->withInput();
-				return redirect('login')->withInput();
+				return redirect('login');//->withInput();
 			}
 				
 		if($request->session()->get('locked')!=null && $request->session()->get('locked') === true && stripos( $request->path(),'user_lock')===false  && stripos( $request->path(),'get_')===false && stripos( $request->path(),'API')===false){

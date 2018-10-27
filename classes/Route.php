@@ -203,6 +203,7 @@ function add_route($method, $parameters){
 							$func='create';
 						}
 					}
+						load_laravel_classes();
 					 
 					$controllers_path=$GLOBALS['controllers_path'];
 					
@@ -306,6 +307,15 @@ function load_classes(){
 	include $public_path . '/../classes/Auth.php';
 		Route::$auth=new Auth();
 	include $public_path . '/../classes/Validator.php';
+	
+}
+function load_laravel_classes(){
+	global $GLOBALS;
+		$public_path=$GLOBALS['public_path'];
+		
+	include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
+	include $public_path . '/../classes/Illuminate_Session.php';
+	include $public_path . '/../classes/Illuminate_Auth.php';
 }
 function through_middleware($func, $fire_args,$controller_class=null){
 	global $GLOBALS;

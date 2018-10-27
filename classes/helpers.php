@@ -257,3 +257,6 @@ function load_middleware_class($public_path,$class){
 	include  $middleware_file;					 
 	return new $class() ;
 }
+function session(){
+	return Route::$request->session;
+}

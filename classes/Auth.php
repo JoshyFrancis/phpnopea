@@ -4,21 +4,26 @@ class Auth{
 	public $name;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public static function __callStatic($method, $parameters){
-			Route::$auth->guard();
+			Route::$auth->_guard();
 		return Route::$auth;
 	}
 	public function __call($method, $parameters){
-			Route::$auth->guard();
+			Route::$auth->_guard();
 		return Route::$auth;
     }
 	public function guest(){
 			$this->check();
 		return !Route::$request->session->get('_login',false);
 	}
-	public function guard(){
+	public function _guard(){
 		$this->id=Route::$request->session->get('_userID',null);
 		$this->name=Route::$request->session->get('_userName',null);
 		return $this;
+	}
+	public function __get($name){
+		if($name==='ID'){
+			return $this->id;
+		}
 	}
 	public function check(){
 		global $GLOBALS;

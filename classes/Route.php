@@ -263,20 +263,20 @@ function add_route($method, $parameters){
 					 
 						load_classes();
 			
-			if($group_count>0){
+			//if($group_count>0){
 				//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
 				if(isset($controller_class)){
 					echo through_middleware($func, $fire_args,$controller_class );
 				}else{
 					echo through_middleware($func, $fire_args );
 				}				 
-			}else{
-				if(isset($controller_class)){
-					echo call_user_func_array([$controller_class, $func], $fire_args);
-				}else{
-					echo call_user_func_array($func, $fire_args);
-				}
-			}
+			//}else{
+			//	if(isset($controller_class)){
+			//		echo call_user_func_array([$controller_class, $func], $fire_args);
+			//	}else{
+			//		echo call_user_func_array($func, $fire_args);
+			//	}
+			//}
 		}
 	}
 }
@@ -341,7 +341,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	$middleware_args=[];
 	$middleware_args[]= Route::$request ;
 	$middleware_args[]= function($request) use($func, $fire_args,& $res,$controller_class){//, &$called){
-							if($res===null){// && $called===false){
+							if($res===null && error_get_last()['type']<2){// && $called===false){
 								if($controller_class!==null){
 									$res= call_user_func_array([$controller_class, $func], $fire_args);
 								}else{
@@ -437,7 +437,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	}
 	
 	//var_dump($res);
-	if($res===null){// && $called===false){
+	if($res===null && error_get_last()['type']<2){// && $called===false){
 		//var_dump($res);
 		$res=$middleware_args[1]($request);
 	}

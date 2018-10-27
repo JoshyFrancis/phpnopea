@@ -189,3 +189,6 @@ class Session {
 		return Route::$request->session->has($key );
 	}
 }
+function session(){
+	return return Route::$request->session;
+}

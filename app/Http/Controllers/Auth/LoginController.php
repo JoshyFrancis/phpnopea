@@ -17,8 +17,9 @@ class LoginController extends Controller{
 		if ( auth()->guard('user2')->attempt( $request->all() ,$request->input('remember'))) {	
 			$locked=$request->session()->get('locked');
 			$backUrl=$request->session()->has('backUrl')?$request->session()->get('backUrl'):'home';
-				$request->session()->put('locked', false);
-				$request->session()->put('backUrl', '');
+				$request->session()->put('locked', $locked);
+				$request->session()->put('backUrl', $backUrl);
+				$request->session->save();
 			if($locked === true ){
 				return redirect('/');
 			}
@@ -26,10 +27,10 @@ class LoginController extends Controller{
             // exit;
              
             if ($backUrl!='' && stripos($backUrl,'user_lock')===false ){
-				return redirect( $backUrl)->withInput();
+				return redirect( $backUrl);//->withInput();
 			}else{
 				//return redirect()->intended('user2/dashboard')->withInput();
-				return redirect()->intended('/')->withInput();
+				return redirect()->intended('/');//->withInput();
 			}
 			return redirect('home');
 		}else{

@@ -21,8 +21,8 @@ class ValidatePostSize{
 		//$error = 'PostTooLargeException';
 		//throw new \Exception($error);
         if ($max > 0 && $request->server('CONTENT_LENGTH') > $max) {
-            throw new \Exception('PostTooLargeException') ;
-           // exit;
+            throw new \Exception('PostTooLargeException'); 
+            return 'Error!';
         }
 
         return $next($request);

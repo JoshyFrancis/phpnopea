@@ -276,6 +276,7 @@ Route::pattern('id', '[0-9]+');// Only called if {id} is numeric.
 //Route::any('API/rc/resource', 'ResourceController@API');
 Route::get('/home', 'HomeController@index') ;
 
+
 Route::group(['middleware' => ['web']], function ( ) {
 	
 	Route::get('validatortest/create', 'ValidatorTestController@create');

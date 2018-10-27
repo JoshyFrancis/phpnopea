@@ -25,15 +25,18 @@ class View {
 				$this->data= $this->data + ['errors'=>new ParameterBag($erros)] ; 
 			}
 			*/
-			if(Route::$request->session->has('_input')){
-				Route::$request->setInput(Route::$request->session->get('_input'));
+			if($inner_view===false){
+				if(Route::$request->session->has('_input')){
+					Route::$request->setInput(Route::$request->session->get('_input'));
+				}
+				$this->data+=Route::$request->session->get('_data',[]);
+				$this->data+=['errors'=>new ParameterBag(Route::$request->session->get('_errors',[]))];
+					
+					Route::$request->session->remove('_input');
+					Route::$request->session->remove('_data');
+					Route::$request->session->remove('_errors');
 			}
-			$this->data+=Route::$request->session->get('_data',[]);
-			$this->data+=['errors'=>new ParameterBag(Route::$request->session->get('_errors',[]))];
-				Route::$request->session->remove('_input');
-				Route::$request->session->remove('_data');
-				Route::$request->session->remove('_errors');
-			 
+			
         if($view!==null){
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];

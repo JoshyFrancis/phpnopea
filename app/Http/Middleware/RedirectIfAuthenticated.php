@@ -13,7 +13,7 @@ class RedirectIfAuthenticated{
      * @throws \Illuminate\Http\Exceptions\PostTooLargeException
      */
     public function handle($request, Closure $next, $middleware = 'user'){
-		
+		 
 		#auto login
 		if(env('APP_DEMO','false')=='true' && !auth()->guard('user2')->check()){
 			

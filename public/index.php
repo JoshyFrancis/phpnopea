@@ -162,6 +162,8 @@ include __DIR__ . '/../classes/View.php';
 		page_not_found();
 	}else{
 		
+			load_classes();
+		
 		include __DIR__ . '/../routes/web.php' ;	
 
 		$route=null;

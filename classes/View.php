@@ -101,6 +101,7 @@ class View {
 					'{{','}}'
 					,'{!!','!!}'
 					,'@endsection'
+					,'@show'
 					,'@else'
 					,'@endif'
 					,'@guest'
@@ -110,6 +111,7 @@ class View {
 			$changes=[
 					'<?php echo ',';?>'
 					,'<?php echo ',';?>'
+					,'<?php $this->stopSection(); ?>'
 					,'<?php $this->stopSection(); ?>'
 					,'<?php }else{ ?>'
 					,'<?php } ?>'

@@ -207,7 +207,7 @@ function add_route($method, $parameters){
 					 
 					$controllers_path=$GLOBALS['controllers_path'];
 					
-					include  $controllers_path . '/Controller.php';
+					//include  $controllers_path . '/Controller.php';
 
 					$controller_file=$controllers_path.$namespace.$controller.'.php';
 				 
@@ -262,7 +262,7 @@ function add_route($method, $parameters){
 			
 			//var_dump($fire_args);
 					 
-						load_classes();
+						//load_classes();
 			
 			//if($group_count>0){
 				//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
@@ -300,22 +300,24 @@ function load_classes(){
 			
 	
 	include $public_path . '/../classes/Storage.php';	
-
 	include $public_path . '/../classes/DB.php';
 		//$db=new DB();
 		//$GLOBALS['db']=$db;
+	
 	include $public_path . '/../classes/Auth.php';
 		Route::$auth=new Auth();
 	include $public_path . '/../classes/Validator.php';
-	
+	include $public_path . '/../classes/Session.php';
+	include $public_path . '/../classes/Illuminate_Session.php';
 }
 function load_laravel_classes(){
 	global $GLOBALS;
 		$public_path=$GLOBALS['public_path'];
-		
+	include $public_path . '/../classes/Illuminate_Controller.php';	
 	include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
-	include $public_path . '/../classes/Illuminate_Session.php';
+	//include $public_path . '/../classes/Illuminate_Session.php';
 	include $public_path . '/../classes/Illuminate_Auth.php';
+	
 }
 function through_middleware($func, $fire_args,$controller_class=null){
 	global $GLOBALS;

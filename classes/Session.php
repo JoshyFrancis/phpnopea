@@ -1,7 +1,5 @@
 <?php
-namespace Illuminate\Support\Facades;
-use Route;
-trait Session{
+class Session{
 	public static function get($key) {
 		return Route::$request->session->get($key);
 	}

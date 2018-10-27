@@ -7,7 +7,7 @@ trait Auth{
 		return Route::$auth;
 	}
 	public function __call($method, $parameters){
-			\Route::$auth->_guard();
+			Route::$auth->_guard();
 		return Route::$auth;
     }
 }

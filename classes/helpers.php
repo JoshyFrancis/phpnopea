@@ -61,7 +61,11 @@ Jesus Christ is the only savior, who will redeem you.
 				case 'array':
 					$data.= serialize_fast($val)  ;
 				break;
+				case 'object':
+					$data.= serialize_fast($val)  ;
+				break;
 				default:
+					var_dump(gettype ($val));
 					var_dump($val);
 					$data.='s:'.strlen($val).":\"$val\";" ;
 				break;		
@@ -200,6 +204,9 @@ function csrf_token(){
 }
 function csrf_field(){
 	return  '<input type="hidden" name="_token" value="'.csrf_token().'">' ;
+}
+function method_field($method){
+	return  '<input type="hidden" name="_method" value="'.$method.'">' ;
 }
 function view($view,$data=[]){
 	$view = View::make($view,$data);

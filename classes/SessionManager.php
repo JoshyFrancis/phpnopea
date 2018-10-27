@@ -158,8 +158,8 @@ class SessionManager{// implements SessionHandlerInterface{
         return $this->started = true;
     }
     public function save(){	
-		//$this->write($this->getId(),   @serialize($this->attributes)  );
-		$this->write($this->getId(),   serialize_fast($this->attributes)  );
+		$this->write($this->getId(),   @serialize($this->attributes)  );
+		//$this->write($this->getId(),   serialize_fast($this->attributes)  );
     }
     public function destroy_current( ){
         $path = $this->path.'/'.$this->getId();
@@ -173,19 +173,5 @@ class SessionManager{// implements SessionHandlerInterface{
 		$this->destroy($this->getId());
 		$this->regenerate();
 		$this->start();
-	}
-}
-class Session {
-	public static function get($key) {
-		return Route::$request->session->get($key);
-	}
-	public static function put($key, $value){
-		return Route::$request->session->put($key, $value);
-	}
-	public static function forget($key ){
-		return Route::$request->session->forget($key );
-	}
-	public static function has($key ){
-		return Route::$request->session->has($key );
 	}
 }

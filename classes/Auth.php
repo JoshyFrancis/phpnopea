@@ -1,5 +1,6 @@
 <?php
 class Auth{
+	public $ID;
 	public $id;
 	public $name;
 	public $remember_time=((60*60)*24)*365;//365 days
@@ -18,6 +19,7 @@ class Auth{
 	public function _guard(){
 		$this->id=Route::$request->session->get('_userID',null);
 		$this->name=Route::$request->session->get('_userName',null);
+		$this->ID=$this->id;
 		return $this;
 	}
 	public function __get($name){
@@ -63,11 +65,14 @@ class Auth{
 			$password=$credentials['password'];
 			$active= isset($credentials['active'])?$credentials['active']:null;
 			//var_dump($remember);
-			
+				$bind=[$email];
+					if($active!==null){
+						$bind[]=$active;
+					}
 				remove_cookie($remember_cookie);
 							
 				DB::setFetchMode(\PDO::FETCH_ASSOC);
-				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!==null ?' and active=?':''),[$email] + ($active!==null ?[$active]:[]) );
+				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!==null ?' and active=?':''),$bind);
 				DB::setFetchMode(\PDO::FETCH_OBJ);
 				
 			if(count($rows)>0){

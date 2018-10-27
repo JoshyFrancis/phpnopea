@@ -119,6 +119,10 @@ class View {
 					,'<?php } ?>'
 					,'<?php } ?>'
 					];
+			$php=false;
+			$single_line_comment=false;
+			$multi_line_comment=false;
+			 
 			//ini_set("auto_detect_line_endings", true);
 			$handle = fopen($this->path, 'rb');
 			if ($handle) {
@@ -182,9 +186,35 @@ class View {
 							}while($pos!==false);
 						}
 						*/	
+						
+						$single_line_comment=false;	
+							if(strpos($line,'<?php')!==false){
+								$php=true;
+								
+							}
+								
 							
+						if($php===true){
+							if(strpos($line,'//')!==false){
+								$line=substr($line,0,strpos($line,'//'));
+								$single_line_comment=true;
+							}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
+								$line=substr($line,0,strpos($line,'/*'));
+								$multi_line_comment=true;
+							}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
+								$line=substr($line,0,strpos($line,'*/'));
+								$multi_line_comment=false;
+							}
+							if($multi_line_comment===true){
+								$line='';
+							}
+							//var_dump($line);
+						}
+							if($php===true && strpos($line,'?>')!==false){
+								$php=false;
+							}
 						 	$line=str_replace($keys ,$changes ,$line);
-						 	 
+						 
 						
 						//if(strpos($line,'<@')!==false){
 						//	$line=str_replace('<@' ,'{{{' ,$line);

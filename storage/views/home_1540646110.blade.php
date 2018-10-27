@@ -4,7 +4,16 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
-
+				<?php
+					echo "Going to skip Single Line comment<br>";
+					
+					echo "skipped<br>";
+
+
+
+					 
+					echo "skipped multiline comment <br>";
+				?>
                 <div class="panel-body">
                      
                         <div class="alert alert-success">
@@ -19,16 +28,16 @@
 						echo '<br>';
 						echo $test;
 						var_dump($arr);
-						/*
-						echo "<pre></pre>";
-						foreach(debug_backtrace() as $item){
-							echo "File : " . $item['file']  . ", line : " . $item['line'] . ", function : " . $item['function']."<br>"; 
-							//var_dump($item['args']);
-						}
-						echo "</pre>";
-						*/
+
+
+
+
+
+
+
+						
+						$some_data='this should be avaialble to the followinf view';
                     ?>
-                    <br>
                     <?php echo $this->view_make('include_test',$this->data,true)->render(); ?>
                 </div>
             </div>

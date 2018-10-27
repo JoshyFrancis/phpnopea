@@ -5,7 +5,16 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
-
+				<?php
+					echo "Going to skip Single Line comment<br>";
+					// commented line contians vars{{test}};
+					echo "skipped<br>";
+					/*
+						This is a 
+						multiline comment contains vars {{test2}}
+					 */
+					echo "skipped multiline comment <br>";
+				?>
                 <div class="panel-body">
                      
                         <div class="alert alert-success">
@@ -28,8 +37,8 @@
 						}
 						echo "</pre>";
 						*/
+						$some_data='this should be avaialble to the followinf view';
                     ?>
-                    <br>
                     @include('include_test')
                 </div>
             </div>

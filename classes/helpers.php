@@ -267,3 +267,17 @@ function load_middleware_class($public_path,$class){
 function session(){
 	return Route::$request->session;
 }
+function assoc_array_merge_diff($array1, $array2){ 
+	$diff=[];
+	foreach ($array1 as $key=>$value) {
+		$diff[$key]=$value;
+	}
+	foreach ($array2 as $key=>$value) {
+		if(isset($diff[$key])){
+			unset($diff[$key]);
+		}else{
+			$diff[$key]=$value;
+		}
+	}
+  return $diff;
+}

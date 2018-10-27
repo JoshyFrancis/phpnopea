@@ -1,5 +1,9 @@
+<br>
 Included View
+<br>
 <?php 
+	echo $some_data;
+	
 	echo $test;
 	var_dump($arr);
 	

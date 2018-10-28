@@ -6,10 +6,10 @@ class View {
     public $storage_path;
     protected $sections=[];
     protected $sectionStack=[];
-    protected $parent_sections=[];
     protected $contents='';
     public $status=200;
-    protected $parent_section='';
+    protected $curly_braces_open='{{';
+    protected $curly_braces_close='}}';
     protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false better speed
@@ -99,18 +99,14 @@ class View {
         return isset($this->sections[$section])? $this->sections[$section]:'';
     }
     public function startParent(){
-		//$this->parent_section=$this->sectionStack[count($this->sectionStack)-1];
 		$last=$this->stopSection();
-		var_dump($this->yieldContent($last));
-		$this->parent_sections[]=$last;
-		var_dump($last);
+		//$this->sections[$last]='';
 		$this->startSection('parent_'.$last);
+		return $last;
     }
     public function showParent(){
-		$this->parent_section=$this->stopSection();
-		var_dump($this->parent_section);
-		var_dump($this->yieldContent($this->parent_section));
-		return $this->yieldContent($this->parent_section);
+		$last=$this->stopSection();
+		return $this->yieldContent('parent_'.$last);
     }
     public function compile(){
 		if($this->expired()){
@@ -194,12 +190,7 @@ class View {
 							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
-						//if(strpos($line,'{{{')!==false){
-						//	$line=str_replace('{{{' ,'<@' ,$line);
-						//}
-						//if(strpos($line,'}}}')!==false){
-						//	$line=str_replace('}}}' ,'@>' ,$line);
-						//}
+						
 							
 						/*
 						$count=count($changes);
@@ -248,7 +239,22 @@ class View {
 							if(strpos($line,'</script')!==false){
 								$javascript=false;
 							}
-						}	
+						}
+						if(strpos($line,'@{{')!==false){							
+							$pos=false;
+							$pos2=false;
+							do{
+								$pos = strpos($line, '@{{');							
+								if($pos!==false){
+									$line=substr($line, 0, $pos) . '<?php echo $this->curly_braces_open;?>' .substr($line,  $pos+ 3 ) ;	 	
+									$pos2=strpos($line, '}}',$pos);
+									if($pos2!==false){		
+										$line=substr($line, 0, $pos2) . '<?php echo $this->curly_braces_close;?>' .substr($line,  $pos2+ 2 ) ;
+									}
+								}
+							}while($pos!==false);	
+						}
+						
 						 	$line=str_replace($keys ,$changes ,$line).$line2;
 						 
 						

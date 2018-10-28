@@ -78,8 +78,8 @@
         <br>
         Here comes Links Section
         <br>
-		@section('links')				
-			
+		@section('links')
+		
 		@show
 		<br>
 		@section('links2')				

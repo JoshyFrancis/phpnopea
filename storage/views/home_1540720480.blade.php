@@ -1,14 +1,12 @@
 <?php $this->startSection('links'); ?>
 	<?php $this->startParent(); ?>
-		<br>
 			Links
-		 <br>
+	<br>		
 <?php $this->stopSection(); ?>
 <?php $this->startSection('links2'); ?>
 	<?php $this->startParent(); ?>
-		<br>
 			Links2
-		 <br>
+	<br>
 <?php $this->stopSection(); ?>
 <?php $this->startSection('content'); ?>
 <div class="container">
@@ -28,10 +26,12 @@
 					$data0='data0';
 				?>
 				<script>
+					
 					var div=document.createElement('div');
 						div.innerHTML='Added by Javascript';//comment {{skipped }}
 						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }}
 						div.innerHTML+='<br>data0:<?php echo $data0;?>';
+						div.innerHTML+='<br>Javascript <?php echo $this->curly_braces_open;?>var1<?php echo $this->curly_braces_close;?> : <?php echo $this->curly_braces_open;?>var2<?php echo $this->curly_braces_close;?>';
 					/*
 						This is a 
 						multiline comment contains vars {{test2}} in script block
@@ -65,6 +65,7 @@
                     ?>
                     <br>
 <?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
+<?php $_view=$this->view_make('include_test2',$this);$_view->compile();include $_view->storage_path; ?>
                 </div>
             </div>
         </div>

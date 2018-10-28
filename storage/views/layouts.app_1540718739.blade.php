@@ -78,8 +78,8 @@
         <br>
         Here comes Links Section
         <br>
-		<?php $this->startSection('links'); ?>				
-			
+		<?php $this->startSection('links'); ?>
+		
 		<?php echo $this->showParent(); ?>
 		<br>
 		<?php $this->startSection('links2'); ?>				

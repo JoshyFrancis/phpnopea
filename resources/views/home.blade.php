@@ -1,15 +1,13 @@
 @extends('layouts.app')
 @section('links')
 	@parent
-		<br>
 			Links
-		 <br>
+	<br>		
 @endsection
 @section('links2')
 	@parent
-		<br>
 			Links2
-		 <br>
+	<br>
 @endsection
 @section('content')
 <div class="container">
@@ -29,10 +27,12 @@
 					$data0='data0';
 				?>
 				<script>
+					
 					var div=document.createElement('div');
 						div.innerHTML='Added by Javascript';//comment {{skipped }}
 						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }}
 						div.innerHTML+='<br>data0:{{$data0}}';
+						div.innerHTML+='<br>Javascript @{{var1}} : @{{var2}}';
 					/*
 						This is a 
 						multiline comment contains vars {{test2}} in script block
@@ -66,6 +66,7 @@
                     ?>
                     <br>
                     @include('include_test')
+                    @include('include_test2')
                 </div>
             </div>
         </div>

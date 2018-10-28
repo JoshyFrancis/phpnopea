@@ -59,12 +59,16 @@
 						$some_data='this should be avaialble to the following view';
                     ?>
                     <br>
-<?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
-<?php foreach($arr as $a){ ?>
+                    <?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
+                    <?php if($arr[1]===1){ ?>
+						<?php echo  $arr[1] ;?>
+						<br>
+					<?php } ?>
+                    <?php foreach($arr as $a){ ?>
 						<?php echo $a;?>
 						<br>
 					<?php } ?>
-<?php $_view=$this->view_make('include_test2',$this);$_view->compile();include $_view->storage_path; ?>
+                    <?php $_view=$this->view_make('include_test2',$this);$_view->compile();include $_view->storage_path; ?>
                 </div>
             </div>
         </div>

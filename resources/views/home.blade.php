@@ -61,6 +61,10 @@
                     ?>
                     <br>
                     @include('include_test')
+                    @if($arr[1]===1)
+						{{ $arr[1] }}
+						<br>
+					@endif
                     @foreach($arr as $a)
 						{{$a}}
 						<br>

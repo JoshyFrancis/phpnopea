@@ -100,7 +100,6 @@ class View {
     }
     public function startParent(){
 		$last=$this->stopSection();
-		//$this->sections[$last]='';
 		$this->startSection('parent_'.$last);
 		return $last;
     }
@@ -143,7 +142,8 @@ class View {
 			$javascript=false;
 			$single_line_comment=false;
 			$multi_line_comment=false;
-			 
+			$pos=false;
+			$pos2=false; 
 			//ini_set("auto_detect_line_endings", true);
 			$handle = fopen($this->path, 'rb');
 			$handlew = fopen($this->storage_path, 'w');
@@ -151,48 +151,111 @@ class View {
 				//while (!feof($handle) ) {
 					while (($line = fgets($handle,65535 )) !== false) {
 					//while($line=stream_get_line($handle,65535,"\n")) {
-						
+						 /*
 						if(strpos($line,'@extends')!==false){
-							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],trim($line)).PHP_EOL;
+							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
 							continue;
 						}
+						
 						if(strpos($line,'@include')!==false){
-							/*
-							 $line=str_replace(['@include',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
-							 */
-							$line2=str_replace(['@include',')'],'',trim($line));
-							$line='<?php $_view=$this->view_make'.$line2.',$this);$_view->compile();include $_view->storage_path; ?>'.PHP_EOL ;
+							$line=str_replace(['@include',')'],['<?php $_view=$this->view_make',',$this);$_view->compile();include $_view->storage_path; ?>'],$line);
 							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}
+						
 						if(strpos($line,'@section')!==false){
-							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],trim($line)).PHP_EOL;
+							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],$line);
 							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}
+						
 						if(strpos($line,'@yield')!==false){
-							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],trim($line)).PHP_EOL;
+							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],$line);
 							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}
-						if(strpos($line,'@if')!==false){
-							$line=str_replace( '@if' , '<?php if' ,trim($line)).'{ ?>'.PHP_EOL;
+						*/ 
+						
+							$pos=strpos($line,'@extends');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php echo $this->view_make' .substr($line,  $pos+ 8 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . ',$this)->compile_render(); ?>' .substr($line,  $pos+ 1 ) ;
+							}
+							$extends=$line;
+							continue;
+						}
+						
+							$pos=strpos($line,'@include');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . ',$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
+							}
 							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}
-						if(strpos($line,'@elseif')!==false){
-							$line=str_replace( '@elseif' , '<?php }elseif' ,trim($line)).'{ ?>'.PHP_EOL;
+						
+							$pos=strpos($line,'@section');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php $this->startSection' .substr($line,  $pos+ 8 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . '); ?>' .substr($line,  $pos+ 1 ) ;
+							}
 							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}
-						if(strpos($line,'@foreach')!==false){
-							$line=str_replace( '@foreach' , '<?php foreach' ,trim($line)).'{ ?>'.PHP_EOL;
-							//$contents.=$line; 
+	
+							$pos=strpos($line,'@yield');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php echo $this->yieldContent' .substr($line,  $pos+ 6 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . '); ?>' .substr($line,  $pos+ 1 ) ;
+							}
+							//$contents.=$line;
+							fwrite($handlew,$line);
+							continue;
+						}
+						 
+							$pos=strpos($line,'@if');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php if' .substr($line,  $pos+ 3 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . '){ ?>' .substr($line,  $pos+ 1 ) ;
+							}
+							//$contents.=$line;
+							fwrite($handlew,$line);
+							continue;
+						}
+							$pos=strpos($line,'@elseif');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php }elseif' .substr($line,  $pos+ 7 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . '){ ?>' .substr($line,  $pos+ 1 ) ;
+							}
+							//$contents.=$line;
+							fwrite($handlew,$line);
+							continue;
+						}
+							$pos=strpos($line,'@foreach');
+						if($pos!==false){
+							$line=substr($line, 0, $pos) .'<?php foreach' .substr($line,  $pos+ 8 ) ;	 	
+							$pos=strrpos($line, ')');
+							if($pos!==false){		
+								$line=substr($line, 0, $pos) . '){ ?>' .substr($line,  $pos+ 1 ) ;
+							}
+							//$contents.=$line;
 							fwrite($handlew,$line);
 							continue;
 						}

@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo  csrf_token() ;?>">
 
     <title>Laraquick</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="<?php echo  asset('css/app.css') ;?>" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -28,12 +28,12 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
+                    <a class="navbar-brand" href="<?php echo  url('/') ;?>">
                         Laraquick
                     </a>
 
-                    <a class="navbar-brand" href="{{ url('/') }}">
-						|    @yield('content3')
+                    <a class="navbar-brand" href="<?php echo  url('/') ;?>">
+						|    <?php echo $this->yieldContent('content3'); ?>
                     </a>
                 </div>
 
@@ -47,30 +47,30 @@
                     <ul class="nav navbar-nav navbar-right">
 						
                         <!-- Authentication Links -->
-                        @guest
-                            <li><a href="{{ route('login') }}">Login</a></li>
-                            <li><a href="{{ route('register') }}">Register</a></li>
-                        @else
+                        <?php if(auth()->guard()->guest()){ ?>
+                            <li><a href="<?php echo  route('login') ;?>">Login</a></li>
+                            <li><a href="<?php echo  route('register') ;?>">Register</a></li>
+                        <?php }else{ ?>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    <?php echo  Auth::user()->name ;?> <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{{ route('logout') }}"
+                                        <a href="<?php echo  route('logout') ;?>"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
+                                        <form id="logout-form" action="<?php echo  route('logout') ;?>" method="POST" style="display: none;">
+                                            <?php echo  csrf_field() ;?>
                                         </form>
                                     </li>
                                 </ul>
                             </li>
-                        @endguest
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
@@ -78,20 +78,20 @@
         <br>
         Here comes Links Section
         <br>
-		@section('links')				
+		<?php $this->startSection('links'); ?>				
 			
-		@show
+		<?php echo $this->showParent(); ?>
 		<br>
-		@section('links2')				
+		<?php $this->startSection('links2'); ?>				
 			
-		@show
+		<?php echo $this->showParent(); ?>
 		<br>
-        @yield('content')
-		@yield('content2')
+        <?php echo $this->yieldContent('content'); ?>
+		<?php echo $this->yieldContent('content2'); ?>
 		
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="<?php echo  asset('js/app.js') ;?>"></script>
 </body>
 </html>

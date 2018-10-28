@@ -3,18 +3,19 @@ class View {
     protected $view;
     protected $data;
     protected $path;
-    protected $storage_path;
-    protected $sections = [];
-    protected $sectionStack = [];
+    public $storage_path;
+    protected $sections=[];
+    protected $sectionStack=[];
+    protected $parent_sections=[];
     protected $contents='';
     public $status=200;
-    protected $header='';
+    protected $parent_section='';
     protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false better speed
-    public function __construct($view=null,$data = [],$sections=null,$sectionStack=null,$inner_view=false){
-        $this->view = $view;
-        $this->data = $data;
+    
+    public function __construct($view=null,$data=[],$sections=null,$sectionStack=null,$inner_view=false){
+        $this->data=$data;
         /*
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 				
@@ -37,7 +38,18 @@ class View {
 					Route::$request->session->remove('_errors');
 			}
 			
-        if($view!==null){
+        $this->prepare_view($view,$inner_view);
+        
+			if($sections!==null){
+				$this->sections=$sections;
+			}
+			if($sectionStack!==null){
+				$this->sectionStack=$sectionStack;
+			}
+    }
+    public function prepare_view($view,$inner_view=false){
+		$this->view=$view;
+		if($view!==null){
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];
 				$view_path=$GLOBALS['view_path'];  
@@ -56,14 +68,7 @@ class View {
 			
 			$this->storage_path = $storage_path ; 
 			$this->path = $path ;       
-
-		}
-			if($sections!==null){
-				$this->sections=$sections;
-			}
-			if($sectionStack!==null){
-				$this->sectionStack=$sectionStack;
-			}
+		} 
     }
     public static function make($view,$data = [],$inner_view=false){
 		return new View($view,$data,null,null,$inner_view);
@@ -75,8 +80,10 @@ class View {
 			self::$shared_data= self::$shared_data + [$key=>$val];
 		}
 	}
-	public function view_make($view,$inner_view=false )    {
-		return new View($view, $this->data ,$this->sections,$this->sectionStack,$inner_view) ;
+	public function view_make($view,$parent_view){
+		//return new View($view, $this->data ,$this->sections,$this->sectionStack,true);
+		$this->prepare_view($view,true);	
+		return $this;
     }
 	public function startSection($section ){
 		if (ob_start()) {
@@ -89,10 +96,23 @@ class View {
         return $last;
     }
 	public function yieldContent($section ){
-		//var_dump($this->sections);
         return isset($this->sections[$section])? $this->sections[$section]:'';
     }
-    public function render(){
+    public function startParent(){
+		//$this->parent_section=$this->sectionStack[count($this->sectionStack)-1];
+		$last=$this->stopSection();
+		var_dump($this->yieldContent($last));
+		$this->parent_sections[]=$last;
+		var_dump($last);
+		$this->startSection('parent_'.$last);
+    }
+    public function showParent(){
+		$this->parent_section=$this->stopSection();
+		var_dump($this->parent_section);
+		var_dump($this->yieldContent($this->parent_section));
+		return $this->yieldContent($this->parent_section);
+    }
+    public function compile(){
 		if($this->expired()){
 			$contents='';
 			//$contents= file_get_contents( $this->path);
@@ -101,67 +121,77 @@ class View {
 					'{{','}}'
 					,'{!!','!!}'
 					,'@endsection'
-					,'@show'
 					,'@else'
 					,'@endif'
 					,'@guest'
 					,'@endguest'
 					,'@endforeach'
+					,'@parent'
+					,'@show'
 					];
 			$changes=[
 					'<?php echo ',';?>'
 					,'<?php echo ',';?>'
-					,'<?php $this->stopSection(); ?>'
 					,'<?php $this->stopSection(); ?>'
 					,'<?php }else{ ?>'
 					,'<?php } ?>'
 					,'<?php if(auth()->guard()->guest()){ ?>'
 					,'<?php } ?>'
 					,'<?php } ?>'
+					,'<?php $this->startParent(); ?>'
+					,'<?php echo $this->showParent(); ?>'
 					];
+			$line='';
+			$line2='';
 			$php=false;
+			$javascript=false;
 			$single_line_comment=false;
 			$multi_line_comment=false;
 			 
 			//ini_set("auto_detect_line_endings", true);
 			$handle = fopen($this->path, 'rb');
+			//$handlew = fopen($this->storage_path, 'w');
 			if ($handle) {
-				while (!feof($handle) ) {
-					//while (($line = fgets($handle,65535 )) !== false) {
-					while($line=stream_get_line($handle,65535,"\n")) {
+				//while (!feof($handle) ) {
+					while (($line = fgets($handle,65535 )) !== false) {
+					//while($line=stream_get_line($handle,65535,"\n")) {
 						
 						if(strpos($line,'@extends')!==false){
-							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this->data,true)->render(); ?>'],$line);
+							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
 							continue;
 						}
 						if(strpos($line,'@include')!==false){
-							$line=str_replace(['@include',')'],['<?php echo $this->view_make',',$this->data,true)->render(); ?>'],$line);
-							$contents.=$line.PHP_EOL;
+							/*
+							 $line=str_replace(['@include',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
+							 */
+							$line2=str_replace(['@include',')'],'',trim($line));
+							$line='<?php $_view=$this->view_make'.$line2.',$this);$_view->compile();include $_view->storage_path; ?>'.PHP_EOL ;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@section')!==false){
 							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],$line);
-							$contents.=$line.PHP_EOL;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@yield')!==false){
 							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],$line);
-							$contents.=$line.PHP_EOL;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@if')!==false){
 							$line=str_replace( '@if' , '<?php if' ,$line) . '{ ?>';
-							$contents.=$line.PHP_EOL;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@elseif')!==false){
 							$line=str_replace( '@elseif' , '<?php }elseif' ,$line) . '{ ?>';
-							$contents.=$line.PHP_EOL;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@foreach')!==false){
 							$line=str_replace( '@foreach' , '<?php foreach' ,$line) . '{ ?>';
-							$contents.=$line.PHP_EOL;
+							$contents.=$line;//.PHP_EOL;
 							continue;
 						}
 						//if(strpos($line,'{{{')!==false){
@@ -187,33 +217,39 @@ class View {
 						}
 						*/	
 						
-						$single_line_comment=false;	
+						$line2='';
 							if(strpos($line,'<?php')!==false){
 								$php=true;
-								
 							}
-								
-							
-						if($php===true){
+							if(strpos($line,'<script')!==false ){
+								$javascript=true;
+							}
+						if($php===true || $javascript===true){
+							$single_line_comment=false;	
 							if(strpos($line,'//')!==false){
+								$line2=substr($line, strpos($line,'//') );
 								$line=substr($line,0,strpos($line,'//'));
 								$single_line_comment=true;
 							}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
+								$line2=substr($line, strpos($line,'/*'));
 								$line=substr($line,0,strpos($line,'/*'));
 								$multi_line_comment=true;
 							}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
+								$line2=substr($line, strpos($line,'*/'));
 								$line=substr($line,0,strpos($line,'*/'));
 								$multi_line_comment=false;
-							}
-							if($multi_line_comment===true){
+							}elseif($multi_line_comment===true){
+								$line2=$line;
 								$line='';
 							}
-							//var_dump($line);
-						}
-							if($php===true && strpos($line,'?>')!==false){
+							if(strpos($line,'?>')!==false){
 								$php=false;
 							}
-						 	$line=str_replace($keys ,$changes ,$line);
+							if(strpos($line,'</script')!==false){
+								$javascript=false;
+							}
+						}	
+						 	$line=str_replace($keys ,$changes ,$line).$line2;
 						 
 						
 						//if(strpos($line,'<@')!==false){
@@ -223,19 +259,25 @@ class View {
 						//	$line=str_replace('@>' ,'}}}' ,$line);
 						//}
 						
-						$contents.=$line. PHP_EOL ;
+						$contents.=$line;//. PHP_EOL ;
 						
 					} 
-					if (!feof($handle)) {
+					//if (!feof($handle)) {
 						//echo "Error: unexpected fgets() fail\n";
-					}
-				}
+					//}
+				//}
 				fclose($handle);
-				$contents.=  $extends. PHP_EOL;
+				$contents.=  $extends;//. PHP_EOL;
 			}
 			
 			file_put_contents($this->storage_path,$contents);
 		}
+	}
+	public function compile_render(){
+		$this->compile();
+		return $this->render();
+	}
+    public function render(){
 		
 		$__path=$this->storage_path;
 		
@@ -311,7 +353,7 @@ class View {
 	}
     public function __tostring(){
 		if($this->contents==='' && $this->view!==null){
-			$this->contents=$this->render();
+			$this->contents=$this->compile_render();
 		}
 			$this->setStatus();
 		return $this->contents;

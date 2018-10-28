@@ -216,7 +216,7 @@ echo "<br>";
 		 
 		//$file=[ 'name'=> $file ,'size'=> number_format(filesize($file)/1024,2) . 'KB' ];
 			 
-		$file= $file.'('. number_format(filesize($file)/1024,2) . 'KB)';
+		//$file= $file.'('. number_format(filesize($file)/1024,2) . 'KB)';
 		 
 	}
 	//print_r($files);

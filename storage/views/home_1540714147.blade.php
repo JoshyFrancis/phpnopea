@@ -1,17 +1,16 @@
-@extends('layouts.app')
-@section('links')
-	@parent
+<?php $this->startSection('links'); ?>
+	<?php $this->startParent(); ?>
 		<br>
 			Links
 		 <br>
-@endsection
-@section('links2')
-	@parent
+<?php $this->stopSection(); ?>
+<?php $this->startSection('links2'); ?>
+	<?php $this->startParent(); ?>
 		<br>
 			Links2
 		 <br>
-@endsection
-@section('content')
+<?php $this->stopSection(); ?>
+<?php $this->startSection('content'); ?>
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -32,7 +31,7 @@
 					var div=document.createElement('div');
 						div.innerHTML='Added by Javascript';//comment {{skipped }}
 						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }}
-						div.innerHTML+='<br>data0:{{$data0}}';
+						div.innerHTML+='<br>data0:<?php echo $data0;?>';
 					/*
 						This is a 
 						multiline comment contains vars {{test2}} in script block
@@ -43,7 +42,7 @@
                 <div class="panel-body">
                      
                         <div class="alert alert-success">
-                            {{ date('l jS \of F Y h:i:s A') }} @ {{ date('now') }}
+                            <?php echo  date('l jS \of F Y h:i:s A') ;?> @ <?php echo  date('now') ;?>
                         </div>
                      
 						
@@ -65,16 +64,17 @@
 						$some_data='this should be avaialble to the following view';
                     ?>
                     <br>
-                    @include('include_test')
+<?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-@section('content2')
+<?php $this->stopSection(); ?>
+<?php $this->startSection('content2'); ?>
 	Section Content 2
-@endsection
-@section('content3')
+<?php $this->stopSection(); ?>
+<?php $this->startSection('content3'); ?>
 	Section Content 3
-@endsection
+<?php $this->stopSection(); ?>
+<?php echo $this->view_make('layouts.app',$this)->compile_render(); ?>

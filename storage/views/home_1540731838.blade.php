@@ -11,11 +11,11 @@
                 <div class="panel-heading">Dashboard</div>
 				<?php
 					echo "Going to skip Single Line comment<br>";
-					// commented line contians vars{{test}}
-					echo "skipped<br>";//comment {{skipped }}
+					// commented line contians vars<?php echo $this->curly_braces_open;?>test<?php echo $this->curly_braces_close;?> m
+					echo "skipped<br>";//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
 					/*
 						This is a 
-						multiline comment contains vars {{test2}}
+						multiline comment contains vars <?php echo $this->curly_braces_open;?>test2<?php echo $this->curly_braces_close;?> m
 					 */
 					echo "skipped multiline comment <br>";
 					$data0='data0';
@@ -23,13 +23,13 @@
 				<script>
 					
 					var div=document.createElement('div');
-						div.innerHTML='Added by Javascript';//comment {{skipped }}
-						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }}
-						div.innerHTML+='<br>data0:<?php echo $data0;?>';
-						div.innerHTML+='<br>Javascript <?php echo $this->curly_braces_open;?>var1<?php echo $this->curly_braces_close;?> : <?php echo $this->curly_braces_open;?>var2<?php echo $this->curly_braces_close;?>';
+						div.innerHTML='Added by Javascript';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
+						div.innerHTML+='<br>Added by <?php echo 'php';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> ?>';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
+						div.innerHTML+='<br>data0:<?php echo $data0;?> m';
+						div.innerHTML+='<br>Javascript <?php echo $this->curly_braces_open;?>var1<?php echo $this->curly_braces_close;?> : <?php echo $this->curly_braces_open;?>var2<?php echo $this->curly_braces_close;?> m';
 					/*
 						This is a 
-						multiline comment contains vars {{test2}} in script block
+						multiline comment contains vars <?php echo $this->curly_braces_open;?>test2<?php echo $this->curly_braces_close;?> in script block
 					 */	
 					document.body.appendChild(div);
 					
@@ -60,7 +60,7 @@
                     ?>
                     <br>
                     <?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
-                    <?php if($arr[1]===1){ ?>
+                    <?php if($arr[1]===2){ ?>
 						<?php echo  $arr[1] ;?>
 						<br>
 					<?php } ?>

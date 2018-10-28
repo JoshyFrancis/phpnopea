@@ -151,34 +151,7 @@ class View {
 				//while (!feof($handle) ) {
 					while (($line = fgets($handle,65535 )) !== false) {
 					//while($line=stream_get_line($handle,65535,"\n")) {
-						 /*
-						if(strpos($line,'@extends')!==false){
-							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
-							continue;
-						}
-						
-						if(strpos($line,'@include')!==false){
-							$line=str_replace(['@include',')'],['<?php $_view=$this->view_make',',$this);$_view->compile();include $_view->storage_path; ?>'],$line);
-							//$contents.=$line;
-							fwrite($handlew,$line);
-							continue;
-						}
-						
-						if(strpos($line,'@section')!==false){
-							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],$line);
-							//$contents.=$line;
-							fwrite($handlew,$line);
-							continue;
-						}
-						
-						if(strpos($line,'@yield')!==false){
-							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],$line);
-							//$contents.=$line;
-							fwrite($handlew,$line);
-							continue;
-						}
-						*/ 
-						
+												
 							$pos=strpos($line,'@extends');
 						if($pos!==false){
 							$line=substr($line, 0, $pos) .'<?php echo $this->view_make' .substr($line,  $pos+ 8 ) ;	 	
@@ -189,7 +162,6 @@ class View {
 							$extends=$line;
 							continue;
 						}
-						
 							$pos=strpos($line,'@include');
 						if($pos!==false){
 							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8 ) ;	 	
@@ -201,7 +173,6 @@ class View {
 							fwrite($handlew,$line);
 							continue;
 						}
-						
 							$pos=strpos($line,'@section');
 						if($pos!==false){
 							$line=substr($line, 0, $pos) .'<?php $this->startSection' .substr($line,  $pos+ 8 ) ;	 	
@@ -213,7 +184,6 @@ class View {
 							fwrite($handlew,$line);
 							continue;
 						}
-	
 							$pos=strpos($line,'@yield');
 						if($pos!==false){
 							$line=substr($line, 0, $pos) .'<?php echo $this->yieldContent' .substr($line,  $pos+ 6 ) ;	 	
@@ -225,7 +195,6 @@ class View {
 							fwrite($handlew,$line);
 							continue;
 						}
-						 
 							$pos=strpos($line,'@if');
 						if($pos!==false){
 							$line=substr($line, 0, $pos) .'<?php if' .substr($line,  $pos+ 3 ) ;	 	
@@ -276,15 +245,17 @@ class View {
 							}while($pos!==false);
 						}
 						*/	
-						
 						$line2='';
+						
+						
 							if(strpos($line,'<?php')!==false){
 								$php=true;
 							}
 							if(strpos($line,'<script')!==false ){
 								$javascript=true;
 							}
-						if($php===true || $javascript===true){
+						if(1===2){// if($php===true || $javascript===true){// excluding comments
+							 
 							$single_line_comment=false;	
 							if(strpos($line,'//')!==false){
 								$line2=substr($line, strpos($line,'//') );
@@ -309,6 +280,7 @@ class View {
 								$javascript=false;
 							}
 						}
+						
 						if(strpos($line,'@{{')!==false){							
 								$pos=false;
 								$pos2=false;
@@ -372,11 +344,11 @@ class View {
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
-        try {
+        //try {
             include $__path;
-        } catch (Exception $e) {
-            $this->handleViewException($e, $obLevel);
-		}
+        //} catch (Exception $e) {
+        //    $this->handleViewException($e, $obLevel);
+		//}
         return ltrim(ob_get_clean());
     }
 	protected function handleViewException(Exception $e, $obLevel){

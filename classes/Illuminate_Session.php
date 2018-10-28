@@ -6,7 +6,8 @@ trait Session{
 		return Route::$request->session->get($key);
 	}
 	public static function put($key, $value){
-		return Route::$request->session->put($key, $value);
+			Route::$request->session->put($key, $value);
+		return Route::$request->session->save();
 	}
 	public static function forget($key ){
 		return Route::$request->session->forget($key );

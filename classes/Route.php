@@ -317,6 +317,7 @@ function load_laravel_classes(){
 	include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
 	//include $public_path . '/../classes/Illuminate_Session.php';
 	include $public_path . '/../classes/Illuminate_Auth.php';
+	include $public_path . '/../classes/Illuminate_Storage.php';
 	
 }
 function through_middleware($func, $fire_args,$controller_class=null){
@@ -351,7 +352,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	$res=null;
 	//$called=false;
 	$middleware_args=[];
-	$middleware_args[]= Route::$request ;
+	$middleware_args[]= Route::$request;
 	$middleware_args[]= function($request) use($func, $fire_args,& $res,$controller_class){//, &$called){
 							if($res===null && error_get_last()['type']<2){// && $called===false){
 								if($controller_class!==null){
@@ -451,7 +452,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	//var_dump($res);
 	if($res===null && error_get_last()['type']<2){// && $called===false){
 		//var_dump($res);
-		$res=$middleware_args[1]($request);
+		$res=$middleware_args[1](Route::$request);
 	}
 	return $res;
 }

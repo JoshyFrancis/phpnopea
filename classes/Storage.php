@@ -153,6 +153,8 @@ class Storage{
 		return copy($path,$new_path);
     }
 }
+class StorageBase extends Storage{
+}
 class disk{
 	//public $storage_path;
 	public $path;

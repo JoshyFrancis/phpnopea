@@ -4,8 +4,11 @@ class DB{
 	private static $fetchMode = \PDO::FETCH_OBJ;//\PDO::FETCH_ASSOC
 	//private static $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
     //private static $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
+    private static $connection;
 	function __construct(){
+		
 		self::createDB();
+		
 	}
 	function __destruct() {
 		self::$DBH=null;
@@ -25,10 +28,16 @@ class DB{
 			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,false);
 			$DBH->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
 			self::$DBH=$DBH;
+			self::$connection=new connection(self::$DBH);
 		}
+		
     }
     public static function setFetchMode ( $mode) {
         self::$fetchMode=$mode; 
+    }
+    public static function connection(){
+			self::createDB();
+        return self::$connection; 
     }
     public static function getPdo(){
 			self::createDB();
@@ -77,5 +86,14 @@ class DB{
     }
     public static function insert ($sql,$bindings=[]){   
 		return self::update($sql, $bindings);
+    }
+}
+class connection{
+	private $DBH=null;
+	function __construct($DBH){
+		$this->DBH=$DBH;
+	}
+	public function getPdo(){
+        return $this->DBH; 
     }
 }

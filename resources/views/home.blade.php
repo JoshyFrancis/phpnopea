@@ -12,11 +12,11 @@
                 <div class="panel-heading">Dashboard</div>
 				<?php
 					echo "Going to skip Single Line comment<br>";
-					// commented line contians vars{{test}}
-					echo "skipped<br>";//comment {{skipped }}
+					// commented line contians vars@{{test}} m
+					echo "skipped<br>";//comment @{{skipped }} m
 					/*
 						This is a 
-						multiline comment contains vars {{test2}}
+						multiline comment contains vars @{{test2}} m
 					 */
 					echo "skipped multiline comment <br>";
 					$data0='data0';
@@ -24,13 +24,13 @@
 				<script>
 					
 					var div=document.createElement('div');
-						div.innerHTML='Added by Javascript';//comment {{skipped }}
-						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }}
-						div.innerHTML+='<br>data0:{{$data0}}';
-						div.innerHTML+='<br>Javascript @{{var1}} : @{{var2}}';
+						div.innerHTML='Added by Javascript';//comment @{{skipped }} m
+						div.innerHTML+='<br>Added by <?php echo 'php';//comment @{{skipped }} ?>';//comment @{{skipped }} m
+						div.innerHTML+='<br>data0:{{$data0}} m';
+						div.innerHTML+='<br>Javascript @{{var1}} : @{{var2}} m';
 					/*
 						This is a 
-						multiline comment contains vars {{test2}} in script block
+						multiline comment contains vars @{{test2}} in script block
 					 */	
 					document.body.appendChild(div);
 					
@@ -61,7 +61,7 @@
                     ?>
                     <br>
                     @include('include_test')
-                    @if($arr[1]===1)
+                    @if($arr[1]===2)
 						{{ $arr[1] }}
 						<br>
 					@endif

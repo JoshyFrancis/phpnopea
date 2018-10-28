@@ -110,8 +110,8 @@ class View {
     }
     public function compile(){
 		if($this->expired()){
-			$contents='';
 			//$contents= file_get_contents( $this->path);
+			//$contents='';
 			$extends='';
 			$keys=[
 					'{{','}}'
@@ -146,7 +146,7 @@ class View {
 			 
 			//ini_set("auto_detect_line_endings", true);
 			$handle = fopen($this->path, 'rb');
-			//$handlew = fopen($this->storage_path, 'w');
+			$handlew = fopen($this->storage_path, 'w');
 			if ($handle) {
 				//while (!feof($handle) ) {
 					while (($line = fgets($handle,65535 )) !== false) {
@@ -162,32 +162,38 @@ class View {
 							 */
 							$line2=str_replace(['@include',')'],'',trim($line));
 							$line='<?php $_view=$this->view_make'.$line2.',$this);$_view->compile();include $_view->storage_path; ?>'.PHP_EOL ;
-							$contents.=$line;
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 						if(strpos($line,'@section')!==false){
 							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],trim($line)).PHP_EOL;
-							$contents.=$line;
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 						if(strpos($line,'@yield')!==false){
 							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],trim($line)).PHP_EOL;
-							$contents.=$line;
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 						if(strpos($line,'@if')!==false){
 							$line=str_replace( '@if' , '<?php if' ,trim($line)).'{ ?>'.PHP_EOL;
-							$contents.=$line;
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 						if(strpos($line,'@elseif')!==false){
 							$line=str_replace( '@elseif' , '<?php }elseif' ,trim($line)).'{ ?>'.PHP_EOL;
-							$contents.=$line;
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 						if(strpos($line,'@foreach')!==false){
 							$line=str_replace( '@foreach' , '<?php foreach' ,trim($line)).'{ ?>'.PHP_EOL;
-							$contents.=$line; 
+							//$contents.=$line; 
+							fwrite($handlew,$line);
 							continue;
 						}
 						
@@ -265,18 +271,20 @@ class View {
 						//	$line=str_replace('@>' ,'}}}' ,$line);
 						//}
 						
-						$contents.=$line;//. PHP_EOL ;
-						
+						//$contents.=$line; 
+						fwrite($handlew,$line);
 					} 
 					//if (!feof($handle)) {
 						//echo "Error: unexpected fgets() fail\n";
 					//}
 				//}
 				fclose($handle);
-				$contents.=  $extends;//. PHP_EOL;
+				//$contents.=$extends; 
+				fwrite($handlew,$extends);
+				fclose($handlew);
 			}
 			
-			file_put_contents($this->storage_path,$contents);
+			//file_put_contents($this->storage_path,$contents);
 		}
 	}
 	public function compile_render(){

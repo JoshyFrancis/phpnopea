@@ -1,4 +1,3 @@
-<br>
 <h3>Included View 2</h3>
 <br>
 <?php 

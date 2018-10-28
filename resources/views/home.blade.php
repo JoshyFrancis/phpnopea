@@ -4,11 +4,6 @@
 			Links
 	<br>		
 @endsection
-@section('links2')
-	@parent
-			Links2
-	<br>
-@endsection
 @section('content')
 <div class="container">
     <div class="row">
@@ -66,12 +61,21 @@
                     ?>
                     <br>
                     @include('include_test')
+                    @foreach($arr as $a)
+						{{$a}}
+						<br>
+					@endforeach
                     @include('include_test2')
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+@section('links2')
+	@parent
+			Links2
+	<br>
 @endsection
 @section('content2')
 	Section Content 2

@@ -153,7 +153,7 @@ class View {
 					//while($line=stream_get_line($handle,65535,"\n")) {
 						
 						if(strpos($line,'@extends')!==false){
-							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],$line);
+							$extends=str_replace(['@extends',')'],['<?php echo $this->view_make',',$this)->compile_render(); ?>'],trim($line)).PHP_EOL;
 							continue;
 						}
 						if(strpos($line,'@include')!==false){
@@ -162,32 +162,32 @@ class View {
 							 */
 							$line2=str_replace(['@include',')'],'',trim($line));
 							$line='<?php $_view=$this->view_make'.$line2.',$this);$_view->compile();include $_view->storage_path; ?>'.PHP_EOL ;
-							$contents.=$line;//.PHP_EOL;
+							$contents.=$line;
 							continue;
 						}
 						if(strpos($line,'@section')!==false){
-							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],$line);
-							$contents.=$line;//.PHP_EOL;
+							$line=str_replace(['@section',')'],['<?php $this->startSection','); ?>'],trim($line)).PHP_EOL;
+							$contents.=$line;
 							continue;
 						}
 						if(strpos($line,'@yield')!==false){
-							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],$line);
-							$contents.=$line;//.PHP_EOL;
+							$line=str_replace(['@yield',')'],['<?php echo $this->yieldContent','); ?>'],trim($line)).PHP_EOL;
+							$contents.=$line;
 							continue;
 						}
 						if(strpos($line,'@if')!==false){
-							$line=str_replace( '@if' , '<?php if' ,$line) . '{ ?>';
-							$contents.=$line;//.PHP_EOL;
+							$line=str_replace( '@if' , '<?php if' ,trim($line)).'{ ?>'.PHP_EOL;
+							$contents.=$line;
 							continue;
 						}
 						if(strpos($line,'@elseif')!==false){
-							$line=str_replace( '@elseif' , '<?php }elseif' ,$line) . '{ ?>';
-							$contents.=$line;//.PHP_EOL;
+							$line=str_replace( '@elseif' , '<?php }elseif' ,trim($line)).'{ ?>'.PHP_EOL;
+							$contents.=$line;
 							continue;
 						}
 						if(strpos($line,'@foreach')!==false){
-							$line=str_replace( '@foreach' , '<?php foreach' ,$line) . '{ ?>';
-							$contents.=$line;//.PHP_EOL;
+							$line=str_replace( '@foreach' , '<?php foreach' ,trim($line)).'{ ?>'.PHP_EOL;
+							$contents.=$line; 
 							continue;
 						}
 						
@@ -241,12 +241,12 @@ class View {
 							}
 						}
 						if(strpos($line,'@{{')!==false){							
-							$pos=false;
-							$pos2=false;
+								$pos=false;
+								$pos2=false;
 							do{
 								$pos = strpos($line, '@{{');							
 								if($pos!==false){
-									$line=substr($line, 0, $pos) . '<?php echo $this->curly_braces_open;?>' .substr($line,  $pos+ 3 ) ;	 	
+									$line=substr($line, 0, $pos) .'<?php echo $this->curly_braces_open;?>' .substr($line,  $pos+ 3 ) ;	 	
 									$pos2=strpos($line, '}}',$pos);
 									if($pos2!==false){		
 										$line=substr($line, 0, $pos2) . '<?php echo $this->curly_braces_close;?>' .substr($line,  $pos2+ 2 ) ;

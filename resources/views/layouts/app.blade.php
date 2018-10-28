@@ -75,18 +75,23 @@
                 </div>
             </div>
         </nav>
-        <br>
+        <?php $action='index';?>
+        @if ($action =='index')
+			<h3>Index</h3>
+        @endif
+        
         Here comes Links Section
         <br>
 		@section('links')
 		
 		@show
-		<br>
-		@section('links2')				
-			
-		@show
+
+		
 		<br>
         @yield('content')
+        @section('links2')				
+			
+		@show
 		@yield('content2')
 		
     </div>

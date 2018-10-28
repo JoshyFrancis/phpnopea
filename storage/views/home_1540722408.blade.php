@@ -3,11 +3,6 @@
 			Links
 	<br>		
 <?php $this->stopSection(); ?>
-<?php $this->startSection('links2'); ?>
-	<?php $this->startParent(); ?>
-			Links2
-	<br>
-<?php $this->stopSection(); ?>
 <?php $this->startSection('content'); ?>
 <div class="container">
     <div class="row">
@@ -65,12 +60,21 @@
                     ?>
                     <br>
 <?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
+<?php foreach($arr as $a){ ?>
+						<?php echo $a;?>
+						<br>
+					<?php } ?>
 <?php $_view=$this->view_make('include_test2',$this);$_view->compile();include $_view->storage_path; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<?php $this->stopSection(); ?>
+<?php $this->startSection('links2'); ?>
+	<?php $this->startParent(); ?>
+			Links2
+	<br>
 <?php $this->stopSection(); ?>
 <?php $this->startSection('content2'); ?>
 	Section Content 2

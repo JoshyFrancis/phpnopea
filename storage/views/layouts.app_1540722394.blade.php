@@ -33,7 +33,7 @@
                     </a>
 
                     <a class="navbar-brand" href="<?php echo  url('/') ;?>">
-						|    <?php echo $this->yieldContent('content3'); ?>
+|    <?php echo $this->yieldContent('content3'); ?>
                     </a>
                 </div>
 
@@ -75,19 +75,24 @@
                 </div>
             </div>
         </nav>
-        <br>
+        <?php $action='index';?>
+<?php if ($action =='index'){ ?>
+			<h3>Index</h3>
+        <?php } ?>
+        
         Here comes Links Section
         <br>
-		<?php $this->startSection('links'); ?>
+<?php $this->startSection('links'); ?>
 		
 		<?php echo $this->showParent(); ?>
+
+		
 		<br>
-		<?php $this->startSection('links2'); ?>				
+<?php echo $this->yieldContent('content'); ?>
+<?php $this->startSection('links2'); ?>
 			
 		<?php echo $this->showParent(); ?>
-		<br>
-        <?php echo $this->yieldContent('content'); ?>
-		<?php echo $this->yieldContent('content2'); ?>
+<?php echo $this->yieldContent('content2'); ?>
 		
     </div>
 

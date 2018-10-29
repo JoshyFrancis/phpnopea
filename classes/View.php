@@ -14,10 +14,11 @@ class View{
     public static $shared_data=[];
     public static $use_array_merge=false;//false better speed
     public static $views=[];
+    public static $views_data=[];
     public function __construct($view=null,$data=[],$sections=null,$sectionStack=null,$inner_view=false){
 		 
-			View::$views[]=$this;
-	 
+			//View::$views[]=$this;//not used now
+			View::$views_data=$data;
         $this->data=$data;
         /*
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
@@ -74,9 +75,10 @@ class View{
 		} 
     }
     public static function make($view,$data=[],$inner_view=false){
-			foreach(View::$views as $v){
-				$data+=$v->data;
-			}
+			//foreach(View::$views as $v){//not used now
+			//	$data+=$v->data;
+			//}
+			$data+=View::$views_data;
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
@@ -507,16 +509,26 @@ class View{
 		}
 		return $this;
 	}
+	public function file($file,$headers=[]){
+		$this->setContents(file_get_contents($file));
+		return $this->withHeaders($headers);
+	}
 }
 function http_response_status($code,$text){
 	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
 	header($protocol . ' ' . $code . ' ' . $text);
 }
 function back(){
+	/*
 	if(Route::$request->session->get('_view')){		
 		$view = View::make(Route::$request->session->get('_view'));
 		return $view;
-	}	
+	}
+	*/
+	$url=Route::$request->previous();
+	$view=new View();
+	$view->redirect_url($url);	
+	return  $view;		
 }
 function response($content=null,$code=null){
 	if($code!==null){

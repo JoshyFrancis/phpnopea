@@ -2,7 +2,8 @@
 class Auth{
 	public $ID;
 	public $id;
-	public $name;
+	public $username;
+	public $first_name;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public static function __callStatic($method, $parameters){
 			Route::$auth->_guard();
@@ -18,7 +19,8 @@ class Auth{
 	}
 	public function _guard(){
 		$this->id=Route::$request->session->get('_userID',null);
-		$this->name=Route::$request->session->get('_userName',null);
+		$this->username=Route::$request->session->get('_username',null);
+		$this->first_name=Route::$request->session->get('_first_name',null);
 		$this->ID=$this->id;
 		return $this;
 	}
@@ -37,13 +39,14 @@ class Auth{
 			$login=false;
 			list($token,$time)=explode('_',$cookie);
 				$token.='_'.$time;
-			$rows =DB::select('SELECT ID,password,username from users where remember_token=?' ,[$token ] );
+			$rows =DB::select('SELECT ID,password,username,first_name from users where remember_token=?' ,[$token ] );
 			if(count($rows)>0){
 				//if(time()<=(int)$time){
 					 $login=true;
 						$ID=$rows[0]->ID;
 					 Route::$request->session->put('_userID',$ID);
-					 Route::$request->session->put('_userName',$rows[0]->username );
+					 Route::$request->session->put('_username',$rows[0]->username );
+					 Route::$request->session->put('_first_name',$rows[0]->first_name );
 				//}else{
 				//	remove_cookie($remember_cookie);
 				//}
@@ -72,7 +75,7 @@ class Auth{
 				remove_cookie($remember_cookie);
 							
 				DB::setFetchMode(\PDO::FETCH_ASSOC);
-				$rows =DB::select('SELECT ID,password,username from users where email=? '.( $active!==null ?' and active=?':''),$bind);
+				$rows =DB::select('SELECT ID,password,username,first_name from users where email=? '.( $active!==null ?' and active=?':''),$bind);
 				DB::setFetchMode(\PDO::FETCH_OBJ);
 				
 			if(count($rows)>0){
@@ -109,8 +112,8 @@ class Auth{
 					//header("Location: /foo.php",TRUE,301);
 					 $login=true;
 					 Route::$request->session->put('_userID',$ID);
-					 Route::$request->session->put('_userName',$rows[0]['username']);
-					 
+					 Route::$request->session->put('_username',$rows[0]['username']);
+					 Route::$request->session->put('_first_name',$rows[0]['first_name']);
 					if($remember==='on' || $remember==='1'){
 						$time=time()+$this->remember_time;
 						$token=bin2hex(openssl_random_pseudo_bytes(32)).'_'.$time;

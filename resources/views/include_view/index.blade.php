@@ -5,5 +5,6 @@ This is included View
 	echo '<br>';
 	echo $test;
 	var_dump($arr);
+	var_dump($array_data);
 ?>
 <br>

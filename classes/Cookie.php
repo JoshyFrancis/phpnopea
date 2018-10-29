@@ -196,6 +196,7 @@ function encrypt_coookies(){
 				$Content_Type=$header;
 			}
 		}
+		/*
 			// prevent clickjacking
 			header('X-Frame-Options: sameorigin');	//SAMEORIGIN		
 		if(strpos($Content_Type ,'text/html')!==false){
@@ -205,7 +206,8 @@ function encrypt_coookies(){
 			// disable caching of potentially sensitive data
 			header('Cache-Control: no-store, no-cache, must-revalidate',true);
 			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT',true);
-			header('Pragma: no-cache',true);			
+			header('Pragma: no-cache',true);	
+		*/
 			if($date_found==false){
 				$now = DateTime::createFromFormat('U',time());
 				$now->setTimezone(new \DateTimeZone('UTC'));

@@ -298,6 +298,8 @@ function load_classes(){
 		$session->start(); 
 		Route::$request->set_session($session);
 			
+		Route::$request->session->set('_previous_url', Route::$request->getUri());
+		Route::$request->session->save();
 	
 	include $public_path . '/../classes/Storage.php';	
 	include $public_path . '/../classes/DB.php';

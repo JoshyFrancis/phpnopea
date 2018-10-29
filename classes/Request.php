@@ -78,6 +78,28 @@ class Request{
 	public function file($name){
 		return $this->files->get($name);
 	}
+	public function __get($name){
+		if(isset($_FILES[$name])){
+			return $this->files->get($name);
+		}elseif(isset($_REQUEST[$name])){
+			return $_REQUEST[$name];
+		}else{
+			return null;
+		}
+	}
+	public function all(){
+        //return array_merge($_REQUEST,$_FILES);
+        return  $_REQUEST+$_FILES;//better speed
+    }
+    public function all_input(){
+        return $_REQUEST;
+    }
+    public function setInput($data=null){
+		if($data!==null){
+			$_REQUEST=$data;
+		}
+        $this->request  = new ParameterBag($_REQUEST);
+    }
 	public function isSecure(){
 		if ( (isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" )		{
 			true;
@@ -271,19 +293,6 @@ class Request{
     }
     public function session(){
         return  $this->session  ;
-    }
-    public function all(){
-        //return array_merge($_REQUEST,$_FILES);
-        return  $_REQUEST+$_FILES;//better speed
-    }
-    public function all_input(){
-        return $_REQUEST;
-    }
-    public function setInput($data=null){
-		if($data!==null){
-			$_REQUEST=$data;
-		}
-        $this->request  = new ParameterBag($_REQUEST);
     }
     public function previous(){
         return  $this->session->get('_previous_url')  ;

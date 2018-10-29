@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="<?php echo  csrf_token() ;?>">
 
-    <title>Laraquick</title>
+    <title>Laranopea</title>
 
     <!-- Styles -->
     <link href="<?php echo  asset('css/app.css') ;?>" rel="stylesheet">
@@ -29,7 +29,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="<?php echo  url('/') ;?>">
-                        Laraquick
+                        Laranopea
                     </a>
 
                     <a class="navbar-brand" href="<?php echo  url('/') ;?>">

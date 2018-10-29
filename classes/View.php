@@ -355,12 +355,13 @@ class View {
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
-        //try {
+        try {
             include $__path;
-        //} catch (Exception $e) {
-        //    $this->handleViewException($e, $obLevel);
-		//}
-        return ltrim(ob_get_clean());
+        } catch (Exception $e) {
+            $this->handleViewException($e, $obLevel);
+		}
+        //return ltrim(ob_get_clean());
+        return ob_get_clean();
     }
 	protected function handleViewException(Exception $e, $obLevel){
         while (ob_get_level() > $obLevel) {
@@ -436,7 +437,10 @@ class View {
 		Route::$request->session->save();
 		return $this;
 	}
-	public function with($data){
+	public function with($data,$val=null){
+			if(!is_array($data)){
+				$data=[$data=>$val];
+			}
 		if(self::$use_array_merge===true){ 
 			$data=array_merge($this->data,$data);
 		}else{
@@ -477,6 +481,16 @@ class View {
 			</html>', htmlspecialchars($url, ENT_QUOTES, 'UTF-8')) );
 		
 	}
+	public function json($json){
+		//// 15 === JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+		$view->setContents(json_encode($json,15));
+		if(!headers_sent()){
+			//header('Content-Type: text/javascript');
+			header('Content-Type: application/json');
+			header('Content-Length: ' . strlen($this->contents));
+		}
+		return $this;
+	}
 }
 function http_response_status($code,$text){
 	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
@@ -488,7 +502,7 @@ function back(){
 		return $view;
 	}	
 }
-function response($content,$code=null){
+function response($content=null,$code=null){
 	if($code!==null){
 		http_response_status($code,$content);
 	}

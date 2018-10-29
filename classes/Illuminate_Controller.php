@@ -11,7 +11,7 @@ class Controller{
 		$validator = Validator::make($request->all(),$rules,$messages);
 		if ($validator->fails()) {
             echo redirect($request->path())->withErrors($validator)->withInput();
-            exit;
+            die();
         }
 	}
 }

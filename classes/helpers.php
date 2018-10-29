@@ -178,7 +178,19 @@ function route($route ){
 	return Route::$request->getBaseUri().'/'. trim( $route,'/');
 }
 function encrypt($data,$key,$cipher='AES-256-CBC'){
+	
+	//laravel 5.4
+	if (function_exists('random_bytes')) {
+		$iv =random_bytes(16) ;
+	}
+	if (function_exists('openssl_random_pseudo_bytes')) {
+		$iv =openssl_random_pseudo_bytes(16) ;
+	}
+	
+	/*
+	//laravel 5.7
 	$iv=random_bytes(openssl_cipher_iv_length($cipher));
+	*/
 	$value=openssl_encrypt($data,$cipher,$key,0,$iv);
 	$iv=base64_encode($iv);
 	$mac=hash_hmac('sha256',$iv.$value,$key);
@@ -194,6 +206,7 @@ function decrypt($json_data,$key,$cipher='AES-256-CBC'){
 	return $data;
 }
 function is_encrypted($json_data){
+	//ctype_xdigit( $decrypted)===false
 	$json= json_decode( base64_decode(  $json_data ));
 	return $json!==null;
 }

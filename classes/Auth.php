@@ -64,7 +64,7 @@ class Auth{
 			$email=$credentials['email'];
 			$password=$credentials['password'];
 			$active= isset($credentials['active'])?$credentials['active']:null;
-			//var_dump($remember);
+						
 				$bind=[$email];
 					if($active!==null){
 						$bind[]=$active;
@@ -111,13 +111,17 @@ class Auth{
 					 Route::$request->session->put('_userID',$ID);
 					 Route::$request->session->put('_userName',$rows[0]['username']);
 					 
-					if($remember==='on'){
+					if($remember==='on' || $remember==='1'){
 						$time=time()+$this->remember_time;
 						$token=bin2hex(openssl_random_pseudo_bytes(32)).'_'.$time;
-						
-						$rows_affected =DB::update('UPDATE users set remember_token=? where ID=? '.( $active!=null ?' and active=?':''),[$token,$ID,$active ] );
+								$bind=[$token];
+								$bind[]=$ID;
+							if($active!==null){
+								$bind[]=$active;
+							}
+						$rows_affected =DB::update('UPDATE users set remember_token=? where ID=? '.( $active!=null ?' and active=?':''),$bind);
 						if($rows_affected>0){
-							set_cookie($remember_cookie ,$token ,$time);
+							set_cookie($remember_cookie ,$token ,$time);							 
 						}
 					}
 				}

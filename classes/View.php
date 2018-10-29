@@ -1,7 +1,7 @@
 <?php
-class View {
+class View{
     protected $view;
-    protected $data;
+    public $data;
     protected $path;
     public $storage_path;
     protected $sections=[];
@@ -13,13 +13,16 @@ class View {
     protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false better speed
-    
+    public static $views=[];
     public function __construct($view=null,$data=[],$sections=null,$sectionStack=null,$inner_view=false){
+		 
+			View::$views[]=$this;
+	 
         $this->data=$data;
         /*
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
 				
-			if(self::$use_array_merge===true){
+			if(View::$use_array_merge===true){
 				$this->data=array_merge($this->data,['errors'=>new ParameterBag($erros)]);
 			}else{
 				unset($this->data['errors']);
@@ -70,14 +73,17 @@ class View {
 			$this->path = $path ;       
 		} 
     }
-    public static function make($view,$data = [],$inner_view=false){
+    public static function make($view,$data=[],$inner_view=false){
+			foreach(View::$views as $v){
+				$data+=$v->data;
+			}
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
-		if(self::$use_array_merge===true){
-			self::$shared_data=array_merge(self::$shared_data,[$key=>$val]);
+		if(View::$use_array_merge===true){
+			View::$shared_data=array_merge(View::$shared_data,[$key=>$val]);
 		}else{
-			self::$shared_data= self::$shared_data + [$key=>$val];
+			View::$shared_data=View::$shared_data + [$key=>$val];
 		}
 	}
 	public function view_make($view,$parent_view){
@@ -349,17 +355,17 @@ class View {
 		foreach($this->data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
 		    $$key = $value; 
 		}
-		foreach(self::$shared_data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
+		foreach(View::$shared_data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
 		    $$key = $value; 
 		}
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
-        try {
+        //try {
             include $__path;
-        } catch (Exception $e) {
-            $this->handleViewException($e, $obLevel);
-		}
+        //} catch (Exception $e) {
+        //    $this->handleViewException($e, $obLevel);
+		//}
         //return ltrim(ob_get_clean());
         return ob_get_clean();
     }
@@ -423,7 +429,7 @@ class View {
 		if($data instanceof Validator){
 			$data=$data->errors();
 		}
-		if(self::$use_array_merge===true){
+		if(View::$use_array_merge===true){
 			$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
 		}else{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
@@ -441,13 +447,23 @@ class View {
 			if(!is_array($data)){
 				$data=[$data=>$val];
 			}
-		if(self::$use_array_merge===true){ 
+		if(View::$use_array_merge===true){ 
 			$data=array_merge($this->data,$data);
 		}else{
 			$data= $this->data+$data;
 		}
 		Route::$request->session->set('_data',$data);
 		Route::$request->session->save();
+		return $this;
+	}
+	public function __call($method,$args){
+		if(substr($method,0,2)==='with'){
+			$method=strtolower(substr($method,3));
+			var_dump($args);
+			exit;
+			Route::$request->session->set($args[0],$args[1]);
+			Route::$request->session->save();
+		}
 		return $this;
 	}
 	public function intended($route){

@@ -176,7 +176,8 @@ function remove_cookie($name){
 }
 function encrypt_coookies(){
 	global $GLOBALS;
-	$app_key=$GLOBALS['app_key'];	 
+	$app_key=$GLOBALS['app_key'];
+	$session_name=$GLOBALS['session_name']; 
 			$cookies=[];
 	$date_found=false;
 	$Content_Type='';
@@ -217,7 +218,7 @@ function encrypt_coookies(){
 			foreach($parts as &$part){
 				if(stripos($part,'set-cookie')!==false){
 					$keypair=explode('=',$part);
-					if(is_encrypted($keypair[1])===false){
+					if(is_encrypted($keypair[1])===false && strpos($keypair[0],$session_name)!==false){
 						$keypair[1]=encrypt($keypair[1],$app_key) ;
 					}
 					$part=implode('=',$keypair);

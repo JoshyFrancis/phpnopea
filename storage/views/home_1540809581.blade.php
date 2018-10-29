@@ -9,6 +9,11 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
+					<h4>Include another view manually</h4>
+					<?php
+						include base_path().'/resources/views/include_view.php';
+					?>
+					<br>
                  <?php foreach($arr as $a){ ?>
 				<?php
 					echo "Going to skip Single Line comment<br>";

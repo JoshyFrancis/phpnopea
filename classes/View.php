@@ -483,7 +483,7 @@ class View {
 	}
 	public function json($json){
 		//// 15 === JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
-		$view->setContents(json_encode($json,15));
+		$this->setContents(json_encode($json,15));
 		if(!headers_sent()){
 			//header('Content-Type: text/javascript');
 			header('Content-Type: application/json');

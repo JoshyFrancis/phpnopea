@@ -9,31 +9,36 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
+                 <?php foreach($arr as $a){ ?>
 				<?php
 					echo "Going to skip Single Line comment<br>";
-					// commented line contians vars<?php echo $this->curly_braces_open;?>test<?php echo $this->curly_braces_close;?> m
-					echo "skipped<br>";//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
+					// commented line contians vars {{test}} m
+					echo "skipped<br>";//comment {{skipped }} m
 					/*
 						This is a 
-						multiline comment contains vars <?php echo $this->curly_braces_open;?>test2<?php echo $this->curly_braces_close;?> m
+						multiline comment contains vars {{test2}} m
 					 */
 					echo "skipped multiline comment <br>";
-					$data0='data0';
+					$data0='This data is from PHP';
 				?>
 				<script>
 					
 					var div=document.createElement('div');
-						div.innerHTML='Added by Javascript';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
-						div.innerHTML+='<br>Added by <?php echo 'php';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> ?>';//comment <?php echo $this->curly_braces_open;?>skipped <?php echo $this->curly_braces_close;?> m
+						div.innerHTML='Added by Javascript';
+						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }} m
 						div.innerHTML+='<br>data0:<?php echo $data0;?> m';
 						div.innerHTML+='<br>Javascript <?php echo $this->curly_braces_open;?>var1<?php echo $this->curly_braces_close;?> : <?php echo $this->curly_braces_open;?>var2<?php echo $this->curly_braces_close;?> m';
 					/*
 						This is a 
-						multiline comment contains vars <?php echo $this->curly_braces_open;?>test2<?php echo $this->curly_braces_close;?> in script block
+						multiline comment contains vars {{test2}} in script block
 					 */	
 					document.body.appendChild(div);
 					
 				</script>
+					<br>
+					<?php echo $a;?>
+				<?php } ?>
+				
                 <div class="panel-body">
                      
                         <div class="alert alert-success">
@@ -86,4 +91,4 @@
 <?php $this->startSection('content3'); ?>
 	Section Content 3
 <?php $this->stopSection(); ?>
-<?php echo $this->view_make('layouts.app',$this)->compile_render(); ?>
+<?php echo $this->view_make('layouts.app',$this)->render(); ?>

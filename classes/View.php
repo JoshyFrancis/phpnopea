@@ -112,10 +112,18 @@ class View {
 			//$contents= file_get_contents( $this->path);
 			//$contents='';
 			$extends='';
+			
 			$keys=[
 					'{{','}}'
 					,'{!!','!!}'
-					,'@endsection'
+
+					];
+			$changes=[
+					'<?php echo ',';?>'
+					,'<?php echo ',';?>'
+					];
+			$statement_keys=[
+					'@endsection'
 					,'@else'
 					,'@endif'
 					,'@guest'
@@ -124,10 +132,8 @@ class View {
 					,'@parent'
 					,'@show'
 					];
-			$changes=[
-					'<?php echo ',';?>'
-					,'<?php echo ',';?>'
-					,'<?php $this->stopSection(); ?>'
+			$statement_changes=[
+					'<?php $this->stopSection(); ?>'
 					,'<?php }else{ ?>'
 					,'<?php } ?>'
 					,'<?php if(auth()->guard()->guest()){ ?>'
@@ -139,7 +145,6 @@ class View {
 			$line='';
 			$line2='';
 			$php=false;
-			$javascript=false;
 			$single_line_comment=false;
 			$multi_line_comment=false;
 			$pos=false;
@@ -157,7 +162,7 @@ class View {
 							$line=substr($line, 0, $pos) .'<?php echo $this->view_make' .substr($line,  $pos+ 8 ) ;	 	
 							$pos=strrpos($line, ')');
 							if($pos!==false){		
-								$line=substr($line, 0, $pos) . ',$this)->compile_render(); ?>' .substr($line,  $pos+ 1 ) ;
+								$line=substr($line, 0, $pos) . ',$this)->render(); ?>' .substr($line,  $pos+ 1 ) ;
 							}
 							$extends=$line;
 							continue;
@@ -228,8 +233,20 @@ class View {
 							fwrite($handlew,$line);
 							continue;
 						}
-						
-							
+							$pos2=false; 
+						foreach($statement_keys as $k=>$v){
+								$pos=strpos($line,$v);
+							if($pos!==false){
+								$line=substr($line, 0, $pos) .$statement_changes[$k] .substr($line,  $pos+ strlen($v) ) ;
+								//$contents.=$line;
+								fwrite($handlew,$line);
+								$pos2=true; 
+								break;
+							}
+						}
+						if($pos2===true){
+							continue;
+						}
 						/*
 						$count=count($changes);
 						$j=0;
@@ -251,10 +268,7 @@ class View {
 							if(strpos($line,'<?php')!==false){
 								$php=true;
 							}
-							if(strpos($line,'<script')!==false ){
-								$javascript=true;
-							}
-						if(1===2){// if($php===true || $javascript===true){// excluding comments
+						if($php===true){// excluding comments
 							 
 							$single_line_comment=false;	
 							if(strpos($line,'//')!==false){
@@ -275,9 +289,6 @@ class View {
 							}
 							if(strpos($line,'?>')!==false){
 								$php=false;
-							}
-							if(strpos($line,'</script')!==false){
-								$javascript=false;
 							}
 						}
 						
@@ -322,11 +333,11 @@ class View {
 			//file_put_contents($this->storage_path,$contents);
 		}
 	}
-	public function compile_render(){
+	public function render(){
 		$this->compile();
-		return $this->render();
+		return $this->_render();
 	}
-    public function render(){
+    private function _render(){
 		
 		$__path=$this->storage_path;
 		
@@ -402,7 +413,7 @@ class View {
 	}
     public function __tostring(){
 		if($this->contents==='' && $this->view!==null){
-			$this->contents=$this->compile_render();
+			$this->contents=$this->render();
 		}
 			$this->setStatus();
 		return $this->contents;

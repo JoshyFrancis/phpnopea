@@ -128,6 +128,11 @@ function public_path($path='') {
 	$public_path=$GLOBALS['public_path'];
 	return $public_path .($path!=''? '/'. $path:'') ;
 }
+function base_path($path='') {
+	global $GLOBALS;
+	$public_path=$GLOBALS['public_path'];
+	return $public_path. '/..'.($path!=''? '/'. $path:'');
+}
 function app_path($path='') {
 	global $GLOBALS;
 	$public_path=$GLOBALS['public_path'];

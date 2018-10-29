@@ -10,31 +10,36 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
+                 @foreach($arr as $a)
 				<?php
 					echo "Going to skip Single Line comment<br>";
-					// commented line contians vars@{{test}} m
-					echo "skipped<br>";//comment @{{skipped }} m
+					// commented line contians vars {{test}} m
+					echo "skipped<br>";//comment {{skipped }} m
 					/*
 						This is a 
-						multiline comment contains vars @{{test2}} m
+						multiline comment contains vars {{test2}} m
 					 */
 					echo "skipped multiline comment <br>";
-					$data0='data0';
+					$data0='This data is from PHP';
 				?>
 				<script>
 					
 					var div=document.createElement('div');
-						div.innerHTML='Added by Javascript';//comment @{{skipped }} m
-						div.innerHTML+='<br>Added by <?php echo 'php';//comment @{{skipped }} ?>';//comment @{{skipped }} m
+						div.innerHTML='Added by Javascript';
+						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }} m
 						div.innerHTML+='<br>data0:{{$data0}} m';
 						div.innerHTML+='<br>Javascript @{{var1}} : @{{var2}} m';
 					/*
 						This is a 
-						multiline comment contains vars @{{test2}} in script block
+						multiline comment contains vars {{test2}} in script block
 					 */	
 					document.body.appendChild(div);
 					
 				</script>
+					<br>
+					{{$a}}
+				@endforeach
+				
                 <div class="panel-body">
                      
                         <div class="alert alert-success">

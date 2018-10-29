@@ -116,7 +116,7 @@ $current_route=null;
 
 
 
-	$session_name='laraquick_session';	
+	$session_name='laranopea_session';	
 	//$lifetime=(60*60)*2;//in seconds
 	$lifetime= 60 ;//in seconds
 		$GLOBALS['session_name']=$session_name;

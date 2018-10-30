@@ -15,7 +15,8 @@ Route::group(['middleware' => ['admin']], function () {
 Route::post('forget_password', ['as'=>'user2.auth_forgot','uses'=>'User2LoginController@forget_password']);
 Route::resource('password_reset', 'password_reset\password_resetController');
 */
-
+	include_once(app_path().'/Http/Controllers/Common/helper.php');
+	
 Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null,$c = null) {
 	var_dump($name);
 	var_dump($id);

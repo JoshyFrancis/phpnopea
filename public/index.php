@@ -170,7 +170,8 @@ include __DIR__ . '/../classes/View.php';
 		
 			if($current_route===null){
 				page_not_found();
-				
+			}else{
+				echo through_middleware($current_route['func'],$current_route['args'],$current_route['controller_class']);
 			}
 		$env_data=null;
 		$request=null;

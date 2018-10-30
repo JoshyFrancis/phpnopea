@@ -258,7 +258,7 @@ function add_route($method, $parameters){
 			//echo $controller_class->$func(...$fire_args);
 			
 			//$current_route=['func'=>$func, 'args'=>$fire_args,'group'=>Route::$group];
-			$current_route=$path;
+			//$current_route=$path;
 			
 			//var_dump($fire_args);
 					 
@@ -266,11 +266,12 @@ function add_route($method, $parameters){
 			
 			//if($group_count>0){
 				//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
-				if(isset($controller_class)){
-					echo through_middleware($func, $fire_args,$controller_class );
-				}else{
-					echo through_middleware($func, $fire_args );
-				}				 
+				//if(isset($controller_class)){
+				//	echo through_middleware($func, $fire_args,$controller_class );
+				//}else{
+				//	echo through_middleware($func, $fire_args );
+				//}
+								 
 			//}else{
 			//	if(isset($controller_class)){
 			//		echo call_user_func_array([$controller_class, $func], $fire_args);
@@ -278,6 +279,7 @@ function add_route($method, $parameters){
 			//		echo call_user_func_array($func, $fire_args);
 			//	}
 			//}
+			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class];
 		}
 	}
 }

@@ -53,7 +53,9 @@ class DB{
     public static function prepareBindings ($bindings){
 			$out=[];
 		foreach ($bindings as $value) {
-            if($value instanceof DateTimeInterface){
+			if($value instanceof Closure){
+				$value =null;
+            }elseif($value instanceof DateTimeInterface){
                 $value = $value->format('Y-m-d H:i:s');
             }elseif (is_bool($value)){
                 $value = (int) $value;

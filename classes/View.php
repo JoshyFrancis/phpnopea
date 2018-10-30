@@ -12,7 +12,7 @@ class View{
     protected $curly_braces_close='}}';
     protected $url='';
     public static $shared_data=[];
-    public static $use_array_merge=false;//false better speed
+    public static $use_array_merge=false;//false=better speed
     public static $views=[];
     public static $views_data=[];
     public function __construct($view=null,$data=[],$sections=null,$sectionStack=null,$inner_view=false){
@@ -82,6 +82,7 @@ class View{
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
+		$$key=$val;
 		if(View::$use_array_merge===true){
 			View::$shared_data=array_merge(View::$shared_data,[$key=>$val]);
 		}else{
@@ -346,7 +347,8 @@ class View{
 		return $this->_render();
 	}
     private function _render(){
-		
+			//use Exception;
+			//use Throwable;
 		$__path=$this->storage_path;
 		
 		$obLevel = ob_get_level();
@@ -363,19 +365,31 @@ class View{
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
-        //try {
+        try {
             include $__path;
-        //} catch (Exception $e) {
-        //    $this->handleViewException($e, $obLevel);
-		//}
+        } catch (Exception $e) {
+            $this->handleViewException($e, $obLevel);
+		} catch (Error $e) {
+            $this->handleViewException($e, $obLevel);
+        }
         //return ltrim(ob_get_clean());
         return ob_get_clean();
     }
-	protected function handleViewException(Exception $e, $obLevel){
+	protected function handleViewException($e, $obLevel){
         while (ob_get_level() > $obLevel) {
             ob_end_clean();
         }
+        //var_dump($e);
+        //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine(), $e);
+        //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine());
+        //var_dump($e);
         throw $e;
+		echo "Message: " . $e->getMessage();
+		echo "<br>";
+		echo "getCode(): " . $e->getCode();
+		echo "<br>";
+		echo "__toString(): " . $e->__toString();
+		exit();
     }
     protected function expired(){
 		$dir=dirname($this->storage_path);

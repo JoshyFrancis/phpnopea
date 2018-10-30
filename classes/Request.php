@@ -35,6 +35,40 @@ class Request{
 		if (strpos($uri, '?')!==false) $uri = substr($uri, 0, strpos($uri, '?'));
 		return trim($uri, '/');
 	}
+	public function getBaseUri(){
+		$secure=false;
+		if((isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME']==='https'){
+			$secure=true;
+		}
+		$scheme=$secure?'https':'http';
+		$port =isset($_SERVER['SERVER_PORT'])?$_SERVER['SERVER_PORT']:null;
+		if($port===null){
+			$port =$secure? 443 : 80;
+		}
+		if (!$host = $_SERVER['HTTP_HOST']) {
+			if (!$host = $_SERVER['HOST']) {	
+				if (!$host = $_SERVER['SERVER_NAME']) {
+					$host = $_SERVER['SERVER_ADDR'];
+				}
+			}
+        }
+        // trim and remove port number from host
+        // host is lowercase as per RFC 952/2181
+        $host = strtolower(preg_replace('/:\d+$/', '', trim($host)));
+        // as the host can come from the user (HTTP_HOST and depending on the configuration, SERVER_NAME too can come from the user)
+        // check that it does not contain forbidden characters (see RFC 952 and RFC 2181)
+        // use preg_replace() instead of preg_match() to prevent DoS attacks with long host names
+        if ($host && '' !== preg_replace('/(?:^\[)?[a-zA-Z0-9-:\]_]+\.?/', '', $host)) {
+                $host='';
+        }
+        if (('http' === $scheme && 80 === $port) || ('https' === $scheme && 443 === $port)) {
+             
+        }else{
+			 $host=$host.':'.$port;
+		}
+		
+        return $scheme.'://'.$host.  $this->getBaseUrl() ;
+    }
 	public function path(){
         //$uri=explode('/', strtolower(explode('?', $_SERVER['REQUEST_URI'])[0])) ;
 		//$doc_root= explode('/',strtolower($_SERVER['SCRIPT_FILENAME'])) ;
@@ -288,7 +322,7 @@ class Request{
     public function current(){
         return  $this->url()  ;
     }
-    public function getBaseUri(){
+    public function getBaseUri2(){
         return $this->getSchemeAndHttpHost().$this->getBaseUrl() ;
     }
     public function session(){

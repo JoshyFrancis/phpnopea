@@ -165,7 +165,8 @@ function url($route=null){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
 		//}
-		return Route::$request->getBaseUri().'/'. trim( $route,'/');
+		$url=Route::$request->getBaseUri().'/'. ltrim( $route,'/');
+		return rtrim($url,'/');
 	}
 	return Route::$request;
 }

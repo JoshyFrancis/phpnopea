@@ -35,7 +35,7 @@ class Request{
 		if (strpos($uri, '?')!==false) $uri = substr($uri, 0, strpos($uri, '?'));
 		return trim($uri, '/');
 	}
-	public function getBaseUri(){
+	public function getBaseUri2(){
 		$secure=false;
 		if((isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME']==='https'){
 			$secure=true;
@@ -46,7 +46,7 @@ class Request{
 			$port =$secure? 443 : 80;
 		}
 		if (!$host = $_SERVER['HTTP_HOST']) {
-			if (!$host = $_SERVER['HOST']) {	
+			if (!$host = $_SERVER['HOST']) {
 				if (!$host = $_SERVER['SERVER_NAME']) {
 					$host = $_SERVER['SERVER_ADDR'];
 				}
@@ -322,7 +322,7 @@ class Request{
     public function current(){
         return  $this->url()  ;
     }
-    public function getBaseUri2(){
+    public function getBaseUri(){
         return $this->getSchemeAndHttpHost().$this->getBaseUrl() ;
     }
     public function session(){

@@ -531,22 +531,28 @@ class View{
 		$this->setContents(file_get_contents($file));
 		return $this->withHeaders($headers);
 	}
+	public function back(){
+		$url=Route::$request->previous();
+		$this->redirect_url($url);
+		return $this;
+	}
+	public function to($route){
+		$url=url($route);
+		$this->redirect_url($url);
+		return $this;
+	}
 }
 function http_response_status($code,$text){
 	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
 	header($protocol . ' ' . $code . ' ' . $text);
 }
+function view($view,$data=[]){
+	$view = View::make($view,$data);
+	return $view;
+}
 function back(){
-	/*
-	if(Route::$request->session->get('_view')){		
-		$view = View::make(Route::$request->session->get('_view'));
-		return $view;
-	}
-	*/
-	$url=Route::$request->previous();
 	$view=new View();
-	$view->redirect_url($url);	
-	return  $view;		
+	return  $view->back();		
 }
 function response($content=null,$code=null){
 	if($code!==null){
@@ -564,7 +570,7 @@ function redirect($route=null){
 	if($route===null){
 		return  new View();
 	}
-	$url=url($route);
+	
 		//Route::$request->session()->set('backUrl',$url);
 		//Route::$request->session->save();	
 		/*
@@ -578,14 +584,8 @@ function redirect($route=null){
 		}
 		*/
 		
-	$view=new View();
-	
-	$view->redirect_url($url);
-	
-	//var_dump($view);
-	//exit;
-	
-	return  $view;	
+	$view=new View();	
+	return  $view->to($route);	
 }
 function send_file($path){
 	$out = fopen('php://output', 'wb');

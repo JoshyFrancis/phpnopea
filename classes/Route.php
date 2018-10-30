@@ -317,6 +317,7 @@ function load_classes(){
 	include $public_path . '/../classes/Validator.php';
 	include $public_path . '/../classes/Session.php';
 	include $public_path . '/../classes/Illuminate_Session.php';
+	include $public_path . '/../classes/Illuminate_Hash.php';
 }
 function load_laravel_classes(){
 	global $GLOBALS;

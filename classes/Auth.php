@@ -4,6 +4,7 @@ class Auth{
 	public $id;
 	public $username;
 	public $first_name;
+	public $password;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public static function __callStatic($method, $parameters){
 			Route::$auth->_guard();
@@ -21,6 +22,7 @@ class Auth{
 		$this->id=Route::$request->session->get('_userID',null);
 		$this->username=Route::$request->session->get('_username',null);
 		$this->first_name=Route::$request->session->get('_first_name',null);
+		$this->password=Route::$request->session->get('_password',null);
 		$this->ID=$this->id;
 		return $this;
 	}
@@ -47,6 +49,7 @@ class Auth{
 					 Route::$request->session->put('_userID',$ID);
 					 Route::$request->session->put('_username',$rows[0]->username );
 					 Route::$request->session->put('_first_name',$rows[0]->first_name );
+					 Route::$request->session->put('_password',$rows[0]->password );
 				//}else{
 				//	remove_cookie($remember_cookie);
 				//}
@@ -114,6 +117,7 @@ class Auth{
 					 Route::$request->session->put('_userID',$ID);
 					 Route::$request->session->put('_username',$rows[0]['username']);
 					 Route::$request->session->put('_first_name',$rows[0]['first_name']);
+					 Route::$request->session->put('_password',$rows[0]['password']);
 					if($remember==='on' || $remember==='1'){
 						$time=time()+$this->remember_time;
 						$token=bin2hex(openssl_random_pseudo_bytes(32)).'_'.$time;

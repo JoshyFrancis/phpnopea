@@ -165,18 +165,24 @@ function url($route=null){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
 		//}
-		$url=Route::$request->getBaseUri().'/'. ltrim( $route,'/');
-		return rtrim($url,'/');
+		$url=Route::$request->getBaseUri();
+		if(substr($url,-1,1)!=='/'){
+			$url.='/';
+		}
+		//$route=trim($route,'/');
+		if(substr($route,0,1)==='/'){
+			$route=substr($route,1);
+		}
+		if(substr($route,-1,1)==='/'){
+			$route=substr($route,0,strrpos($route,'/'));
+		}
+		$url.= $route ;
+		return $url;
 	}
 	return Route::$request;
 }
 function route($route ){
-	global $GLOBALS;
-		$routes=$GLOBALS['routes'];
-	if(isset($routes['get'][$route])){
-		$route= $routes['get'][$route][0];
-	}
-	return Route::$request->getBaseUri().'/'. trim( $route,'/');
+	return url($route);
 }
 function encrypt($data,$key,$cipher='AES-256-CBC'){
 	
@@ -226,10 +232,6 @@ function csrf_field(){
 }
 function method_field($method){
 	return  '<input type="hidden" name="_method" value="'.$method.'">' ;
-}
-function view($view,$data=[]){
-	$view = View::make($view,$data);
-	return $view;
 }
 function old($key, $default = ''){
 	return Route::$request->input($key);
@@ -282,9 +284,6 @@ function load_middleware_class($public_path,$class){
 	$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
 	include  $middleware_file;					 
 	return new $class() ;
-}
-function session(){
-	return Route::$request->session;
 }
 function assoc_array_merge_diff($array1, $array2){ 
 	$diff=[];

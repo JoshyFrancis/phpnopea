@@ -175,3 +175,10 @@ class SessionManager{// implements SessionHandlerInterface{
 		$this->start();
 	}
 }
+function session($key=null){
+	if($key!==null){
+		return Route::$request->session->get($key);
+	}else{
+		return Route::$request->session;
+	}
+}

@@ -5,7 +5,7 @@ class Session{
 	}
 	public static function put($key, $value){
 			Route::$request->session->put($key, $value);
-		return Route::$request->session->save();
+		//return Route::$request->session->save();
 	}
 	public static function forget($key ){
 		return Route::$request->session->forget($key );

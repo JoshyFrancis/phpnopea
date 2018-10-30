@@ -19,7 +19,7 @@ class LoginController extends Controller{
 			$backUrl=$request->session()->has('backUrl')?$request->session()->get('backUrl'):'home';
 				$request->session()->put('locked', $locked);
 				$request->session()->put('backUrl', $backUrl);
-				$request->session->save();
+				//$request->session->save();
 			if($locked === true ){
 				return redirect('/');
 			}

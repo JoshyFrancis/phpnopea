@@ -220,7 +220,7 @@ function add_route($method, $parameters){
 					$func_args=$reflection->getParameters();
 					
 			}else{//handles routes
-				 
+				$controller_class=null;
 				$reflection = new ReflectionFunction( $func);
 				$func_args=$reflection->getParameters();				
 				
@@ -301,7 +301,7 @@ function load_classes(){
 		Route::$request->set_session($session);
 			
 		Route::$request->session->set('_previous_url', Route::$request->getUri());
-		Route::$request->session->save();
+		//Route::$request->session->save();
 	
 	include $public_path . '/../classes/Storage.php';	
 	include $public_path . '/../classes/DB.php';

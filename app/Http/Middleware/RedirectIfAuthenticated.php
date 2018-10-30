@@ -29,7 +29,7 @@ class RedirectIfAuthenticated{
 			
 			//Session::put('backUrl', $url= url()->current(););
 			$request->session()->put('backUrl', explode('?', url()->previous())[0] );
-			$request->session->save();
+			//$request->session->save();
 		}
 				//var_dump($request->session()->get('backUrl',''));
 				var_dump($request->path());
@@ -38,7 +38,7 @@ class RedirectIfAuthenticated{
 			if (!auth()->guard('user2')->check() && $request->path()!=='login') {
 				if($request->method()==='GET'){
 					$request->session()->put('backUrl',url()->current());
-					$request->session->save();
+					//$request->session->save();
 				}
 				//return redirect('user2/login')->withInput();
 				return redirect('login');//->withInput();

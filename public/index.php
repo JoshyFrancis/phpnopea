@@ -166,6 +166,7 @@ include __DIR__ . '/../classes/View.php';
 		
 		include __DIR__ . '/../routes/web.php' ;	
 
+		
 		$route=null;
 		
 			if($current_route===null){
@@ -173,6 +174,7 @@ include __DIR__ . '/../classes/View.php';
 			}else{
 				echo through_middleware($current_route['func'],$current_route['args'],$current_route['controller_class']);
 			}
+		Route::$request->session->save();
 		$env_data=null;
 		$request=null;
 		

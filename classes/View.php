@@ -383,7 +383,7 @@ class View{
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine(), $e);
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine());
         //var_dump($e);
-        throw $e;
+        //throw $e;
 		echo "Message: " . $e->getMessage();
 		echo "<br>";
 		echo "getCode(): " . $e->getCode();
@@ -451,34 +451,38 @@ class View{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
 		}
 		Route::$request->session->set('_errors',$data);
-		Route::$request->session->save();
+		//Route::$request->session->save();
 		return $this;
 	}
 	public function withInput(){
 		Route::$request->session->set('_input',Route::$request->all_input());
-		Route::$request->session->save();
+		//Route::$request->session->save();
 		return $this;
 	}
 	public function with($data,$val=null){
 			if(!is_array($data)){
 				$data=[$data=>$val];
 			}
-		if(View::$use_array_merge===true){ 
-			$data=array_merge($this->data,$data);
-		}else{
-			$data= $this->data+$data;
+		//if(View::$use_array_merge===true){ 
+		//	$data=array_merge($this->data,$data);
+		//}else{
+		//	$data= $this->data+$data;
+		//}
+		//Route::$request->session->set('_data',$data);
+		foreach($data as $k=>$v){
+			Route::$request->session->set($k,$v);
 		}
-		Route::$request->session->set('_data',$data);
-		Route::$request->session->save();
+		//Route::$request->session->save();
 		return $this;
 	}
 	public function __call($method,$args){
-		if(substr($method,0,2)==='with'){
-			$method=strtolower(substr($method,3));
+		if(substr($method,0,4)==='with'){
+			$method=strtolower(substr($method,4));
+			return $this->with($method,$args[0]);
 			var_dump($args);
 			exit;
 			Route::$request->session->set($args[0],$args[1]);
-			Route::$request->session->save();
+			//Route::$request->session->save();
 		}
 		return $this;
 	}

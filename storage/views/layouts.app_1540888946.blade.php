@@ -87,10 +87,10 @@
 		<?php echo $this->showParent(); ?>
 		<?php
 			var_dump(get_class($this));
-			share_data_with_view();
-			var_dump(View::$shared_data);
+			//share_data_with_view();
+			//var_dump(View::$shared_data);
 		?>
-		<?php echo $share_otf;?>
+		<?php //echo $share_otf;?>
 		
 		<br>
         <?php echo $this->yieldContent('content'); ?>

@@ -217,7 +217,7 @@ function asset($path){
 	return  url('/')  . trim( $path,'/') . '?t=' . filemtime($file) ;
 }
 function csrf_token(){
-		Route::$request->session->save();
+		//Route::$request->session->save();
 	return Route::$request->session->token();
 }
 function csrf_field(){
@@ -271,7 +271,7 @@ function check_nonce($nonce, $optional_salt='',$hour=1){
 }
 function ajax_csrf_token( ){
 		Route::$request->session->put('_current_page',$_SERVER['SCRIPT_NAME']);
-		Route::$request->session->save();
+		//Route::$request->session->save();
 	return create_nonce($_SERVER['SCRIPT_NAME'] );
 }
 function check_ajax_csrf_token($nonce,$hour=1){

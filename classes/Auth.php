@@ -52,7 +52,7 @@ class Auth{
 				//}
 			}
 			Route::$request->session->put('_login',$login);
-			Route::$request->session->save();
+			//Route::$request->session->save();
 		}
 		return $login;
 	}
@@ -131,7 +131,7 @@ class Auth{
 			}
 		 
 		Route::$request->session->put('_login',$login);
-		Route::$request->session->save();
+		//Route::$request->session->save();
 		return $login;
 	}
 	public function logout(){

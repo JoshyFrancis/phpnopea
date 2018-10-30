@@ -299,8 +299,12 @@ function load_classes(){
 		$session->setId(Route::$request->cookies->get($session_name )  );
 		$session->start(); 
 		Route::$request->set_session($session);
-			
-		Route::$request->session->set('_previous_url', Route::$request->getUri());
+		
+		$previous_url='';
+			if ($_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
+				$previous_url=Route::$request->getUri();
+			}
+		Route::$request->session->set('_previous_url',$previous_url );
 		//Route::$request->session->save();
 	
 	include $public_path . '/../classes/Storage.php';	

@@ -294,15 +294,24 @@ class Request{
     public function session(){
         return  $this->session  ;
     }
-    public function previous(){
-        return  $this->session->get('_previous_url')  ;
+    public function previous($fallback=false){
+				$referrer =isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:null;
+			$url = $referrer ? url($referrer) : $this->session->get('_previous_url');
+        if($url){
+            return $url;
+        }elseif($fallback){
+            return url($fallback);
+        }else{
+            return url('/');
+        }
     }
     public function isXmlHttpRequest(){
         //return 'XMLHttpRequest' == $this->headers->get('X-Requested-With');
         return 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'];
     }
     public function ajax(){
-        return $this->isXmlHttpRequest();
+        //return $this->isXmlHttpRequest();
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']==='XMLHttpRequest';
     }
     public function ajax_secure($hour=1){
 		$token=$this->input('_token','');

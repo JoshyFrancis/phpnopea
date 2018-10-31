@@ -25,6 +25,9 @@ class DB{
 			$user=$env['DB_USERNAME'];
 			$pass=$env['DB_PASSWORD'];
 			$DBH = new \PDO($connection, $user, $pass);
+			$DBH->setAttribute(\PDO::ATTR_CASE,\PDO::CASE_NATURAL);
+			$DBH->setAttribute(\PDO::ATTR_ORACLE_NULLS,\PDO::NULL_NATURAL);
+			$DBH->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES,false);
 			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,false);
 			$DBH->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
 			self::$DBH=$DBH;
@@ -50,7 +53,7 @@ class DB{
     //private static function escape($value){
     //    return str_replace(self::$search, self::$replace, $value);
     //}
-    public static function prepareBindings ($bindings){
+    public static function prepareBindings_old($bindings){
 			$out=[];
 		foreach ($bindings as $value) {
 			if($value instanceof Closure){
@@ -71,16 +74,40 @@ class DB{
         
         return $out;
     }
+    public static function prepareBindings($bindings){//taken from laravel
+        foreach ($bindings as $key => $value){
+            // We need to transform all instances of DateTimeInterface into the actual
+            // date string. Each query grammar maintains its own date string format
+            // so we'll just ask the grammar for the format to get from the date.
+            if ($value instanceof DateTimeInterface) {
+                $bindings[$key] = $value->format('Y-m-d H:i:s');
+            } elseif ($value === false) {
+                $bindings[$key] = 0;
+            }
+        }
+        return $bindings;
+    }
+    public static function bindValues ($statement, $bindings){//taken from laravel
+		foreach ($bindings as $key => $value) {
+            $statement->bindValue(
+                is_string($key) ? $key : $key + 1, $value,is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
+            );
+        }
+	}
     public static function select($sql,$bindings=[]){
 			self::createDB();
-        $STH = self::$DBH->prepare($sql);
-		$STH->execute( self::prepareBindings($bindings));
+        $STH = self::$DBH->prepare($sql); 
+		//$STH->execute( self::prepareBindings($bindings));
+		self::bindValues($STH,self::prepareBindings($bindings));
+		$STH->execute();
 		return $STH->fetchAll(self::$fetchMode); 
     }
     public static function update($sql,$bindings=[]){
 			self::createDB();
         $STH = self::$DBH->prepare($sql);
-		$STH->execute( self::prepareBindings($bindings));
+		//$STH->execute( self::prepareBindings($bindings));
+		self::bindValues($STH,self::prepareBindings($bindings));
+		$STH->execute();
 		return $STH->rowCount();
     }
     public static function delete ($sql,$bindings=[]){   

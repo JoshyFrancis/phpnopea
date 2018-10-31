@@ -78,7 +78,7 @@ class View{
 			//foreach(View::$views as $v){//not used now
 			//	$data+=$v->data;
 			//}
-			$data+=View::$views_data;
+			//$data+=View::$views_data;
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
@@ -369,9 +369,10 @@ class View{
             include $__path;
         } catch (Exception $e) {
             $this->handleViewException($e, $obLevel);
-		} catch (Error $e) {
-            $this->handleViewException($e, $obLevel);
+		//} catch (Error $e) {
+        //   $this->handleViewException($e, $obLevel);
         }
+        
         //return ltrim(ob_get_clean());
         return ob_get_clean();
     }
@@ -379,17 +380,22 @@ class View{
         while (ob_get_level() > $obLevel) {
             ob_end_clean();
         }
+        
         //var_dump($e);
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine(), $e);
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine());
         //var_dump($e);
+        
         //throw $e;
+		error_handler($e);
+		/*
 		echo "Message: " . $e->getMessage();
 		echo "<br>";
 		echo "getCode(): " . $e->getCode();
 		echo "<br>";
 		echo "__toString(): " . $e->__toString();
 		exit();
+		*/
     }
     protected function expired(){
 		$dir=dirname($this->storage_path);
@@ -479,10 +485,6 @@ class View{
 		if(substr($method,0,4)==='with'){
 			$method=strtolower(substr($method,4));
 			return $this->with($method,$args[0]);
-			var_dump($args);
-			exit;
-			Route::$request->session->set($args[0],$args[1]);
-			//Route::$request->session->save();
 		}
 		return $this;
 	}

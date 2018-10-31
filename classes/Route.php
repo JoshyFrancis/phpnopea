@@ -280,10 +280,12 @@ function add_route($method, $parameters){
 			//	}
 			//}
 			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class];
+			
 		}
 	}
 }
 function load_classes(){
+	
 	global $GLOBALS;
 		$public_path=$GLOBALS['public_path'];
 		$lifetime=$GLOBALS['lifetime'];

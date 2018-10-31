@@ -4,7 +4,7 @@ This is included View
 	
 	echo 'shared data : ' . $shared_data;
 	echo '<br>';
-	//$x=1/0;
+	$x=1/0;
 	//throw new ErrorException("Just invoking the exception handler.", 2);
 	echo $test;
 	var_dump($arr);

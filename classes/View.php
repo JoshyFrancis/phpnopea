@@ -82,7 +82,6 @@ class View{
 		return new View($view,$data,null,null,$inner_view);
 	}
 	public static function share($key,$val){
-		$$key=$val;
 		if(View::$use_array_merge===true){
 			View::$shared_data=array_merge(View::$shared_data,[$key=>$val]);
 		}else{

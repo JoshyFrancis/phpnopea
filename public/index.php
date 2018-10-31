@@ -127,8 +127,7 @@ $current_route=null;
 //if (!file_exists(public_path('storage'))) {//or php artisan storage:link
 //	storage_link(storage_path('app/public'),public_path('storage'));
 //}
-			include __DIR__ . '/../classes/ExceptionHandler.php';
-			//throw new Exception("Just invoking the exception handler.", 2);
+
 $routes=[];
 $GLOBALS['routes']=$routes;
 	$route = new Route($request);
@@ -162,6 +161,8 @@ include __DIR__ . '/../classes/View.php';
 	if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
 		page_not_found();
 	}else{
+			include __DIR__ . '/../classes/ExceptionHandler.php';
+			//throw new Exception("Just invoking the exception handler.", 2);
 		
 			load_classes();
 		
@@ -172,10 +173,8 @@ include __DIR__ . '/../classes/View.php';
 		
 			if($current_route===null){
 				page_not_found();
-			}else{
-				 
-				echo through_middleware($current_route['func'],$current_route['args'],$current_route['controller_class']);
-				 
+			}else{		 
+				echo through_middleware($current_route['func'],$current_route['args'],$current_route['controller_class']);				 
 			}
 		Route::$request->session->save();
 		$env_data=null;

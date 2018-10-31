@@ -118,16 +118,16 @@
 
 		<div class="row">
 			<div class="col-md-12 page-500">
-				<div class=" number font-red"> {{Code}} </div>
+				<div class=" number font-red"> 4 </div>
 				<div class=" details">
-					<h3>{{Exception}}</h3>
-					<p> {{Explanation}}
+					<h3>Illuminate\Http\Exceptions\PostTooLargeException</h3>
+					<p> Your request is invalid in the current context.
 						<br/> 
 					</p>
 						
 					<p>
-						<a href="{{home}}" class="btn red btn-outline"> Return Home</a>
-						<a href="{{back}}" class="btn red btn-outline"> Return Back</a>
+						<a href="http://localhost/work/HR/laravel-5.4.23/public/index_c.php" class="btn red btn-outline"> Return Home</a>
+						<a href="http://localhost/work/HR/laravel-5.4.23/public/index_c.php/upload" class="btn red btn-outline"> Return Back</a>
 						<!--
 						<a class="btn red btn-outline"  href="javascript:show_error_precise();">Technical Details</a>
 						-->
@@ -213,53 +213,16 @@
                                     </h3>
                                     <p class="break-long-words trace-message"></p>
                                 </th></tr></thead>
-                                <tbody>
-									<tr>
-										<td>
-											<span class="block trace-file-path">in 
-												<a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php line 24">
-													<strong>ValidatePostSize.php</strong> line 24</a>
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td>at 
-											<span class="trace-class">
-												<abbr title="Illuminate\Foundation\Http\Middleware\ValidatePostSize">ValidatePostSize</abbr>
-												</span>
-												<span class="trace-type">-></span>
-												<span class="trace-method">handle</span>(
-												<span class="trace-arguments">
-													<em>object</em>(
-													<abbr title="Illuminate\Http\Request">Request</abbr>), 
-													<em>object</em>(<abbr title="Closure">Closure</abbr>)
-													</span>)
-													<span class="block trace-file-path">in 
-													<a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php line 148">
-														<strong>Pipeline.php
-														</strong> line 148</a>
-														</span>
-										</td>
-									</tr>
-									<tr>
-										<td>at 
-											<span class="trace-class">
-												<abbr title="Illuminate\Foundation\Http\Middleware\ValidatePostSize">ValidatePostSize</abbr>
-												</span>
-												<span class="trace-type">-></span>
-												<span class="trace-method">handle</span>(
-												<span class="trace-arguments">
-													<em>object</em>(
-													<abbr title="Illuminate\Http\Request">Request</abbr>), 
-													<em>object</em>(<abbr title="Closure">Closure</abbr>)
-													</span>)
-													<span class="block trace-file-path">in 
-													<a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php line 148">
-														<strong>Pipeline.php
-														</strong> line 148</a>
-														</span>
-										</td>
-									</tr>
+                                <tbody><tr><td><span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php line 24"><strong>ValidatePostSize.php</strong> line 24</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Foundation\Http\Middleware\ValidatePostSize">ValidatePostSize</abbr></span><span class="trace-type">-></span><span class="trace-method">handle</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>), <em>object</em>(<abbr title="Closure">Closure</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php line 148"><strong>Pipeline.php</strong> line 148</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Pipeline\Pipeline">Pipeline</abbr></span><span class="trace-type">-></span><span class="trace-method">Illuminate\Pipeline\{closure}</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Routing\Pipeline.php line 53"><strong>Pipeline.php</strong> line 53</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Routing\Pipeline">Pipeline</abbr></span><span class="trace-type">-></span><span class="trace-method">Illuminate\Routing\{closure}</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode.php line 46"><strong>CheckForMaintenanceMode.php</strong> line 46</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode">CheckForMaintenanceMode</abbr></span><span class="trace-type">-></span><span class="trace-method">handle</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>), <em>object</em>(<abbr title="Closure">Closure</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php line 148"><strong>Pipeline.php</strong> line 148</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Pipeline\Pipeline">Pipeline</abbr></span><span class="trace-type">-></span><span class="trace-method">Illuminate\Pipeline\{closure}</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Routing\Pipeline.php line 53"><strong>Pipeline.php</strong> line 53</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Routing\Pipeline">Pipeline</abbr></span><span class="trace-type">-></span><span class="trace-method">Illuminate\Routing\{closure}</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php line 102"><strong>Pipeline.php</strong> line 102</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Pipeline\Pipeline">Pipeline</abbr></span><span class="trace-type">-></span><span class="trace-method">then</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Closure">Closure</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php line 151"><strong>Kernel.php</strong> line 151</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Foundation\Http\Kernel">Kernel</abbr></span><span class="trace-type">-></span><span class="trace-method">sendRequestThroughRouter</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php line 116"><strong>Kernel.php</strong> line 116</a></span></td></tr>
+<tr><td>at <span class="trace-class"><abbr title="Illuminate\Foundation\Http\Kernel">Kernel</abbr></span><span class="trace-type">-></span><span class="trace-method">handle</span>(<span class="trace-arguments"><em>object</em>(<abbr title="Illuminate\Http\Request">Request</abbr>)</span>)<span class="block trace-file-path">in <a title="E:\Work\HR\laravel-5.4.23\public\index_c.php line 64"><strong>index_c.php</strong> line 64</a></span></td></tr>
 </tbody>
 </table>
 </div>

@@ -34,7 +34,7 @@ function codeToString($code){
 		case E_USER_DEPRECATED:
 			return 'E_USER_DEPRECATED';
 	}
-	return 'Unknown PHP error';
+	return '';//'Unknown PHP error';
 }
 
 // Register handler
@@ -68,7 +68,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
 	$trace = debug_backtrace();//DEBUG_BACKTRACE_IGNORE_ARGS 
 	//ob_clean();
 	while (ob_get_level()){
-		//ob_get_clean();
+		//$out.=ob_get_clean();
 		ob_end_clean();
 	}
 	 
@@ -83,5 +83,9 @@ function error_handler($code=null,$message='',$file='',$line=0){
     // Output error page
     echo $message;
     var_dump($trace);
+			$public_path=$GLOBALS['public_path'];
+			$class_path= $public_path. '/../classes/' ;
+    $exception=file_get_contents($class_path.'exception.html');
+    //echo $exception;
     exit;
 }

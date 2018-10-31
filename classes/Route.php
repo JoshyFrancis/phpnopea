@@ -359,17 +359,17 @@ function through_middleware($func, $fire_args,$controller_class=null){
 		*/
 		$public_path=$GLOBALS['public_path'];
 	$res=null;
-	//$called=false;
+	$called=false;
 	$middleware_args=[];
 	$middleware_args[]= Route::$request;
-	$middleware_args[]= function($request) use($func, $fire_args,& $res,$controller_class){//, &$called){
-							if($res===null && error_get_last()['type']<2){// && $called===false){
+	$middleware_args[]= function($request) use($func, $fire_args,&$res,$controller_class, &$called){
+							if($res===null && error_get_last()['type']<2 && $called===false){
 								if($controller_class!==null){
 									$res= call_user_func_array([$controller_class, $func], $fire_args);
 								}else{
 									$res= call_user_func_array($func, $fire_args);
 								}
-								//$called=true;
+								$called=true;
 							}
 							return $res;
 						};
@@ -421,7 +421,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 				$class=new $class() ;	
 			$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 		if($res!==$res2){
-			//$called=true; 
+			$called=true; 
 			$res=$res2;
 		} 
 	}
@@ -436,7 +436,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 					$class=new $class() ;
 						$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 					if($res!==$res2){
-						//$called=true;
+						$called=true;
 						$res=$res2;
 					}
 				}
@@ -451,7 +451,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 			$middleware_args[2]=$group;
 				$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 			if($res!==$res2){
-				//$called=true; 
+				$called=true; 
 				$res=$res2;
 			}
 			//var_dump($res2);
@@ -459,7 +459,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	}
 	
 	//var_dump($res);
-	if($res===null && error_get_last()['type']<2){// && $called===false){
+	if($res===null && error_get_last()['type']<2 && $called===false){
 		//var_dump($res);
 		$res=$middleware_args[1](Route::$request);
 	}

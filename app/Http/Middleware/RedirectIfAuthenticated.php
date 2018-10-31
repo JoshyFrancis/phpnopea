@@ -32,11 +32,11 @@ class RedirectIfAuthenticated{
 			//$request->session->save();
 		}
 				//var_dump($request->session()->get('backUrl',''));
-				var_dump($request->path());
+				//var_dump($request->path());
 				//var_dump($request->method());	
 			//if (!\Auth::guard($guard)->check()) {
 			if (!auth()->guard('user2')->check() && $request->path()!=='login') {
-				if($request->method()==='GET'){
+				if($request->method()==='GET' && !$request->ajax() ){
 					$request->session()->put('backUrl',url()->current());
 					//$request->session->save();
 				}

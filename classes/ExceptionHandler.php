@@ -114,7 +114,14 @@ function error_handler($code=null,$message='',$file='',$line=0){
 			if($function==='error_handler'){
 				continue;
 			}
-		$class=isset($val['class'])?$val['class']:explode('.',$file_name)[0];
+				 
+				if(($pos=strrpos($file_name,'\\'))!==false){
+					$s_name=substr($file_name,  $pos+1) ;	 	
+				}elseif(($pos=strrpos($file_name,'/')+1)!==false){
+					$s_name=substr($file_name,  $pos) ;	 	
+				}
+				
+		$class=isset($val['class'])?$val['class']:explode('.',$s_name)[0];
 		$type=isset($val['type'])?$val['type']:'';
 		$args=isset($val['args'])?$val['args']:[];
 		$s_args='<em>object</em>(
@@ -158,17 +165,14 @@ function error_handler($code=null,$message='',$file='',$line=0){
 		 
 		$trace_body.='
 			<tr>
-				<td>at 
-					<span class="trace-class">
-						<abbr title="'.$file_name.'">'.$class.'</abbr>
-						</span>
-						<span class="trace-type">'.$type.'</span>
-						<span class="trace-method">'.$function.'</span>(<span class="trace-arguments">'.$s_args.'</span>)
-						<span class="block trace-file-path">in 
-							<a title="'.$file.'">
-								<strong>'.$file_name.'
-								</strong> line '.$line.'</a>
-						</span>
+				<td>at <span class="trace-class"><abbr title="'.$file_name.'">'.$class.'</abbr></span>
+					<span class="trace-type">'.$type.'</span>
+					<span class="trace-method">'.$function.'</span>(<span class="trace-arguments">'.$s_args.'</span>)
+					<span class="block trace-file-path">in 
+						<a title="'.$file.'">
+							<strong>'.$file_name.'
+							</strong> line '.$line.'</a>
+					</span>
 				</td>
 			</tr>
 		';

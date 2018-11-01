@@ -163,16 +163,16 @@
 
 		<div class="row">
 			<div class="col-md-12 page-500">
-				<div class=" number font-red"> {{Code}} </div>
+				<div class=" number font-red"> 0 </div>
 				<div class=" details">
-					<h3>{{Exception}}</h3>
-					<p> {{Explanation}}
+					<h3>Division by zero</h3>
+					<p> Division by zero
 						<br/> 
 					</p>
 						
 					<p>
-						<a href="{{url}}" class="btn red btn-outline"> Return Home</a>
-						<a href="{{back}}" class="btn red btn-outline"> Return Back</a>
+						<a href="http://localhost/laravel_5.7/laranopea/public/" class="btn red btn-outline"> Return Home</a>
+						<a href="http://localhost/laravel_5.7/laranopea/public/home" class="btn red btn-outline"> Return Back</a>
 						<!--
 						<a class="btn red btn-outline"  href="javascript:show_error_precise();">Technical Details</a>
 						-->
@@ -276,10 +276,149 @@
 						<div class="trace trace-as-html">
 							<table class="trace-details">
 								<thead class="trace-head">
-									{{trace_head}}
+									
+		<tr>
+			<th>
+				<h3 class="trace-class">
+					<span class="text-muted">0</span>
+					<span class="exception_title"><abbr title="\resources\views\include_view\index.blade.php">Division by zero</abbr></span>
+				</h3>
+				<p class="break-long-words trace-message"></p>
+			</th>
+		</tr>
+	
 								</thead>
 								<tbody>
-									{{trace_body}}
+									
+		<tr>
+			<td>
+				<span class="block trace-file-path">in 
+					<a title="\resources\views\include_view\index.blade.php">
+						<strong>\resources\views\include_view\index.blade.php</strong> line 7</a>
+				</span>
+			</td>
+		</tr>
+	
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\classes\View.php">\classes\View</abbr>
+						</span>
+						<span class="trace-type"></span>
+						<span class="trace-method">include</span>(<span class="trace-arguments">'\resources\views\include_view\index.blade.php'</span>)
+						<span class="block trace-file-path">in 
+							<a title="\classes\View.php">
+								<strong>\classes\View.php
+								</strong> line 368</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\classes\View.php">View</abbr>
+						</span>
+						<span class="trace-type">-></span>
+						<span class="trace-method">_render</span>(<span class="trace-arguments"></span>)
+						<span class="block trace-file-path">in 
+							<a title="\classes\View.php">
+								<strong>\classes\View.php
+								</strong> line 346</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\resources\views\include_view.php">View</abbr>
+						</span>
+						<span class="trace-type">-></span>
+						<span class="trace-method">render</span>(<span class="trace-arguments"></span>)
+						<span class="block trace-file-path">in 
+							<a title="\resources\views\include_view.php">
+								<strong>\resources\views\include_view.php
+								</strong> line 6</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\resources\views\home.blade.php">\resources\views\home</abbr>
+						</span>
+						<span class="trace-type"></span>
+						<span class="trace-method">include</span>(<span class="trace-arguments">'\resources\views\include_view.php'</span>)
+						<span class="block trace-file-path">in 
+							<a title="\resources\views\home.blade.php">
+								<strong>\resources\views\home.blade.php
+								</strong> line 14</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\classes\View.php">\classes\View</abbr>
+						</span>
+						<span class="trace-type"></span>
+						<span class="trace-method">include</span>(<span class="trace-arguments">'\resources\views\home.blade.php'</span>)
+						<span class="block trace-file-path">in 
+							<a title="\classes\View.php">
+								<strong>\classes\View.php
+								</strong> line 368</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\classes\View.php">View</abbr>
+						</span>
+						<span class="trace-type">-></span>
+						<span class="trace-method">_render</span>(<span class="trace-arguments"></span>)
+						<span class="block trace-file-path">in 
+							<a title="\classes\View.php">
+								<strong>\classes\View.php
+								</strong> line 346</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\classes\View.php">View</abbr>
+						</span>
+						<span class="trace-type">-></span>
+						<span class="trace-method">render</span>(<span class="trace-arguments"></span>)
+						<span class="block trace-file-path">in 
+							<a title="\classes\View.php">
+								<strong>\classes\View.php
+								</strong> line 444</a>
+						</span>
+				</td>
+			</tr>
+		
+			<tr>
+				<td>at 
+					<span class="trace-class">
+						<abbr title="\public\index.php">View</abbr>
+						</span>
+						<span class="trace-type">-></span>
+						<span class="trace-method">__tostring</span>(<span class="trace-arguments"></span>)
+						<span class="block trace-file-path">in 
+							<a title="\public\index.php">
+								<strong>\public\index.php
+								</strong> line 177</a>
+						</span>
+				</td>
+			</tr>
+		
 								</tbody>
 							
 							</table>
@@ -360,10 +499,10 @@
 					function send_error_report(el){
 						 
 						ajax({
-							url: '{{url}}/send_error_report?error_file={{error_file}}',
+							url: 'http://localhost/laravel_5.7/laranopea/public//send_error_report?error_file=error_0_01-Nov-2018_10-04-12.html',
 							type: 'get',
 							data:{
-									error_file:'{{error_file}}',
+									error_file:'error_0_01-Nov-2018_10-04-12.html',
 								},
 							success:  function (data,xhr) {
 								 //alert(data);

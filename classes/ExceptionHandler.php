@@ -79,7 +79,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $file=replace_file_mtime($e->getFile());
     $file_name=$file;//basename($file);
     $line=$e->getLine();
-    $home=url('/');
+    $url=url('/');
     $back=Route::$request->previous();
     $error_dispaly=Route::$request->ajax()?'':'none';
     $trace_head='
@@ -174,16 +174,17 @@ function error_handler($code=null,$message='',$file='',$line=0){
 		';
 		 
 	}
-		
-    $keys=['{{Code}}','{{Exception}}','{{Explanation}}','{{home}}','{{back}}','{{trace_head}}','{{trace_body}}'];
-    $changes=[$code,$Exception,$description,$home,$back,$trace_head,$trace_body];
-    $html=str_replace($keys,$changes,$exception);
-    echo $html;
-			$file_name= 'error_'.$code.'_' .date("d-M-Y_H-i-s",time()).'.html';
+		$file_name= 'error_'.$code.'_' .date("d-M-Y_H-i-s",time()).'.html';
 		$path= $storage_path.'errors'  ;  
 			if(!is_dir($path)){
 				mkdir($path);
 			}
-		file_put_contents($path.'/'.$file_name,$html);
+		
+    $keys=['{{Code}}','{{Exception}}','{{Explanation}}','{{url}}','{{back}}','{{trace_head}}','{{trace_body}}','{{error_file}}'];
+    $changes=[$code,$Exception,$description,$url,$back,$trace_head,$trace_body,$file_name];
+    $html=str_replace($keys,$changes,$exception);
+    echo $html;
+			$file=$path.'/'.$file_name;	
+		file_put_contents($file,$html);
     exit;
 }

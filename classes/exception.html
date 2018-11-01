@@ -191,7 +191,7 @@
 					 
 					
 				</p>
-				<div id="error_all" style="display:none;">
+				<div id="error_all" style2="display:none;">
 					<div class="exception-summary">
 						<div class="container">
 							<div class="exception-message-wrapper">
@@ -298,16 +298,15 @@
 						document.getElementById('error_detail').style.display='block';
 						 
 					}
-					var error_shown=false;
+					var error_shown=true;
 					function show_error(){
 						document.getElementById('error_detail').style.display=!error_shown?'none':'block';
 						document.getElementById('error_all').style.display=!error_shown?'block':'none';
 						error_shown=!error_shown;
 					}
-					 
-					if(0==1){
+					
 						show_error();
-					}
+					 
 					var ajax=function (o) {
 						var url=o.url;
 						var type=( o.type || 'post').toUpperCase();

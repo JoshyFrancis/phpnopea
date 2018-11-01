@@ -94,6 +94,7 @@ class ResourceController extends Controller{
     }
     public function API(Request $request){
 		var_dump($request->all());
+		
 		echo '<br>is ajax?' . ($request->ajax()?'true':'false') .'<br>';
 		echo '<br>is ajax secure?' . ($request->ajax_secure()?'true':'false')  .'<br>';
 		

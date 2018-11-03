@@ -101,7 +101,7 @@ class Request{
 		return isset($_SERVER[$name])? $_SERVER[$name]:null  ;
 	}
 	public function has($name){
-		return isset($_REQUEST[$name]);
+		return isset($_REQUEST[$name]) && $_REQUEST[$name]!=='';//!empty($_REQUEST[$name]);
 	}
 	public function input($name,$default=null){
 		return isset($_REQUEST[$name])? $_REQUEST[$name]:$default  ;

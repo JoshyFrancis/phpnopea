@@ -64,7 +64,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
 				
     $exception=file_get_contents($class_path.'exception.html');
     $code=$e->getCode();
-    $message=$e->getMessage();
+    $message=str_replace($base_path,'',$e->getMessage());
     $description=$message;
     $Exception=$message;
 			if(strpos($Exception,'Integrity constraint violation')!==false){

@@ -28,7 +28,7 @@ class DB{
 			$DBH->setAttribute(\PDO::ATTR_CASE,\PDO::CASE_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_ORACLE_NULLS,\PDO::NULL_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES,false);
-			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,false);
+			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);//Default false
 			$DBH->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
 			self::$DBH=$DBH;
 			self::$connection=new connection(self::$DBH);
@@ -96,10 +96,14 @@ class DB{
 	}
     public static function select($sql,$bindings=[]){
 			self::createDB();
-        $STH = self::$DBH->prepare($sql); 
-		//$STH->execute( self::prepareBindings($bindings));
-		self::bindValues($STH,self::prepareBindings($bindings));
-		$STH->execute();
+		try{
+			$STH = self::$DBH->prepare($sql); 
+			//$STH->execute( self::prepareBindings($bindings));
+			self::bindValues($STH,self::prepareBindings($bindings));
+			$STH->execute();
+		}catch(Exception $e){
+			throw new \Illuminate\Database\QueryException($sql,$bindings,$e);
+		}
 		return $STH->fetchAll(self::$fetchMode); 
     }
     public static function update($sql,$bindings=[]){

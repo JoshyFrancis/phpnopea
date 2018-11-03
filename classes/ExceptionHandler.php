@@ -133,7 +133,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
 					$bindings=$args[1];
 				foreach($bindings as $value){
 					if(is_string($value)){
-						$value="'".replace_file_mtime($value)."'";
+						$value="'".$value."'";
 					}elseif($value instanceof DateTimeInterface){
 						$value="'".$value->format('Y-m-d H:i:s')."'";
 					}elseif(is_bool($value)){

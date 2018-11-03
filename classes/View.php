@@ -384,7 +384,6 @@ class View{
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine(), $e);
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine());
         //var_dump($e);
-        
         //throw $e;
 		error_handler($e);
 		/*

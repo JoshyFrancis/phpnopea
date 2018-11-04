@@ -125,6 +125,9 @@ class SessionManager{// implements SessionHandlerInterface{
     public function remove($key){
         unset ($this->attributes[$key]);
     }
+    public function all(){
+        return $this->attributes;
+    }
     public function forget($key){
         self::remove($key);
     }
@@ -132,9 +135,9 @@ class SessionManager{// implements SessionHandlerInterface{
         $this->attributes = [];
     }
     public function regenerate( ){
-		$this->destroy($this->getId());
+		//$this->destroy($this->getId());
         $this->setId($this->generateSessionId());
-        $this->start();
+        //$this->start();
     }
     public function migrate( ){
         $this->regenerate();
@@ -172,14 +175,14 @@ class SessionManager{// implements SessionHandlerInterface{
     }
     public function restart(){	
 		$this->flush();
-		//$this->destroy($this->getId());
+		$this->destroy($this->getId());
 		$this->regenerate();
-		//$this->start();
+		$this->start();
 	}
 }
 function session($key=null){
 	if($key!==null){
-		return Route::$request->session->get($key);
+		return Route::$request->session->get('tmp_'.$key);
 	}else{
 		return Route::$request->session;
 	}

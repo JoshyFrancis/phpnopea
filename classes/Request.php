@@ -330,7 +330,7 @@ class Request{
     }
     public function previous($fallback=false){
 				$referrer =isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:null;
-			$url = $referrer ? url($referrer) : $this->session->get('_previous_url');
+			$url = $referrer ? url($referrer) : (isset($this->session)?$this->session->get('_previous_url'):'');
         if($url){
             return $url;
         }elseif($fallback){

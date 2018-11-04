@@ -466,28 +466,22 @@ class View{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
 		}
 		Route::$request->session->set('_errors',$data);
-		//Route::$request->session->save();
 		return $this;
 	}
 	public function withInput(){
 		Route::$request->session->set('_input',Route::$request->all_input());
-		//Route::$request->session->save();
 		return $this;
 	}
+	
 	public function with($data,$val=null){
+		clear_session_tmp();
 			if(!is_array($data)){
 				$data=[$data=>$val];
 			}
-		//if(View::$use_array_merge===true){ 
-		//	$data=array_merge($this->data,$data);
-		//}else{
-		//	$data= $this->data+$data;
-		//}
-		//Route::$request->session->set('_data',$data);
 		foreach($data as $k=>$v){
+			Route::$request->session->set('tmp_'.$k,'');
 			Route::$request->session->set($k,$v);
 		}
-		//Route::$request->session->save();
 		return $this;
 	}
 	public function __call($method,$args){

@@ -303,3 +303,12 @@ function dd($var){
 	var_dump($var);
 	die();
 }
+function clear_session_tmp(){
+		$session=Route::$request->session()->all();
+	foreach($session as $k=>$v){
+		if(strpos($k,'tmp_')!==false){
+			Route::$request->session()->remove(str_replace('tmp_','',$k));
+			Route::$request->session()->remove($k);
+		}
+	}
+}

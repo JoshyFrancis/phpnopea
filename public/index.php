@@ -17,21 +17,8 @@ ini_set('html_errors', true);
 ini_set('display_errors', 1);//in case of linux server
 error_reporting(E_ALL);
 
-function exception_handler($exception) {
-  //echo "Uncaught exception: " , $exception->getMessage(), "\n";
-  
-  //array_walk(debug_backtrace(),create_function('$a,$b','print "{$a[\'function\']}()(".basename($a[\'file\']).":{$a[\'line\']}); ";'));
-	//$db=debug_backtrace();
-	//array_walk($db,function($item, $key){
-	//	echo $item['function'].'()('. (isset($item['file'])? basename($item['file']):'') .':'. (isset($item['line'])?$item['line']:'') ; 
-	//});
-	echo '<pre>'; 
-	debug_print_backtrace();
-	echo '</pre>';
-}
-//set_exception_handler('exception_handler');
-
-//var_dump($_SERVER);
+include __DIR__ . '/../classes/ExceptionHandler.php';
+//throw new Exception("Just invoking the exception handler.", 2);
 
 if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
 	//header("404 not found",true,404);
@@ -161,9 +148,7 @@ include __DIR__ . '/../classes/View.php';
 	if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
 		page_not_found();
 	}else{
-			include __DIR__ . '/../classes/ExceptionHandler.php';
-			//throw new Exception("Just invoking the exception handler.", 2);
-		
+					
 			load_classes();
 		
 		include __DIR__ . '/../routes/web.php' ;	

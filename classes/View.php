@@ -506,6 +506,7 @@ class View{
 		return $this;
 	}
 	public function redirect_url($url){
+		Route::$request->session->set('_back','false');
 		$this->status=302;
 		$this->url=$url;
 		$this->setContents(sprintf('<!DOCTYPE html>
@@ -536,9 +537,10 @@ class View{
 		$this->setContents(file_get_contents($file));
 		return $this->withHeaders($headers);
 	}
-	public function back(){
+	public function back(){		
 		$url=Route::$request->previous();
 		$this->redirect_url($url);
+		Route::$request->session->set('_back','true');
 		return $this;
 	}
 	public function to($route){

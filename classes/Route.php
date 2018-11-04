@@ -307,7 +307,11 @@ function load_classes(){
 			if ($previous_url!==$url && $_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
 				$previous_url=$url;
 			}
+			if (Route::$request->session->get('_back','false')==='false'){
+				clear_session_tmp();
+			}
 		Route::$request->session->set('_previous_url',$previous_url );
+		
 		//Route::$request->session->save();
 	
 	include $public_path . '/../classes/Storage.php';

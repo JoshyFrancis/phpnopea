@@ -88,6 +88,9 @@ class View{
 			View::$shared_data=View::$shared_data + [$key=>$val];
 		}
 	}
+	public function view_include($view,$data,$parent_view){
+		return new View($view,$this->data,null,null,true);
+    }
 	public function view_make($view,$parent_view){
 		//return new View($view, $this->data ,$this->sections,$this->sectionStack,true);
 		$this->prepare_view($view,true);	
@@ -100,7 +103,10 @@ class View{
     }
 	public function stopSection(){
         $last = array_pop($this->sectionStack);
-            $this->sections[$last] = ob_get_clean();
+			if(!isset($this->sections[$last])){
+				$this->sections[$last]='';
+			}
+            $this->sections[$last]=ob_get_clean().$this->sections[$last];
         return $last;
     }
 	public function yieldContent($section ){
@@ -177,10 +183,10 @@ class View{
 						}
 							$pos=strpos($line,'@include');
 						if($pos!==false){
-							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8 ) ;	 	
+							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8 ) ;	 	
 							$pos=strrpos($line, ')');
 							if($pos!==false){		
-								$line=substr($line, 0, $pos) . ',$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
+								$line=substr($line, 0, $pos) . ',get_defined_vars(),$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
 							}
 							//$contents.=$line;
 							fwrite($handlew,$line);
@@ -384,6 +390,7 @@ class View{
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine(), $e);
         //$e = new ErrorException($e->getMessage().' (View: '. $this->view .')', 0, 1, $e->getFile(), $e->getLine());
         //var_dump($e);
+        
         //throw $e;
 		error_handler($e);
 		/*

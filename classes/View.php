@@ -183,10 +183,14 @@ class View{
 						}
 							$pos=strpos($line,'@include');
 						if($pos!==false){
-							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8 ) ;	 	
+							//$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8) ;	
+							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8) ;	 	
 							$pos=strrpos($line, ')');
 							if($pos!==false){		
-								$line=substr($line, 0, $pos) . ',get_defined_vars(),$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
+								/*
+								 $line=substr($line, 0, $pos) . ',get_defined_vars(),$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
+								 */
+								$line=substr($line, 0, $pos) . ',$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
 							}
 							//$contents.=$line;
 							fwrite($handlew,$line);

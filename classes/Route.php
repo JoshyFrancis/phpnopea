@@ -302,9 +302,10 @@ function load_classes(){
 		$session->start(); 
 		Route::$request->set_session($session);
 		
-		$previous_url='';
-			if ($_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
-				$previous_url=Route::$request->getUri();
+		$previous_url=Route::$request->session->get('_previous_url','');
+		$url=Route::$request->getUri();
+			if ($previous_url!==$url && $_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
+				$previous_url=$url;
 			}
 		Route::$request->session->set('_previous_url',$previous_url );
 		//Route::$request->session->save();

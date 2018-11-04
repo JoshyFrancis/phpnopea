@@ -299,3 +299,7 @@ function assoc_array_merge_diff($array1, $array2){
 	}
   return $diff;
 }
+function dd($var){
+	var_dump($var);
+	die();
+}

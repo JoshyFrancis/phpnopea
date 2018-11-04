@@ -132,7 +132,9 @@ class SessionManager{// implements SessionHandlerInterface{
         $this->attributes = [];
     }
     public function regenerate( ){
+		$this->destroy($this->getId());
         $this->setId($this->generateSessionId());
+        $this->start();
     }
     public function migrate( ){
         $this->regenerate();
@@ -170,9 +172,9 @@ class SessionManager{// implements SessionHandlerInterface{
     }
     public function restart(){	
 		$this->flush();
-		$this->destroy($this->getId());
+		//$this->destroy($this->getId());
 		$this->regenerate();
-		$this->start();
+		//$this->start();
 	}
 }
 function session($key=null){

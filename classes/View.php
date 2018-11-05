@@ -130,14 +130,16 @@ class View{
 			$extends='';
 			
 			$keys=[
-					['{{','}}']
+					['@{{','}}']
+					,['{{','}}']
 					,['{!!','!!}']
-					,['@{{','}}']
+					
 					];
 			$changes=[
-					['<?php echo ',';?>']
+					['<?php echo $this->curly_braces_open;?>','<?php echo $this->curly_braces_close;?>']
 					,['<?php echo ',';?>']
-					,['<?php echo $this->curly_braces_open;?>','<?php echo $this->curly_braces_close;?>']
+					,['<?php echo ',';?>']
+					
 					];
 			$statement_keys=[
 					'@endsection'

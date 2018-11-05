@@ -67,6 +67,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $message=str_replace($base_path,'',$e->getMessage());
     $description=$message;
     $Exception=$message;
+    $subject=str_replace("'","\'",$message);
 			if(strpos($Exception,'Integrity constraint violation')!==false){
 				$Exception='Cannot delete this document/item, while it has references. ';
 			}
@@ -184,8 +185,8 @@ function error_handler($code=null,$message='',$file='',$line=0){
 				mkdir($path);
 			}
 		
-    $keys=['{{Code}}','{{Exception}}','{{Explanation}}','{{url}}','{{back}}','{{trace_head}}','{{trace_body}}','{{error_file}}'];
-    $changes=[$code,$Exception,$description,$url,$back,$trace_head,$trace_body,$file_name];
+    $keys=['{{Code}}','{{Exception}}','{{Explanation}}','{{url}}','{{back}}','{{trace_head}}','{{trace_body}}','{{error_file}}','{{subject}}'];
+    $changes=[$code,$Exception,$description,$url,$back,$trace_head,$trace_body,$file_name,$subject];
     $html=str_replace($keys,$changes,$exception);
     echo $html;
 			$file=$path.'/'.$file_name;	

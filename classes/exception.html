@@ -360,11 +360,11 @@
 					function send_error_report(el){
 						 
 						ajax({
-							url: '{{url}}/send_error_report?error_file={{error_file}}&error_subject='+encodeURIComponent('{{Exception}}'),
+							url: '{{url}}/send_error_report?error_file={{error_file}}&error_subject='+encodeURIComponent('{{subject}}'),
 							type: 'get',
 							data:{
 									error_file:'{{error_file}}',
-									error_subject:'{{Exception}}',
+									error_subject:'{{subject}}',
 								},
 							success:  function (data,xhr) {
 								 //alert(data);

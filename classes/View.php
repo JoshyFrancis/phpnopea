@@ -106,7 +106,9 @@ class View{
 			if(!isset($this->sections[$last])){
 				$this->sections[$last]='';
 			}
+			//$this->sections[$last].=ob_get_clean();
             $this->sections[$last]=ob_get_clean().$this->sections[$last];
+            
         return $last;
     }
 	public function yieldContent($section ){
@@ -128,13 +130,14 @@ class View{
 			$extends='';
 			
 			$keys=[
-					'{{','}}'
-					,'{!!','!!}'
-
+					['{{','}}']
+					,['{!!','!!}']
+					,['@{{','}}']
 					];
 			$changes=[
-					'<?php echo ',';?>'
-					,'<?php echo ',';?>'
+					['<?php echo ',';?>']
+					,['<?php echo ',';?>']
+					,['<?php echo $this->curly_braces_open;?>','<?php echo $this->curly_braces_close;?>']
 					];
 			$statement_keys=[
 					'@endsection'
@@ -179,6 +182,9 @@ class View{
 								$line=substr($line, 0, $pos) . ',$this)->render(); ?>' .substr($line,  $pos+ 1 ) ;
 							}
 							$extends=$line;
+							$line="\n";
+							//$contents.=$line;
+							fwrite($handlew,$line);
 							continue;
 						}
 							$pos=strpos($line,'@include');
@@ -265,21 +271,7 @@ class View{
 						if($pos2===true){
 							continue;
 						}
-						/*
-						$count=count($changes);
-						$j=0;
-						for($j=0;$j<$count;$j++){
-							$str=$keys[$j];
-							$len=strlen($str);
-							$pos=false;
-							do{
-								$pos = strpos($line, $str);							
-								if($pos!==false && substr($line,$pos,$len)==$str ){//									 					
-									$line=substr($line, 0, $pos ) . $changes[$j] .substr($line,  $pos+ $len ) ;
-								}
-							}while($pos!==false);
-						}
-						*/	
+						
 						$line2='';
 						
 						
@@ -309,32 +301,47 @@ class View{
 								$php=false;
 							}
 						}
-						
-						if(strpos($line,'@{{')!==false){							
-								$pos=false;
-								$pos2=false;
+						/* 
+						$count=count($changes);
+						$j=0;
+						for($j=0;$j<$count;$j++){
+							$str=$keys[$j];
+							$len=strlen($str);
+							$pos=false;
 							do{
-								$pos = strpos($line, '@{{');							
-								if($pos!==false){
-									$line=substr($line, 0, $pos) .'<?php echo $this->curly_braces_open;?>' .substr($line,  $pos+ 3 ) ;	 	
-									$pos2=strpos($line, '}}',$pos);
-									if($pos2!==false){		
-										$line=substr($line, 0, $pos2) . '<?php echo $this->curly_braces_close;?>' .substr($line,  $pos2+ 2 ) ;
-									}
+								$pos = strpos($line, $str);							
+								if($pos!==false && substr($line,$pos,$len)==$str ){//									 					
+									$line=substr($line, 0, $pos ) . $changes[$j] .substr($line,  $pos+ $len ) ;
 								}
-							}while($pos!==false);	
+							}while($pos!==false);
+						}
+						*/
+						foreach($keys as $key=>$val){
+								$open_key=$val[0];
+								$close_key=$val[1];
+									$val=$changes[$key];
+								$replace_open=$val[0];
+								$replace_close=$val[1];
+							if(strpos($line,$open_key)!==false){							
+									$pos=false;
+									$pos2=false;
+								do{
+									$pos = strpos($line, $open_key);							
+									if($pos!==false){
+										$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos+ strlen($open_key) ) ;	 	
+										$pos2=strpos($line, $close_key,$pos);
+										if($pos2!==false){		
+											$line=substr($line, 0, $pos2) .$replace_close.substr($line,  $pos2+ strlen($close_key) ) ;
+										}
+									}
+								}while($pos!==false);
+							}
 						}
 						
-						 	$line=str_replace($keys ,$changes ,$line).$line2;
+						
+						$line=$line.$line2;
 						 
-						
-						//if(strpos($line,'<@')!==false){
-						//	$line=str_replace('<@' ,'{{{' ,$line);
-						//}
-						//if(strpos($line,'@>')!==false){
-						//	$line=str_replace('@>' ,'}}}' ,$line);
-						//}
-						
+						 
 						//$contents.=$line; 
 						fwrite($handlew,$line);
 					} 
@@ -381,9 +388,10 @@ class View{
 		//} catch (Error $e) {
         //   $this->handleViewException($e, $obLevel);
         }
-        
-        //return ltrim(ob_get_clean());
-        return ob_get_clean();
+        //return ob_get_clean(); 
+        return ltrim(ob_get_clean());
+       
+       
     }
 	protected function handleViewException($e, $obLevel){
         while (ob_get_level() > $obLevel) {

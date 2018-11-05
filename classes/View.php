@@ -472,15 +472,12 @@ class View{
 		Route::$request->session->set('_input',Route::$request->all_input());
 		return $this;
 	}
-	
 	public function with($data,$val=null){
-		clear_session_tmp();
 			if(!is_array($data)){
 				$data=[$data=>$val];
 			}
 		foreach($data as $k=>$v){
-			Route::$request->session->set('tmp_'.$k,'');
-			Route::$request->session->set($k,$v);
+			Route::$request->session->flash($k,$v);
 		}
 		return $this;
 	}
@@ -540,7 +537,6 @@ class View{
 	public function back(){		
 		$url=Route::$request->previous();
 		$this->redirect_url($url);
-		Route::$request->session->set('_back','true');
 		return $this;
 	}
 	public function to($route){

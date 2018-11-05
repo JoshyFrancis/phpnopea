@@ -307,12 +307,8 @@ function load_classes(){
 			if ($previous_url!==$url && $_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
 				$previous_url=$url;
 			}
-			if (Route::$request->session->get('_back','false')==='false'){
-				clear_session_tmp();
-			}
 		Route::$request->session->set('_previous_url',$previous_url );
 		
-		//Route::$request->session->save();
 	
 	include $public_path . '/../classes/Storage.php';
 	include $public_path . '/../classes/Illuminate_QueryException.php';//used in DB class
@@ -321,12 +317,14 @@ function load_classes(){
 		//$GLOBALS['db']=$db;
 	
 	include $public_path . '/../classes/Auth.php';
+	include $public_path . '/../classes/Illuminate_User.php';
 		Route::$auth=new Auth();
 	include $public_path . '/../classes/Validator.php';
 	include $public_path . '/../classes/Session.php';
 	include $public_path . '/../classes/Illuminate_Session.php';
 	include $public_path . '/../classes/Illuminate_Hash.php';
-	include $public_path . '/../classes/Illuminate_User.php';
+	
+			
 }
 function load_laravel_classes(){
 	global $GLOBALS;

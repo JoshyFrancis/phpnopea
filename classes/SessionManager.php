@@ -114,12 +114,26 @@ class SessionManager{// implements SessionHandlerInterface{
         return isset($this->attributes[$key]) && $this->attributes[$key]!==null;
     }
     public function get($key, $default = null){
-       return isset($this->attributes[$key])?$this->attributes[$key]:$default;
+		$value=isset($this->attributes[$key])?$this->attributes[$key]:$default;
+			if(isset($this->attributes['_flash'.$key])){
+				if($this->attributes['_flash'.$key]===''){
+					$this->attributes['_flash'.$key]=$value;
+					unset($this->attributes[$key]);
+				}else{
+					$value=isset($this->attributes['_flash'.$key])?$this->attributes['_flash'.$key]:$default;
+					unset($this->attributes['_flash'.$key]);
+				}
+			}
+		return $value;
     }
     public function put($key, $value = null){
         $this->attributes[$key]=$value;
     }
     public function set($key, $value = null){
+        $this->put($key,$value);
+    }
+    public function flash($key, $value = null){
+        $this->put('_flash'.$key,'');
         $this->put($key,$value);
     }
     public function remove($key){
@@ -182,7 +196,7 @@ class SessionManager{// implements SessionHandlerInterface{
 }
 function session($key=null){
 	if($key!==null){
-		return Route::$request->session->get('tmp_'.$key);
+		return Route::$request->session->get($key);
 	}else{
 		return Route::$request->session;
 	}

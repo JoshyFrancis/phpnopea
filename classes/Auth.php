@@ -1,11 +1,10 @@
 <?php
 class Auth{
-	public $ID;
-	public $id;
-	public $username;
-	public $first_name;
-	public $password;
+	public $user;
 	public $remember_time=((60*60)*24)*365;//365 days
+	public function __construct(){
+		$this->user=new \App\User;
+    }
 	public static function __callStatic($method, $parameters){
 			Route::$auth->_guard();
 		return Route::$auth;
@@ -18,18 +17,22 @@ class Auth{
 			$this->check();
 		return !Route::$request->session->get('_login',false);
 	}
+	public function user(){
+			$this->check();
+		return $this->user;
+	}
 	public function _guard(){
-		$this->id=Route::$request->session->get('_userID',null);
-		$this->username=Route::$request->session->get('_username',null);
-		$this->first_name=Route::$request->session->get('_first_name',null);
-		$this->password=Route::$request->session->get('_password',null);
-		$this->ID=$this->id;
+		$this->check();
 		return $this;
 	}
 	public function __get($name){
-		if($name==='ID'){
-			return $this->id;
-		}
+		return $this->user{$name};
+	}
+	protected function _set_user($rows){
+		$this->user->ID=$rows[0]->ID;
+		$this->user->username=$rows[0]->username;
+		$this->user->first_name=$rows[0]->first_name;
+		$this->user->password=$rows[0]->password;
 	}
 	public function check(){
 		global $GLOBALS;
@@ -45,17 +48,21 @@ class Auth{
 			if(count($rows)>0){
 				//if(time()<=(int)$time){
 					 $login=true;
+					 
 						$ID=$rows[0]->ID;
+					
 					 Route::$request->session->put('_userID',$ID);
-					 Route::$request->session->put('_username',$rows[0]->username );
-					 Route::$request->session->put('_first_name',$rows[0]->first_name );
-					 Route::$request->session->put('_password',$rows[0]->password );
+						$this->_set_user($rows);
 				//}else{
 				//	remove_cookie($remember_cookie);
 				//}
 			}
 			Route::$request->session->put('_login',$login);
-			//Route::$request->session->save();
+		}elseif($login===true){
+			$rows =DB::select('SELECT ID,password,username,first_name from users where ID=?' ,[Route::$request->session->get('_userID')] );
+			if(count($rows)>0){
+				$this->_set_user($rows);
+			}
 		}
 		return $login;
 	}
@@ -115,9 +122,7 @@ class Auth{
 					//header("Location: /foo.php",TRUE,301);
 					 $login=true;
 					 Route::$request->session->put('_userID',$ID);
-					 Route::$request->session->put('_username',$rows[0]['username']);
-					 Route::$request->session->put('_first_name',$rows[0]['first_name']);
-					 Route::$request->session->put('_password',$rows[0]['password']);
+						////$this->_set_user($rows);
 					if($remember==='on' || $remember==='1'){
 						$time=time()+$this->remember_time;
 						$token=bin2hex(openssl_random_pseudo_bytes(32)).'_'.$time;
@@ -135,7 +140,6 @@ class Auth{
 			}
 		 
 		Route::$request->session->put('_login',$login);
-		//Route::$request->session->save();
 		return $login;
 	}
 	public function logout(){

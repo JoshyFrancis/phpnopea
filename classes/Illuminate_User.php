@@ -9,6 +9,13 @@ Class User{
 		$this->names[]=$name;
 		$this->values[]=$value;
     }
+    public function __get($name){
+		$p=array_search($name,$this->names);
+		if($p!==false){
+			return $this->values[$p];
+		}
+		return null;
+    }
     public function save(){
 		$sql='INSERT INTO '.$this->table.'(';
 		$c=0;

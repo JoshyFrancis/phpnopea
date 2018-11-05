@@ -88,8 +88,17 @@ class View{
 			View::$shared_data=View::$shared_data + [$key=>$val];
 		}
 	}
-	public function view_include($view,$data,$parent_view){
-		return new View($view,$this->data,null,null,true);
+	public function view_include($view,$data=[],$vars=[],$vars2=[]){
+		foreach($vars+$vars2 as $key=>$val){
+			if(!isset($data[$key])){
+				$data[$key]=$val;
+			}
+		}
+		unset($data['__path']);
+		unset($data['__data']);
+		//var_dump($data);
+		//exit;
+		return new View($view,$data,null,null,true);
     }
 	public function view_make($view,$parent_view){
 		//return new View($view, $this->data ,$this->sections,$this->sectionStack,true);
@@ -191,14 +200,17 @@ class View{
 						}
 							$pos=strpos($line,'@include');
 						if($pos!==false){
-							//$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8) ;	
-							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8) ;	 	
+							//$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8) ;	 
+							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8) ;	
+								
 							$pos=strrpos($line, ')');
 							if($pos!==false){		
 								/*
 								 $line=substr($line, 0, $pos) . ',get_defined_vars(),$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
-								 */
 								$line=substr($line, 0, $pos) . ',$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
+								*/
+								
+								$line=substr($line, 0, $pos) . ',get_defined_vars());echo $_view->render(); ?>' .substr($line,  $pos+ 1 ) ;
 							}
 							//$contents.=$line;
 							fwrite($handlew,$line);
@@ -339,7 +351,27 @@ class View{
 								}while($pos!==false);
 							}
 						}
-						
+						//$line=str_replace($changes[0],['{{','}}'],$line);// Reverse @{{
+								$val=$changes[0];
+							$open_key=$val[0];
+							$close_key=$val[1];
+								$val=$keys[0];
+							$replace_open='{{';
+							$replace_close='}}';
+						if(strpos($line,$open_key)!==false){							
+								$pos=false;
+								$pos2=false;
+							do{
+								$pos = strpos($line, $open_key);							
+								if($pos!==false){
+									$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos+ strlen($open_key) ) ;	 	
+									$pos2=strpos($line, $close_key,$pos);
+									if($pos2!==false){		
+										$line=substr($line, 0, $pos2) .$replace_close.substr($line,  $pos2+ strlen($close_key) ) ;
+									}
+								}
+							}while($pos!==false);
+						}
 						
 						$line=$line.$line2;
 						 

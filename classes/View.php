@@ -13,10 +13,13 @@ class View{
     protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false=better speed
+    public static $main_view=null;
     public static $views=[];
     public static $views_data=[];
-    public function __construct($view=null,$data=[],$sections=null,$sectionStack=null,$inner_view=false){
-		 
+    public function __construct($view=null,$data=[],$inner_view=false){
+		if(View::$main_view===null){
+			View::$main_view=$this;
+		}
 			//View::$views[]=$this;//not used now
 			View::$views_data=$data;
         $this->data=$data;
@@ -43,13 +46,14 @@ class View{
 			}
 			
         $this->prepare_view($view,$inner_view);
-        
+			/*
 			if($sections!==null){
 				$this->sections=$sections;
 			}
 			if($sectionStack!==null){
 				$this->sectionStack=$sectionStack;
 			}
+			*/
     }
     public function prepare_view($view,$inner_view=false){
 		$this->view=$view;
@@ -79,7 +83,7 @@ class View{
 			//	$data+=$v->data;
 			//}
 			//$data+=View::$views_data;
-		return new View($view,$data,null,null,$inner_view);
+		return new View($view,$data,$inner_view);
 	}
 	public static function share($key,$val){
 		if(View::$use_array_merge===true){
@@ -98,39 +102,39 @@ class View{
 		unset($data['__data']);
 		//var_dump($data);
 		//exit;
-		return new View($view,$data,null,null,true);
+		return new View($view,$data,true);
     }
 	public function view_make($view,$parent_view){
-		//return new View($view, $this->data ,$this->sections,$this->sectionStack,true);
-		$this->prepare_view($view,true);	
-		return $this;
+		return new View($view, $this->data,true);
+		//$this->prepare_view($view,true);	
+		//return $this;
     }
 	public function startSection($section ){
 		if (ob_start()) {
-			$this->sectionStack[] = $section;
+			View::$main_view->sectionStack[] = $section;
 		}
     }
 	public function stopSection(){
-        $last = array_pop($this->sectionStack);
-			if(!isset($this->sections[$last])){
-				$this->sections[$last]='';
+        $last = array_pop(View::$main_view->sectionStack);
+			if(!isset(View::$main_view->sections[$last])){
+				View::$main_view->sections[$last]='';
 			}
-			//$this->sections[$last].=ob_get_clean();
-            $this->sections[$last]=ob_get_clean().$this->sections[$last];
+			//View::$main_view->sections[$last].=ob_get_clean();
+            View::$main_view->sections[$last]=ob_get_clean().View::$main_view->sections[$last];
             
         return $last;
     }
 	public function yieldContent($section ){
-        return isset($this->sections[$section])? $this->sections[$section]:'';
+        return isset(View::$main_view->sections[$section])?View::$main_view->sections[$section]:'';
     }
     public function startParent(){
-		$last=$this->stopSection();
-		$this->startSection('parent_'.$last);
+		$last=View::$main_view->stopSection();
+		View::$main_view->startSection('parent_'.$last);
 		return $last;
     }
     public function showParent(){
-		$last=$this->stopSection();
-		return $this->yieldContent('parent_'.$last);
+		$last=View::$main_view->stopSection();
+		return View::$main_view->yieldContent('parent_'.$last);
     }
     public function compile(){
 		if($this->expired()){
@@ -405,13 +409,14 @@ class View{
 
         ob_start();
 
+		foreach(View::$shared_data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
+		    $$key = $value; 
+		}
 		//extract($this->data, EXTR_SKIP);//Import variables from an array into the current symbol table.
 		foreach($this->data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
 		    $$key = $value; 
 		}
-		foreach(View::$shared_data as $key=>$value){//http://php.net/manual/en/function.extract.php#115757     Surprisingly for me extract is 20%-80% slower then foreach construction. I don't really understand why, but it's so.
-		    $$key = $value; 
-		}
+		
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.

@@ -114,15 +114,10 @@ class SessionManager{// implements SessionHandlerInterface{
         return isset($this->attributes[$key]) && $this->attributes[$key]!==null;
     }
     public function get($key, $default = null){
-		$value=isset($this->attributes[$key])?$this->attributes[$key]:$default;
 			if(isset($this->attributes['_flash'.$key])){
-				if($this->attributes['_flash'.$key]===''){
-					$this->attributes['_flash'.$key]=$value;
-					unset($this->attributes[$key]);
-				}else{
-					$value=isset($this->attributes['_flash'.$key])?$this->attributes['_flash'.$key]:$default;
-					unset($this->attributes['_flash'.$key]);
-				}
+				$value=$this->attributes['_flash'.$key];
+			}else{
+				$value=isset($this->attributes[$key])?$this->attributes[$key]:$default;
 			}
 		return $value;
     }
@@ -133,11 +128,23 @@ class SessionManager{// implements SessionHandlerInterface{
         $this->put($key,$value);
     }
     public function flash($key, $value = null){
-        $this->put('_flash'.$key,'');
-        $this->put($key,$value);
+		if(!isset($this->attributes['flash_url'])){
+			global $GLOBALS;
+			$route_path=$GLOBALS['route_path'];
+			$this->attributes['flash_url']=$route_path;
+		}
+        $this->attributes['_flash'.$key]=$value;
+    }
+    public function clear_flash(){
+		foreach($this->attributes as $key=>$val){
+			if(strpos($key,'_flash')!==false){
+				unset($this->attributes[$key]);
+			}
+		}
+		unset($this->attributes['flash_url']);
     }
     public function remove($key){
-        unset ($this->attributes[$key]);
+        unset($this->attributes[$key]);
     }
     public function all(){
         return $this->attributes;
@@ -173,7 +180,18 @@ class SessionManager{// implements SessionHandlerInterface{
         }
          
 			set_cookie( $this->session_name , $this->getId() ,time()+$this->seconds);
-   
+		
+		if(isset($this->attributes['flash_url'])){
+			if($this->attributes['flash_url']==='subsequent'){
+				$this->clear_flash();
+			}else{
+				global $GLOBALS;
+				$route_path=$GLOBALS['route_path'];
+				//if($this->attributes['flash_url']!==$route_path){
+					$this->attributes['flash_url']='subsequent';
+				//}
+			}
+		}
         return $this->started = true;
     }
     public function save(){	

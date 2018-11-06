@@ -92,11 +92,10 @@ class View{
 			View::$shared_data=View::$shared_data + [$key=>$val];
 		}
 	}
-	public function view_include($view,$data=[],$vars=[],$vars2=[]){
-		foreach($vars+$vars2 as $key=>$val){
-			if(!isset($data[$key])){
-				$data[$key]=$val;
-			}
+	public function view_include($view,$data_new=[],$vars=[],$vars2=[]){
+		$data=$vars+$vars2;
+		foreach($data_new as $key=>$val){
+			$data[$key]=$val;
 		}
 		unset($data['__path']);
 		unset($data['__data']);
@@ -205,16 +204,18 @@ class View{
 							$pos=strpos($line,'@include');
 						if($pos!==false){
 							//$line=substr($line, 0, $pos) .'<?php $_view=$this->view_make' .substr($line,  $pos+ 8) ;	 
+							//$line=substr($line, 0, $pos) .'<?php $this->view_include' .substr($line,  $pos+ 8) ;
 							$line=substr($line, 0, $pos) .'<?php $_view=$this->view_include' .substr($line,  $pos+ 8) ;	
-								
 							$pos=strrpos($line, ')');
 							if($pos!==false){		
 								/*
 								 $line=substr($line, 0, $pos) . ',get_defined_vars(),$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
 								$line=substr($line, 0, $pos) . ',$this);$_view->compile();include $_view->storage_path; ?>' .substr($line,  $pos+ 1 ) ;
-								*/
 								
-								$line=substr($line, 0, $pos) . ',get_defined_vars());echo $_view->render(); ?>' .substr($line,  $pos+ 1 ) ;
+								$line=substr($line, 0, $pos) . ',get_defined_vars())->render(); ?>' .substr($line,  $pos+ 1 ) ;
+								*/
+								$line=substr($line, 0, $pos) . ',get_defined_vars());echo $_view->render(); ?>' .substr($line,  $pos+ 1 ) ;								
+								
 							}
 							//$contents.=$line;
 							fwrite($handlew,$line);

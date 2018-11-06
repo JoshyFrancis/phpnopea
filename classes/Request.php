@@ -107,7 +107,7 @@ class Request{
 		return isset($_REQUEST[$name])? $_REQUEST[$name]:$default  ;
 	}
 	public function hasFile($name){
-		return isset($_FILES[$name]);
+		return isset($_FILES[$name]) && $this->files->get($name)!==null;
 	}
 	public function file($name){
 		return $this->files->get($name);

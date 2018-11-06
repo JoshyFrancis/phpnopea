@@ -2,13 +2,7 @@
 namespace Illuminate\Support\Facades;
 use StorageBase;
 trait Storage{
-	public static function get($path) {
-		return StorageBase::get($path);
-	}
-	public static function delete($path) {
-		return StorageBase::delete($path);
-	}
-	public static function disk($path) {
-		return StorageBase::disk($path);
+	public static function __callStatic($method,$arguments) {
+		return call_user_func_array('StorageBase::'.$method,$arguments);
 	}
 }

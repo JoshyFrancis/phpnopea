@@ -2,7 +2,7 @@
 class View{
     protected $view;
     public $data;
-    protected $path;
+    public $path;
     public $storage_path;
     protected $sections=[];
     protected $sectionStack=[];

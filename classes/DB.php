@@ -79,10 +79,12 @@ class DB{
             // We need to transform all instances of DateTimeInterface into the actual
             // date string. Each query grammar maintains its own date string format
             // so we'll just ask the grammar for the format to get from the date.
-            if ($value instanceof DateTimeInterface) {
+            if($value instanceof DateTimeInterface){
                 $bindings[$key] = $value->format('Y-m-d H:i:s');
-            } elseif ($value === false) {
+            }elseif($value === false){
                 $bindings[$key] = 0;
+            }elseif(is_object($value)){
+                $bindings[$key] = null;
             }
         }
         return $bindings;

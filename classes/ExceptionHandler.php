@@ -131,21 +131,31 @@ function error_handler($code=null,$message='',$file='',$line=0){
 			';
 			if($class==='DB' && count($args)>1){
 					$sql=$args[0];
-					$bindings=$args[1];
-				foreach($bindings as $value){
-					if(is_string($value)){
-						$value="'".$value."'";
-					}elseif($value instanceof DateTimeInterface){
-						$value="'".$value->format('Y-m-d H:i:s')."'";
-					}elseif(is_bool($value)){
-						$value=(int)$value;
+				if(is_string($sql)){
+						$bindings=$args[1];
+					foreach($bindings as $value){
+						if(is_string($value)){
+							$value="'".$value."'";
+						}elseif($value instanceof DateTimeInterface){
+							$value="'".$value->format('Y-m-d H:i:s')."'";
+						}elseif(is_bool($value)){
+							$value=(int)$value;
+						}elseif(is_object($value)){
+							$value=get_class($value);
+						}else{
+							$value=gettype($value);
+						}
+						
+								$pos=strpos($sql,'?');
+							if($pos!==false){
+								$sql=substr($sql, 0, $pos) .$value.substr($sql,  $pos+ 1 ) ;	 	
+							}
+						
 					}
-						$pos=strpos($sql,'?');
-					if($pos!==false){
-						$sql=substr($sql, 0, $pos) .$value.substr($sql,  $pos+ 1 ) ;	 	
-					}
+					$s_args='"'.$sql.';"';
+				}else{
+					$s_args=is_object($sql)?get_class($sql):gettype($sql);
 				}
-				$s_args='"'.$sql.';"';
 			}else{
 				
 					$s_args='';

@@ -7,23 +7,23 @@ class Auth{
     }
 	public static function __callStatic($method, $parameters){
 		if($method==='user'){
-			$this->check();
-			return $this->user;
+			Route::$auth->check();
+			return Route::$auth->user;
 		}
 			Route::$auth->_guard();
 		return Route::$auth;
 	}
 	public function __call($method, $parameters){
+		if($method==='user'){
+			Route::$auth->check();
+			return Route::$auth->user;
+		}
 			Route::$auth->_guard();
 		return Route::$auth;
     }
 	public function guest(){
 			$this->check();
 		return !Route::$request->session->get('_login',false);
-	}
-	public function user(){
-			$this->check();
-		return $this->user;
 	}
 	public function _guard(){
 		$this->check();

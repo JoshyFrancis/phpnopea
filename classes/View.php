@@ -145,12 +145,7 @@ class View{
 				,['@if','(',')','<?php if(','){ ?>']
 				,['@elseif','(',')','<?php }elseif(','){ ?>']
 				,['@foreach','(',')','<?php foreach(','){ ?>']
-				
-				,['@{{','}}','<<','>>']
-				,['{{','}}','<?php echo ',';?>']
-				,['{!!','!!}','<?php echo ',';?>']
-				,['<<','>>','{{','}}']
-				
+							
 				,['@endsection','<?php $this->stopSection(); ?>']
 				,['@else','<?php }else{ ?>']
 				,['@endif','<?php } ?>']
@@ -164,7 +159,10 @@ class View{
 				
 			];
 		$shortcuts=[
-				
+				['@{{','}}','<<','>>']
+				,['{{','}}','<?php echo ',';?>']
+				,['{!!','!!}','<?php echo ',';?>']
+				,['<<','>>','{{','}}']
 				
 			];
 		$line='';
@@ -195,33 +193,7 @@ class View{
 					//$line="#  @if (errors->has('email')) {{var }} {!!var2 !!} @{{ var3 }} <e>@section ( 'links')@extends('layouts.app')e</e> @endsection @show#";
 					//var_dump( $line);
 					
-					$line2='';
-						if(strpos($line,'<?php')!==false){
-							$php=true;
-						}
-					if($php===true){// excluding comments
-						 
-						$single_line_comment=false;	
-						if(strpos($line,'//')!==false){
-							$line2=substr($line, strpos($line,'//') );
-							$line=substr($line,0,strpos($line,'//'));
-							$single_line_comment=true;
-						}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
-							$line2=substr($line, strpos($line,'/*'));
-							$line=substr($line,0,strpos($line,'/*'));
-							$multi_line_comment=true;
-						}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
-							$line2=substr($line, strpos($line,'*/'));
-							$line=substr($line,0,strpos($line,'*/'));
-							$multi_line_comment=false;
-						}elseif($multi_line_comment===true){
-							$line2=$line;
-							$line='';
-						}
-						if(strpos($line,'?>')!==false){
-							$php=false;
-						}
-					}
+					
 					
 						$pos=strpos($line,'@extends');
 						$pos2=false;
@@ -332,6 +304,34 @@ class View{
 						}
 					}
 					
+					$line2='';
+						if(strpos($line,'<?php')!==false){
+							$php=true;
+						}
+					
+					if($php===true){// excluding comments
+						 
+						$single_line_comment=false;	
+						if(strpos($line,'//')!==false){
+							$line2=substr($line, strpos($line,'//') );
+							$line=substr($line,0,strpos($line,'//'));
+							$single_line_comment=true;
+						}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
+							$line2=substr($line, strpos($line,'/*'));
+							$line=substr($line,0,strpos($line,'/*'));
+							$multi_line_comment=true;
+						}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
+							$line2=substr($line, strpos($line,'*/'));
+							$line=substr($line,0,strpos($line,'*/'));
+							$multi_line_comment=false;
+						}elseif($multi_line_comment===true){
+							$line2=$line;
+							$line='';
+						}
+						if(strpos($line,'?>')!==false){
+							$php=false;
+						}
+					}
 					/*	  
 					foreach($statements as $val){
 							$statement=$val[0];
@@ -349,9 +349,8 @@ class View{
 							}while($pos!==false);
 						}
 					}
-											
-					
-					
+					*/					
+										
 					foreach($shortcuts as $key=>$val){
 							$open_brace=$val[0];
 							$close_brace=$val[1];
@@ -401,7 +400,7 @@ class View{
 							}while($pos!==false);
 						}
 					}
-					*/
+					
 					
 					//var_dump($line);
 					//exit;

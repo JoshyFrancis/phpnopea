@@ -6,6 +6,10 @@ class Auth{
 		$this->user=new \App\User;
     }
 	public static function __callStatic($method, $parameters){
+		if($method==='user'){
+			$this->check();
+			return $this->user;
+		}
 			Route::$auth->_guard();
 		return Route::$auth;
 	}

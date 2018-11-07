@@ -76,7 +76,7 @@
             </div>
         </nav>
         <?php $action='index';?>
-        <?php if ($action =='index'){ ?>
+        <?php if($action =='index'){ ?>
 			<h3>Index</h3>
         <?php } ?>
         

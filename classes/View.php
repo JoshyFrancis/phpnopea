@@ -8,8 +8,6 @@ class View{
     protected $sectionStack=[];
     protected $contents='';
     public $status=200;
-    protected $curly_braces_open='{{';
-    protected $curly_braces_close='}}';
     protected $url='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false=better speed
@@ -136,273 +134,267 @@ class View{
 		return View::$main_view->yieldContent('parent_'.$last);
     }
     public function compile(){
-		$b=$this->expired();
-		$b=true;
-		if($b){
-			//$contents= file_get_contents( $this->path);
-			//$contents='';
-			$extends='';
-			
-			$shortcuts=[
-					['@{{','}}','{curly_braces_open}','{curly_braces_close}']
-					,['{{','}}','<?php echo ',';?>']
-					,['{!!','!!}','<?php echo ',';?>']
-					
-				];
-			$conditions=[
-					['@include','(',')','<?php $_view=$this->view_include(',',get_defined_vars());echo $_view->render(); ?>']
-					,['@section','(',')','<?php $this->startSection(','); ?>']
-					,['@yield','(',')','<?php echo $this->yieldContent(','); ?>']
-					,['@if','(',')','<?php if(','){ ?>']
-					,['@elseif','(',')','<?php }elseif(','){ ?>']
-					,['@foreach','(',')','<?php foreach(','){ ?>']
-					//,['','(',')','','']
-					
-				];
+		//$contents= file_get_contents( $this->path);
+		//$contents='';
+		$extends='';
+		
+		$conditions=[
+				['@include','(',')','<?php $_view=$this->view_include(',',get_defined_vars());echo $_view->render(); ?>']
+				,['@section','(',')','<?php $this->startSection(','); ?>']
+				,['@yield','(',')','<?php echo $this->yieldContent(','); ?>']
+				,['@if','(',')','<?php if(','){ ?>']
+				,['@elseif','(',')','<?php }elseif(','){ ?>']
+				,['@foreach','(',')','<?php foreach(','){ ?>']
+				//,['','(',')','','']
 				
-			$statements=[
-					['@endsection','<?php $this->stopSection(); ?>']
-					,['@else','<?php }else{ ?>']
-					,['@endif','<?php } ?>']
-					,['@guest','<?php if(auth()->guard()->guest()){ ?>']
-					,['@endguest','<?php } ?>']
-					,['@endforeach','<?php } ?>']
-					,['@parent','<?php $this->startParent(); ?>']
-					,['@show','<?php echo $this->showParent(); ?>']
-				];
-			
-			$line='';
-			$line2='';
-			$php=false;
-			$single_line_comment=false;
-			$multi_line_comment=false;
-			$pos=false;
-			$pos2=false; 
-			//ini_set("auto_detect_line_endings", true);
-			$handle = fopen($this->path, 'rb');
-			$handlew = fopen($this->storage_path, 'w');
-			if ($handle) {
-				//while (!feof($handle) ) {
-					while (($line = fgets($handle,65535 )) !== false) {
-					//while($line=stream_get_line($handle,65535,"\n")) {
-												
-							$pos=strpos($line,'@extends');
-						if($pos!==false){
-							$line=substr($line, 0, $pos) .'<?php echo $this->view_make' .substr($line,  $pos+ 8 ) ;	 	
-							$pos=strrpos($line, ')');
-							if($pos!==false){		
-								$line=substr($line, 0, $pos) . ',$this)->render(); ?>' .substr($line,  $pos+ 1 ) ;
-							}
-							$extends=$line;
-							$line="\n";
-							//$contents.=$line;
-							fwrite($handlew,$line);
-							continue;
-						}
-						//$line="# @section('links') @section('scripts') @section('content')@include   (Route,tabs[i]['data'] )	#";
-						/*
-						$line="@section('content')@include(Route,tabs[i]['data'] )@section('links')
-							# @section('links') @section('scripts') @section('content')@include   (Route,tabs[i]['data'] )	#
-							@foreach (errors->all() as error)
-								<li>{{ error }}</li>
-							@endforeach
-						";
-						*/
-						$line="#@foreach (errors->all() as error)#";
-							var_dump($line);		
-						foreach($conditions as $val){
-								$statement=$val[0];
-								$open_brace=$val[1];
-								$close_brace=$val[2];
-								$replace_open=$val[3];
-								$replace_close=$val[4];
-							if(strpos($line,$statement)!==false){
-							//	var_dump($val);						
-									$pos=false;
-									$pos2=false;
-									$pos3=false;
-									$pos2_save=false;
-									$pos3_save=false;
-									$p_level=0;
-								do{
-									$pos = strpos($line, $statement);							
-									if($pos!==false){
-											$p_level=0;
-											$pos2=$pos+strlen($statement);
-											$pos3=$pos2;
-										do{
-											
-											if($pos2!==false){
-												$pos2=strpos($line, $open_brace,$pos2);
-												if($pos2!==false){
-													if($p_level===0){
-														$pos2_save=$pos2;
-														//$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos2+ strlen($open_brace) ) ;
-														//	$pos2+=strlen($replace_open);
-													}
-													
-													$pos2+=strlen($open_brace);
-													$p_level+=1;
-													
-												}else{
-													//break;
-												}
-											}
-											var_dump($p_level);
-											$pos3=strpos($line, $close_brace,$pos3);
-												if($pos3!==false){
-													$pos3_save=$pos3;
-													$pos3+=strlen($close_brace);
-													$p_level-=1;
-													
-													
-													if($p_level<=0){
-	//														$line=substr($line, 0, $pos3_save) .$replace_close.substr($line,  $pos3_save+ strlen($close_brace) ) ;
-													//	break;
-													}
-												}else{
-													break;
-												}
-											
-											var_dump($p_level);
-											
-													if($p_level<=0){
-	//														$line=substr($line, 0, $pos3_save) .$replace_close.substr($line,  $pos3_save+ strlen($close_brace) ) ;
-														break;
-													}
-										}while($p_level>=0);
-											if($p_level<=0){
-												//$line=substr($line, 0, $pos3_save) .$replace_close.substr($line,  $pos3_save+ strlen($close_brace) ) ;
-											}
-
-									}
-								}while($pos!==false);
-							}
-						}
-						var_dump($line);
-						exit;
-							  
-						foreach($statements as $val){
-								$statement=$val[0];
-								$replace=$val[1];
-							if(strpos($line,$statement)!==false){							
-									$pos=false;
-									$pos2=false;
-								do{
-									$pos = strpos($line, $statement);							
-									if($pos!==false){
-										$line=substr($line, 0, $pos) .$replace .substr($line,$pos+ strlen($statement));
-									}
-								}while($pos!==false);
-							}
-						}
-												
-						$line2='';
+			];	
+		$statements=[
+				['@endsection','<?php $this->stopSection(); ?>']
+				,['@else','<?php }else{ ?>']
+				,['@endif','<?php } ?>']
+				,['@guest','<?php if(auth()->guard()->guest()){ ?>']
+				,['@endguest','<?php } ?>']
+				,['@endforeach','<?php } ?>']
+				,['@parent','<?php $this->startParent(); ?>']
+				,['@show','<?php echo $this->showParent(); ?>']
+			];
+		$shortcuts=[
+				['@{{','}}','<<','>>']
+				,['{{','}}','<?php echo ',';?>']
+				,['{!!','!!}','<?php echo ',';?>']
+				,['<<','>>','{{','}}']
+				
+			];
+		$line='';
+		$line2='';
+		$php=false;
+		$single_line_comment=false;
+		$multi_line_comment=false;
+		$pos=false;
+		$pos2=false; 
+		//ini_set("auto_detect_line_endings", true);
+		$handle = fopen($this->path, 'rb');
+		$handlew = fopen($this->storage_path, 'w');
+		if ($handle) {
+			//while (!feof($handle) ) {
+				while (($line = fgets($handle)) !== false) {
+				//while($line=stream_get_line($handle,65535,"\n")) {
+					//$line="# @section ( 'links') @section('content1'@section('content2'@section ( 'links2')#";
+					//$line="#@foreach (errors->all() as error)@foreach (errors->all() as error)#";
+					//$line="# @section('links') @section('scripts') @section('content')@include   (Route,tabs[i]['data'] )	#";
+					/*
+					$line="@section('content') @section('content2')@include(Route,tabs[i]['data'] )@section('links')
+						# @section('links2') @section('scripts') @section('content3')@include   (Route,tabs[i]['data'] )	#
+						@foreach (errors->all() as error)
+							<li>{{ error }}</li>
+						@endforeach
+					";
+					*/
+					//$line="#  @if (errors->has('email')) {{var }} {!!var2 !!} @{{ var3 }} <e>@extends('layouts.app')e</e> @endsection @show#";
+					//var_dump( $line);
+						$pos=strpos($line,'@extends');
+						$pos2=false;
+					if($pos!==false){
 						
-						
-							if(strpos($line,'<?php')!==false){
-								$php=true;
-							}
-						if($php===true){// excluding comments
-							 
-							$single_line_comment=false;	
-							if(strpos($line,'//')!==false){
-								$line2=substr($line, strpos($line,'//') );
-								$line=substr($line,0,strpos($line,'//'));
-								$single_line_comment=true;
-							}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
-								$line2=substr($line, strpos($line,'/*'));
-								$line=substr($line,0,strpos($line,'/*'));
-								$multi_line_comment=true;
-							}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
-								$line2=substr($line, strpos($line,'*/'));
-								$line=substr($line,0,strpos($line,'*/'));
-								$multi_line_comment=false;
-							}elseif($multi_line_comment===true){
-								$line2=$line;
-								$line='';
-							}
-							if(strpos($line,'?>')!==false){
-								$php=false;
-							}
+						//$line=substr($line, 0, $pos) .'<?php echo $this->view_make' .substr($line,  $pos+ 8 ) ;	 	
+						$pos2=strrpos($line, ')',$pos);
+						if($pos2!==false){
+							/*
+							 $line=substr($line, 0, $pos2) . ',$this)->render(); ?>' .substr($line,  $pos2+ 1 ) ;
+							 */
+							$extends=substr($line,$pos+8,($pos2-$pos)+1-8);
+							$extends='<?php echo $this->view_make(' . trim($extends,'()') . ',$this)->render(); ?>';
+							//var_dump($extends);
+							$line=substr($line, 0, $pos) .substr($line,  $pos2+ 1 );
+							
 						}
-						/* 
-						$count=count($changes);
-						$j=0;
-						for($j=0;$j<$count;$j++){
-							$str=$keys[$j];
-							$len=strlen($str);
-							$pos=false;
+						//$extends=$line;
+						//$line="\n";
+						
+						//$contents.=$line;
+						//fwrite($handlew,$line);
+						//continue;
+					}
+					
+					foreach($conditions as $val){
+							$statement=$val[0];
+							$open_brace=$val[1];
+							$close_brace=$val[2];
+							$replace_open=$val[3];
+							$replace_close=$val[4];
+						if(strpos($line,$statement)!==false){			
+								$pos=0;
+								$len_statement=strlen($statement);
+								$len_open=strlen($open_brace);
+								$len_close=strlen($close_brace);
+								$len_replace_open=strlen($replace_open);
+								$len_replace_close=strlen($replace_close);
 							do{
-								$pos = strpos($line, $str);							
-								if($pos!==false && substr($line,$pos,$len)==$str ){//									 					
-									$line=substr($line, 0, $pos ) . $changes[$j] .substr($line,  $pos+ $len ) ;
-								}
-							}while($pos!==false);
-						}
-						*/
-						foreach($shortcuts as $key=>$val){
-								$open_key=$val[0];
-								$close_key=$val[1];
-								$replace_open=$val[2];
-								$replace_close=$val[3];
-							if(strpos($line,$open_key)!==false){							
-									$pos=false;
-									$pos2=false;
-								do{
-									$pos = strpos($line, $open_key);							
-									if($pos!==false){
-										$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos+ strlen($open_key) ) ;	 	
-										$pos2=strpos($line, $close_key,$pos);
-										if($pos2!==false){		
-											$line=substr($line, 0, $pos2) .$replace_close.substr($line,  $pos2+ strlen($close_key) ) ;
+								$pos = strpos($line, $statement,$pos);							
+								if($pos!==false){
+										$p_level=0;
+										$length=strlen($line);
+										$pos2=false;
+										$pos3=false;
+									for($p=$pos+$len_statement;$p<=$length;$p++){
+										//var_dump(substr($line, $p, $len_open));
+										if(substr($line,$p,$len_open)===$open_brace){
+											if($p_level===0){
+												$pos2=$p;
+												//$line=substr($line, 0, $pos) .$replace_open.substr($line,  $p+$len_open ) ;
+												//$p=$pos+$len_replace_open;
+												//$length=strlen($line);
+											}
+											$p+=$len_open-1;
+											$p_level+=1;
+											//var_dump($p_level);
+										}
+										if(substr($line,$p,$len_close)===$close_brace){
+											$p_level-=1;
+											//var_dump($p_level);
+											if($p_level===0){
+												$pos3=$p;
+												//$line=substr($line, 0, $p) .$replace_close.substr($line,  $p+$len_close ) ;
+												break;
+											}
+											$p+=$len_close-1;
 										}
 									}
-								}while($pos!==false);
-							}
-						}
-						//$line=str_replace($changes[0],['{{','}}'],$line);// Reverse @{{
-								$val=$shortcuts[0];
-							$open_key=$val[3];
-							$close_key=$val[2];
-							$replace_open='{{';
-							$replace_close='}}';
-						if(strpos($line,$open_key)!==false){							
-								$pos=false;
-								$pos2=false;
-							do{
-								$pos = strpos($line, $open_key);							
-								if($pos!==false){
-									$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos+ strlen($open_key) ) ;	 	
-									$pos2=strpos($line, $close_key,$pos);
-									if($pos2!==false){		
-										$line=substr($line, 0, $pos2) .$replace_close.substr($line,  $pos2+ strlen($close_key) ) ;
+									if($pos2!==false && $pos3!=false){
+										$line=substr($line, 0, $pos3) .$replace_close.substr($line,  $pos3+$len_close ) ;
+										$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos2+$len_open ) ;
+										$pos=$pos3+$len_replace_close;
+									}else{
+										$pos+=$len_statement;
 									}
+									
 								}
 							}while($pos!==false);
 						}
-						
-						$line=$line.$line2;
+					}
+					
+						  
+					foreach($statements as $val){
+							$statement=$val[0];
+							$replace=$val[1];
+						if(strpos($line,$statement)!==false){
+								$len_statement=strlen($statement);
+								$len_replace=strlen($replace);
+								$pos=0;
+							do{
+								$pos = strpos($line, $statement,$pos);							
+								if($pos!==false){
+									$line=substr($line, 0, $pos) .$replace .substr($line,$pos+ $len_statement);
+									$pos+=$len_replace;
+								}
+							}while($pos!==false);
+						}
+					}
+											
+					$line2='';
+					
+					
+						if(strpos($line,'<?php')!==false){
+							$php=true;
+						}
+					if($php===true){// excluding comments
 						 
-						 
-						//$contents.=$line; 
-						fwrite($handlew,$line);
-					} 
-					//if (!feof($handle)) {
-						//echo "Error: unexpected fgets() fail\n";
-					//}
+						$single_line_comment=false;	
+						if(strpos($line,'//')!==false){
+							$line2=substr($line, strpos($line,'//') );
+							$line=substr($line,0,strpos($line,'//'));
+							$single_line_comment=true;
+						}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
+							$line2=substr($line, strpos($line,'/*'));
+							$line=substr($line,0,strpos($line,'/*'));
+							$multi_line_comment=true;
+						}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
+							$line2=substr($line, strpos($line,'*/'));
+							$line=substr($line,0,strpos($line,'*/'));
+							$multi_line_comment=false;
+						}elseif($multi_line_comment===true){
+							$line2=$line;
+							$line='';
+						}
+						if(strpos($line,'?>')!==false){
+							$php=false;
+						}
+					}
+					
+					foreach($shortcuts as $key=>$val){
+							$open_brace=$val[0];
+							$close_brace=$val[1];
+							$replace_open=$val[2];
+							$replace_close=$val[3];
+						if(strpos($line,$open_brace)!==false){
+								$len_open=strlen($open_brace);
+								$len_close=strlen($close_brace);
+								$len_replace_open=strlen($replace_open);
+								$len_replace_close=strlen($replace_close);						
+								$pos=0;
+								$pos2=false;
+							do{
+								$pos = strpos($line, $open_brace,$pos);							
+								if($pos!==false){
+										$p_level=0;
+										$length=strlen($line);
+										$pos2=false;
+										$pos3=false;
+									for($p=$pos;$p<$length;$p++){	
+										if(substr($line,$p,$len_open)===$open_brace){
+											if($p_level===0){
+												$pos2=$p;
+											}
+											$p+=$len_open-1;
+											$p_level+=1;
+										}
+										if(substr($line,$p,$len_close)===$close_brace){
+											$p_level-=1;
+											if($p_level===0){
+												$pos3=$p;
+												break;
+											}
+											$p+=$len_close-1;
+											
+										}
+									}										
+									if($pos2!==false && $pos3!=false){
+										$line=substr($line, 0, $pos3) .$replace_close.substr($line,  $pos3+$len_close ) ;
+										$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos2+$len_open ) ;
+										$pos=$pos3+$len_replace_close;
+									}else{
+										$pos+=$len_open;
+									}
+									
+								}
+							}while($pos!==false);
+						}
+					}
+					
+					//var_dump($line);
+					//exit;
+					
+					$line=$line.$line2;
+					 
+					//$contents.=$line; 
+					fwrite($handlew,$line);
+				} 
+				//if (!feof($handle)) {
+					//echo "Error: unexpected fgets() fail\n";
 				//}
-				fclose($handle);
-				//$contents.=$extends; 
-				fwrite($handlew,$extends);
-				fclose($handlew);
-			}
-			
-			//file_put_contents($this->storage_path,$contents);
+			//}
+			fclose($handle);
+			//$contents.=$extends; 
+			fwrite($handlew,$extends);
+			fclose($handlew);
 		}
+		
+		//file_put_contents($this->storage_path,$contents);
 	}
 	public function render(){
-		$this->compile();
+		if($this->expired()){
+			$this->compile();
+		}
 		return $this->_render();
 	}
     private function _render(){
@@ -675,8 +667,21 @@ function app(){
 	return new View();
 }
 class Blade{
-	public static function compile($contents){
+	public static function compileString($contents){
+		global $GLOBALS;
+				$public_path=$GLOBALS['public_path'];
+				$view_path=$GLOBALS['view_path'];  
+				 
+			$storage_view_path= $public_path. '/../storage/views/' ;
 		$view=new View();
-		
+			$path=$storage_view_path . uniqid() . '.blade.php' ;
+			$storage_path=$storage_view_path . uniqid() . '.blade.php' ;
+			$view->path=$path;
+			$view->storage_path=$storage_path ; 
+		file_put_contents($path,$contents);
+		$contents=$view->render();
+			unlink($path);
+			unlink($storage_path);
+		return $contents;
 	}
 }

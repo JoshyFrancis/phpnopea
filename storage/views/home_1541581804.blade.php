@@ -1,3 +1,4 @@
+
 <?php $this->startSection('links'); ?>
 	<?php $this->startParent(); ?>
 			Links
@@ -32,7 +33,7 @@
 						div.innerHTML='Added by Javascript';
 						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }} m
 						div.innerHTML+='<br>data0:<?php echo $data0;?> m';
-						div.innerHTML+='<br>Javascript <?php echo $this->curly_braces_open;?>var1<?php echo $this->curly_braces_close;?> : <?php echo $this->curly_braces_open;?>var2<?php echo $this->curly_braces_close;?> m';
+						div.innerHTML+='<br>Javascript {{var1}} : {{var2}} m';
 					/*
 						This is a 
 						multiline comment contains vars {{test2}} in script block
@@ -69,7 +70,7 @@
 						$some_data='this should be avaialble to the following view';
                     ?>
                     <br>
-                    <?php $_view=$this->view_make('include_test',$this);$_view->compile();include $_view->storage_path; ?>
+                    <?php $_view=$this->view_include('include_test',get_defined_vars());echo $_view->render(); ?>
                     <?php if($arr[1]===2){ ?>
 						<?php echo  $arr[1] ;?>
 						<br>
@@ -78,7 +79,7 @@
 						<?php echo $a;?>
 						<br>
 					<?php } ?>
-                    <?php $_view=$this->view_make('include_test2',$this);$_view->compile();include $_view->storage_path; ?>
+                    <?php $_view=$this->view_include('include_test2',get_defined_vars());echo $_view->render(); ?>
                 </div>
             </div>
         </div>

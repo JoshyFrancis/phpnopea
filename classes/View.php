@@ -179,21 +179,20 @@ class View{
 			//while (!feof($handle) ) {
 				while (($line = fgets($handle)) !== false) {
 				//while($line=stream_get_line($handle,65535,"\n")) {
-					//$line="# @section ( 'links') @section('content1'@section('content2'@section ( 'links2')#";
+					//$line="# @section ( 'links') @section('content1')@section('content2')@section ( 'links2')#";
 					//$line="#@foreach (errors->all() as error)@foreach (errors->all() as error)#";
 					//$line="# @section('links') @section('scripts') @section('content')@include   (Route,tabs[i]['data'] )	#";
 					/*
 					$line="@section('content') @section('content2')@include(Route,tabs[i]['data'] )@section('links')
-						# @section('links2') @section('scripts') @section('content3')@include   (Route,tabs[i]['data'] )	#
+						# {{var }} @section('links2') @section('scripts') @section('content3')@include   (Route,tabs[i]['data'] )	#
 						@foreach (errors->all() as error)
 							<li>{{ error }}</li>
 						@endforeach
 					";
 					*/
 					//$line="#  @if (errors->has('email')) {{var }} {!!var2 !!} @{{ var3 }} <e>@section ( 'links')@extends('layouts.app')e</e> @endsection @show#";
+					//$line="#@if (errors->has('email'))#";
 					//var_dump( $line);
-					
-					
 					
 						$pos=strpos($line,'@extends');
 						$pos2=false;
@@ -266,7 +265,8 @@ class View{
 											$length=strlen($line);
 											$pos2=false;
 											$pos3=false;
-										for($p=$pos+$len_statement;$p<=$length;$p++){
+										 
+										for($p=$pos+$len_statement;$p<$length;$p++){
 											//var_dump(substr($line, $p, $len_open));
 											if(substr($line,$p,$len_open)===$open_brace){
 												if($p_level===0){
@@ -290,14 +290,16 @@ class View{
 												$p+=$len_close-1;
 											}
 										}
-										if($pos2!==false && $pos3!=false){
+										
+										if($p_level===0 && $pos2!==false && $pos3!==false){
 											$line=substr($line, 0, $pos3) .$replace_close.substr($line,  $pos3+$len_close ) ;
 											$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos2+$len_open ) ;
 											$pos=$pos3+$len_replace_close;
 										}else{
 											$pos+=$len_statement;
 										}
-										
+										//var_dump($pos);
+										break;
 									}
 								}while($pos!==false);
 							}
@@ -370,6 +372,7 @@ class View{
 										$length=strlen($line);
 										$pos2=false;
 										$pos3=false;
+									
 									for($p=$pos;$p<$length;$p++){	
 										if(substr($line,$p,$len_open)===$open_brace){
 											if($p_level===0){
@@ -387,8 +390,9 @@ class View{
 											$p+=$len_close-1;
 											
 										}
-									}										
-									if($pos2!==false && $pos3!=false){
+									}
+									
+									if($p_level===0 && $pos2!==false && $pos3!==false){
 										$line=substr($line, 0, $pos3) .$replace_close.substr($line,  $pos3+$len_close ) ;
 										$line=substr($line, 0, $pos) .$replace_open.substr($line,  $pos2+$len_open ) ;
 										$pos=$pos3+$len_replace_close;
@@ -423,7 +427,9 @@ class View{
 		//file_put_contents($this->storage_path,$contents);
 	}
 	public function render(){
-		if($this->expired()){
+		$b=$this->expired();
+		//$b=true;
+		if($b===true){
 			$this->compile();
 		}
 		return $this->_render();

@@ -531,31 +531,50 @@ class View{
 			header('Location: '.$this->url,true,302 );
 		}
 	}
+    private function getContentType($path){
+			$result = false;
+		if (function_exists('finfo_open') === true){
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			if (is_resource($finfo) === true) {
+				$result = finfo_file($finfo, $path);
+			}
+			finfo_close($finfo);
+		} else if (function_exists('mime_content_type') === true){
+			$result = preg_replace('~^(.+);.*$~', '$1', mime_content_type($path));
+		} else if (function_exists('exif_imagetype') === true){
+			$result = image_type_to_mime_type(exif_imagetype($path));
+		}
+        return $result;
+    }
     public function __tostring(){
 		if($this->file!==''){
-			$formats =[
-				'html' => ['text/html', 'application/xhtml+xml']
-				,'txt' => ['text/plain']
-				,'js' => ['application/javascript', 'application/x-javascript', 'text/javascript']
-				,'css' => ['text/css']
-				,'json' => ['application/json', 'application/x-json']
-				,'jsonld' => ['application/ld+json']
-				,'xml' => ['text/xml', 'application/xml', 'application/x-xml']
-				,'rdf' => ['application/rdf+xml']
-				,'atom' => ['application/atom+xml']
-				,'rss' => ['application/rss+xml']
-				,'form' => ['application/x-www-form-urlencoded']
-				,'mp4'=>['video/mp4']
-				,'pdf'=>['application/pdf']
-				,'bin'=>['application/octet-stream']
-				,'csv'=>['text/plain;charset=UTF-8']
-			];
+			
 			$ext='';
 				if(strpos($this->file,'.')){
 					$ext=substr($this->file,strrpos($this->file,'.')+1);
 				}
+			$mimetype=$this->getContentType($this->file);
+				if($mimetype===false){
+					$formats =[
+						'html' => ['text/html', 'application/xhtml+xml']
+						,'txt' => ['text/plain']
+						,'js' => ['application/javascript', 'application/x-javascript', 'text/javascript']
+						,'css' => ['text/css']
+						,'json' => ['application/json', 'application/x-json']
+						,'jsonld' => ['application/ld+json']
+						,'xml' => ['text/xml', 'application/xml', 'application/x-xml']
+						,'rdf' => ['application/rdf+xml']
+						,'atom' => ['application/atom+xml']
+						,'rss' => ['application/rss+xml']
+						,'form' => ['application/x-www-form-urlencoded']
+						,'mp4'=>['video/mp4']
+						,'pdf'=>['application/pdf']
+						,'bin'=>['application/octet-stream']
+						//,'csv'=>['text/plain;charset=UTF-8']
+					];
+					$mimetype=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
+				}
 			
-			$mimetype=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
 			 
 			$file = $this->file;
 			$fp = @fopen($file, 'rb');
@@ -569,7 +588,15 @@ class View{
 				header('Last-Modified: '.$date->format('D, d M Y H:i:s').' GMT');
 				
 			header('Content-type: '.$mimetype);
-			header("Accept-Ranges: 0-$length");
+			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
+			// The three lines below basically make the
+			// download non-cacheable 
+			//header('Cache-control: private');
+			//header('Pragma: private');
+			//header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+			header('Cache-Control: no-store, no-cache, must-revalidate');
+			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT');
+			header('Pragma: no-cache');
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				$c_start = $start;
 				$c_end   = $end;

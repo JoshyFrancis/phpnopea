@@ -494,7 +494,9 @@ class View{
 		$t=filemtime($this->path);
 		$s2=$this->view ;
 		$s3=$s2.'_'.$t;
-		
+		return !file_exists($dir.'/'.$s3.'.blade.php');
+		//to clear view run the following
+		//php artisan view:clear
 			$found=false;
         if ($handle = opendir($dir)) {
 			while (false !== ($entry = readdir($handle))) {

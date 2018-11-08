@@ -142,6 +142,8 @@ function error_handler($code=null,$message='',$file='',$line=0){
 							$value=(int)$value;
 						}elseif(is_object($value)){
 							$value=get_class($value);
+						}elseif(is_numeric($value)){
+							$value=$value;
 						}else{
 							$value=gettype($value);
 						}

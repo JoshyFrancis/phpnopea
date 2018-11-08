@@ -7,6 +7,7 @@ class View{
     protected $sections=[];
     protected $sectionStack=[];
     protected $contents='';
+    protected $file='';
     public $status=200;
     protected $url='';
     public static $shared_data=[];
@@ -531,6 +532,86 @@ class View{
 		}
 	}
     public function __tostring(){
+		if($this->file!==''){
+			$formats =[
+				'html' => ['text/html', 'application/xhtml+xml']
+				,'txt' => ['text/plain']
+				,'js' => ['application/javascript', 'application/x-javascript', 'text/javascript']
+				,'css' => ['text/css']
+				,'json' => ['application/json', 'application/x-json']
+				,'jsonld' => ['application/ld+json']
+				,'xml' => ['text/xml', 'application/xml', 'application/x-xml']
+				,'rdf' => ['application/rdf+xml']
+				,'atom' => ['application/atom+xml']
+				,'rss' => ['application/rss+xml']
+				,'form' => ['application/x-www-form-urlencoded']
+				,'mp4'=>['video/mp4']
+				,'pdf'=>['application/pdf']
+				,'bin'=>['application/octet-stream']
+				,'csv'=>['text/plain;charset=UTF-8']
+			];
+			$ext='';
+				if(strpos($this->file,'.')){
+					$ext=substr($this->file,strrpos($this->file,'.')+1);
+				}
+			
+			$mimetype=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
+			 
+			$file = $this->file;
+			$fp = @fopen($file, 'rb');
+			$size   = filesize($file); // File size
+			$length = $size;           // Content length
+			$start  = 0;               // Start byte
+			$end    = $size - 1;       // End byte
+			 
+				$date = DateTime::createFromFormat('U',filemtime($file));
+				$date->setTimezone(new \DateTimeZone('UTC'));
+				header('Last-Modified: '.$date->format('D, d M Y H:i:s').' GMT');
+				
+			header('Content-type: '.$mimetype);
+			header("Accept-Ranges: 0-$length");
+			if (isset($_SERVER['HTTP_RANGE'])) {
+				$c_start = $start;
+				$c_end   = $end;
+				list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+				if (strpos($range, ',') !== false) {
+					header('HTTP/1.1 416 Requested Range Not Satisfiable');
+					header("Content-Range: bytes $start-$end/$size");
+					exit;
+				}
+				if ($range == '-') {
+					$c_start = $size - substr($range, 1);
+				}else{
+					$range  = explode('-', $range);
+					$c_start = $range[0];
+					$c_end   = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+				}
+				$c_end = ($c_end > $end) ? $end : $c_end;
+				if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+					header('HTTP/1.1 416 Requested Range Not Satisfiable');
+					header("Content-Range: bytes $start-$end/$size");
+					exit;
+				}
+				$start  = $c_start;
+				$end    = $c_end;
+				$length = $end - $start + 1;
+				fseek($fp, $start);
+				header('HTTP/1.1 206 Partial Content');
+			}
+			header("Content-Range: bytes $start-$end/$size");
+			header("Content-Length: ".$length);
+			$buffer = 1024 * 8;
+			while(!feof($fp) && ($p = ftell($fp)) <= $end) {
+				if ($p + $buffer > $end) {
+					$buffer = $end - $p + 1;
+				}
+				set_time_limit(0);
+				echo fread($fp, $buffer);
+				flush();
+			}
+			fclose($fp);
+			exit();
+		}
 		if($this->contents==='' && $this->view!==null){
 			$this->contents=$this->render();
 		}
@@ -603,7 +684,7 @@ class View{
 	}
 	public function json($json){
 		//// 15 === JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
-		$this->setContents(json_encode($json,15));
+		$this->contents=json_encode($json,15);
 		if(!headers_sent()){
 			//header('Content-Type: text/javascript');
 			header('Content-Type: application/json');
@@ -612,7 +693,10 @@ class View{
 		return $this;
 	}
 	public function file($file,$headers=[]){
-		$this->setContents(file_get_contents($file));
+		//$this->setContents(file_get_contents($file));
+		$this->contents='';
+		$this->file=$file;
+		
 		return $this->withHeaders($headers);
 	}
 	public function back(){		

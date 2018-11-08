@@ -80,20 +80,47 @@ class DB{
             // date string. Each query grammar maintains its own date string format
             // so we'll just ask the grammar for the format to get from the date.
             if($value instanceof DateTimeInterface){
-                $bindings[$key] = $value->format('Y-m-d H:i:s');
+                $bindings[$key]=$value->format('Y-m-d H:i:s');
+            }elseif(gettype($value)==='boolean'){
+				$bindings[$key]=(int)$value;
+			}elseif(gettype($value)==='integer'){
+				$bindings[$key]=(int)$value;
+			}elseif(gettype($value)==='double'){
+				$bindings[$key]=(float)$value;
             }elseif($value === false){
-                $bindings[$key] = 0;
+                $bindings[$key]=0;
             }elseif(is_object($value)){
                 $bindings[$key] = null;
             }
         }
         return $bindings;
     }
-    public static function bindValues ($statement, $bindings){//taken from laravel
+    public static function bindValues ($statement,$bindings){//taken from laravel
+		
 		foreach ($bindings as $key => $value) {
-            $statement->bindValue(
-                is_string($key) ? $key : $key + 1, $value,is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
-            );
+			//$statement->bindValue(
+            //    is_string($key) ? $key : $key + 1, $value,is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
+            //);
+            $key=is_string($key)?$key:$key+1;
+			if($value instanceof DateTimeInterface){
+                $statement->bindValue($key,$value->format('Y-m-d H:i:s'),\PDO::PARAM_STR);
+            }elseif(is_string($value)){
+				$statement->bindValue($key,$value,\PDO::PARAM_STR);
+            }elseif(is_bool($value)){
+				$statement->bindValue($key,$value,\PDO::PARAM_BOOL);
+			}elseif(is_int($value)){
+				$statement->bindValue($key,$value,\PDO::PARAM_INT);
+			}elseif(is_float($value)){
+				$statement->bindValue($key,$value,\PDO::PARAM_INT);
+            }elseif(is_object($value)){
+                $statement->bindValue($key,null,\PDO::PARAM_NULL);
+            }elseif($value===null){
+                $statement->bindValue($key,null,\PDO::PARAM_NULL);
+            }elseif($value === false){
+                $statement->bindValue($key,0,\PDO::PARAM_INT);
+            }else{
+				$statement->bindValue($key,$value,\PDO::PARAM_STR);
+			}
         }
 	}
     public static function select($sql,$bindings=[]){
@@ -101,7 +128,8 @@ class DB{
 		try{
 			$STH = self::$DBH->prepare($sql); 
 			//$STH->execute( self::prepareBindings($bindings));
-			self::bindValues($STH,self::prepareBindings($bindings));
+			//self::bindValues($STH,self::prepareBindings($bindings));
+			self::bindValues($STH,$bindings);
 			$STH->execute();
 		}catch(Exception $e){
 			throw new \Illuminate\Database\QueryException($sql,$bindings,$e);
@@ -112,15 +140,16 @@ class DB{
 			self::createDB();
         $STH = self::$DBH->prepare($sql);
 		//$STH->execute( self::prepareBindings($bindings));
-		self::bindValues($STH,self::prepareBindings($bindings));
+		//self::bindValues($STH,self::prepareBindings($bindings));
+		self::bindValues($STH,$bindings);
 		$STH->execute();
 		return $STH->rowCount();
     }
-    public static function delete ($sql,$bindings=[]){   
-		return self::update($sql, $bindings);
+    public static function delete($sql,$bindings=[]){   
+		return self::update($sql,$bindings);
     }
-    public static function insert ($sql,$bindings=[]){   
-		return self::update($sql, $bindings);
+    public static function insert($sql,$bindings=[]){   
+		return self::update($sql,$bindings);
     }
 }
 class connection{

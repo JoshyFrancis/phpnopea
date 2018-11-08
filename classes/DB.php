@@ -53,58 +53,12 @@ class DB{
     //private static function escape($value){
     //    return str_replace(self::$search, self::$replace, $value);
     //}
-    public static function prepareBindings_old($bindings){
-			$out=[];
-		foreach ($bindings as $value) {
-			if($value instanceof Closure){
-				$value =null;
-            }elseif($value instanceof DateTimeInterface){
-                $value = $value->format('Y-m-d H:i:s');
-            }elseif (is_bool($value)){
-                $value = (int) $value;
-            //}elseif (is_string($value)){
-				//$value=PDO::quote($value);
-				//$value=self::$DBH->quote($value);
-			//	$value=self::escape($value);
-            //}elseif ($value===null){
-				//continue;		
-			}
-			$out[]=$value;
-        }
-        
-        return $out;
-    }
-    public static function prepareBindings($bindings){//taken from laravel
-        foreach ($bindings as $key => $value){
-            // We need to transform all instances of DateTimeInterface into the actual
-            // date string. Each query grammar maintains its own date string format
-            // so we'll just ask the grammar for the format to get from the date.
-            if($value instanceof DateTimeInterface){
-                $bindings[$key]=$value->format('Y-m-d H:i:s');
-            }elseif(gettype($value)==='boolean'){
-				$bindings[$key]=(int)$value;
-			}elseif(gettype($value)==='integer'){
-				$bindings[$key]=(int)$value;
-			}elseif(gettype($value)==='double'){
-				$bindings[$key]=(float)$value;
-            }elseif($value === false){
-                $bindings[$key]=0;
-            }elseif(is_object($value)){
-                $bindings[$key] = null;
-            }
-        }
-        return $bindings;
-    }
-    public static function bindValues ($statement,$bindings){//taken from laravel
-			
+    public static function bindValues ($statement,$bindings){		
 		foreach ($bindings as $key => $value) {
-			//$statement->bindValue(
+			//$statement->bindValue(//taken from laravel
             //    is_string($key) ? $key : $key + 1, $value,is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
             //);
             $key=is_string($key)?$key:$key+1;
-				if(count($bindings)===25){
-					//var_dump($value);
-				}
 			if($value instanceof DateTimeInterface){
                 $statement->bindValue($key,$value->format('Y-m-d H:i:s'),\PDO::PARAM_STR);
             }elseif(is_string($value)){
@@ -114,7 +68,7 @@ class DB{
 			}elseif(is_int($value)){
 				$statement->bindValue($key,$value,\PDO::PARAM_INT);
 			}elseif(is_float($value)){
-				$statement->bindValue($key,$value,\PDO::PARAM_INT);
+				$statement->bindValue($key,$value,\PDO::PARAM_STR);
             }elseif(is_object($value)){
                 $statement->bindValue($key,null,\PDO::PARAM_NULL);
             }elseif($value===null){
@@ -125,9 +79,6 @@ class DB{
 				$statement->bindValue($key,$value,\PDO::PARAM_STR);
 			}
         }
-			if(count($bindings)===25){
-				//exit;
-			}
 	}
     public static function select($sql,$bindings=[]){
 			self::createDB();

@@ -96,12 +96,15 @@ class DB{
         return $bindings;
     }
     public static function bindValues ($statement,$bindings){//taken from laravel
-		
+			
 		foreach ($bindings as $key => $value) {
 			//$statement->bindValue(
             //    is_string($key) ? $key : $key + 1, $value,is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
             //);
             $key=is_string($key)?$key:$key+1;
+				if(count($bindings)===25){
+					//var_dump($value);
+				}
 			if($value instanceof DateTimeInterface){
                 $statement->bindValue($key,$value->format('Y-m-d H:i:s'),\PDO::PARAM_STR);
             }elseif(is_string($value)){
@@ -122,6 +125,9 @@ class DB{
 				$statement->bindValue($key,$value,\PDO::PARAM_STR);
 			}
         }
+			if(count($bindings)===25){
+				//exit;
+			}
 	}
     public static function select($sql,$bindings=[]){
 			self::createDB();

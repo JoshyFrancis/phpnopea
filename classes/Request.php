@@ -112,14 +112,21 @@ class Request{
 	public function file($name){
 		return $this->files->get($name);
 	}
+	public function __isset($name){
+		if(isset($_FILES[$name])){
+			return true;
+		}elseif(isset($_REQUEST[$name])){
+			return true;
+		}
+			return false;
+	}
 	public function __get($name){
 		if(isset($_FILES[$name])){
 			return $this->files->get($name);
 		}elseif(isset($_REQUEST[$name])){
 			return $_REQUEST[$name];
-		}else{
-			return null;
 		}
+			return null;
 	}
 	public function all(){
         //return array_merge($_REQUEST,$_FILES);

@@ -181,6 +181,12 @@ function url($route=null){
 	}
 	return Route::$request;
 }
+function request($name=null,$default=null){
+	if($name!==null){
+		return Route::$request->input($name,$default);
+	}
+	return Route::$request;
+}
 function route($route ){
 	return url($route);
 }

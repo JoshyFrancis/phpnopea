@@ -60,7 +60,12 @@ class View{
 			global $GLOBALS;
 				$public_path=$GLOBALS['public_path'];
 				$view_path=$GLOBALS['view_path'];  
-				 
+					//mkdir views
+					//mkdir sessions
+					//mkdir errors
+					//sudo chmod 755 /var/www
+					//sudo chown -R www-data:www-data views
+					//sudo chown -R www-data:www-data sessions
 			$storage_view_path= $public_path. '/../storage/views/' ;
 					
 				if($inner_view==false){
@@ -767,19 +772,6 @@ function redirect($route=null){
 	if($route===null){
 		return  new View();
 	}
-	
-		//Route::$request->session()->set('backUrl',$url);
-		//Route::$request->session->save();	
-		/*
-		if($url===Route::$request->getUri() || str_replace('.','/', Route::$request->session->get('_view'))===$route ){
-			//var_dump($request->session->get('_request_data'));
-			//var_dump($current_route);
-			//exit;
-			//var_dump($request->session->get('_view')); 
-			$view = View::make(Route::$request->session->get('_view'));
-			return $view;
-		}
-		*/
 		
 	$view=new View();	
 	return  $view->to($route);	

@@ -211,7 +211,7 @@ function add_route($method, $parameters){
 
 					$controller_file=$controllers_path.$namespace.$controller.'.php';
 				 
-					include  $controller_file;
+					include str_replace(['App','\\'],['app','/'],$controller_file);
 					$class = 'App\\Http\\Controllers\\'.$namespace.$controller;
 					
 					$controller_class=new $class() ;
@@ -279,7 +279,7 @@ function add_route($method, $parameters){
 			//		echo call_user_func_array($func, $fire_args);
 			//	}
 			//}
-			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class];
+			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class,'params'=>$parameters];
 			
 		}
 	}
@@ -303,7 +303,7 @@ function load_classes(){
 		Route::$request->set_session($session);
 		
 		$previous_url=Route::$request->session->get('_previous_url','');
-		$url=Route::$request->getUri();
+		$url=Route::$request->url();
 			if ($previous_url!==$url && $_SERVER['REQUEST_METHOD']=== 'GET' && !Route::$request->ajax()){// && $request->route()){
 				$previous_url=$url;
 			}
@@ -424,7 +424,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	*/
 	foreach($kernel_class->middleware as $class){
 				$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
-					include  $middleware_file;	
+					include str_replace(['App','\\'],['app','/'],$middleware_file);	
 				$class=new $class() ;	
 			$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 		if($res!==$res2){
@@ -439,7 +439,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 					$middleware_args[2]=$group;
 				foreach($classes as $class){
 					$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
-						include  $middleware_file;	
+						include str_replace(['App','\\'],['app','/'],$middleware_file);	
 					$class=new $class() ;
 						$res2= call_user_func_array([$class, 'handle'], $middleware_args);
 					if($res!==$res2){
@@ -453,7 +453,7 @@ function through_middleware($func, $fire_args,$controller_class=null){
 		//if(in_array($group,$middleware_groups)){
 		if(strpos($middleware_groups,$group.',')!==false){
 				$middleware_file=$public_path.'/../'. str_replace('\\','/', $class).'.php';			 
-					include  $middleware_file;	
+					include str_replace(['App','\\'],['app','/'],$middleware_file);	
 				$class=new $class() ;
 			$middleware_args[2]=$group;
 				$res2= call_user_func_array([$class, 'handle'], $middleware_args);

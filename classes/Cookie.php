@@ -177,6 +177,9 @@ function remove_cookie($name){
 function encrypt_coookies(){
 	global $GLOBALS;
 	$app_key=$GLOBALS['app_key'];
+	if(!isset($GLOBALS['session_name'])){
+		return;
+	}
 	$session_name=$GLOBALS['session_name']; 
 			$cookies=[];
 	$date_found=false;

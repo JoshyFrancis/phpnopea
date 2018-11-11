@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+//error_reporting(E_STRICT);
 set_error_handler("error_handler");
 set_exception_handler("error_handler");
 register_shutdown_function("error_handler");
@@ -80,9 +81,16 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $file=replace_file_mtime($e->getFile());
     $file_name=$file;//basename($file);
     $line=$e->getLine();
-    $url=url('/');
-    $back=Route::$request->previous();
-    $error_dispaly=Route::$request->ajax()?'':'none';
+    if(Route::$request!==null){
+		$url=url('/');
+		$back=Route::$request->previous();
+		$error_dispaly=Route::$request->ajax()?'':'none';
+	}else{
+		$url='';
+		$back='';
+		$error_dispaly='';
+	}
+
     $trace_head='
 		<tr>
 			<th>

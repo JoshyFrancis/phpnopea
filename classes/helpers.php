@@ -157,10 +157,10 @@ function env($key,$def=null){
 }
 function url($route=null){
 	global $GLOBALS;
-		$routes=$GLOBALS['routes'];
-	if(strpos($route,Route::$request->getBaseUri())!==false){
-		return $route;
-	}
+		//$routes=$GLOBALS['routes'];
+	//if(strpos($route,Route::$request->getBaseUri())!==false){
+	//	return $route;
+	//}
 	if($route!==null  ){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
@@ -186,9 +186,6 @@ function request($name=null,$default=null){
 		return Route::$request->input($name,$default);
 	}
 	return Route::$request;
-}
-function route($route ){
-	return url($route);
 }
 function encrypt($data,$key,$cipher='AES-256-CBC'){
 	

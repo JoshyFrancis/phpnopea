@@ -1,9 +1,9 @@
 <?php
 class Auth{
-	public $user;
+	public $user=null;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public function __construct(){
-		$this->user=new \App\User;
+		//$this->user=new \App\User;
     }
 	public static function __callStatic($method, $parameters){
 		if($method==='user'){
@@ -33,6 +33,9 @@ class Auth{
 		return $this->user{$name};
 	}
 	protected function _set_user($rows){
+		if(!$this->user){
+			$this->user=new \App\User;
+		}
 		$this->user->ID=$rows[0]->ID;
 		$this->user->username=$rows[0]->username;
 		$this->user->first_name=$rows[0]->first_name;
@@ -44,6 +47,7 @@ class Auth{
 		$remember_cookie=$session_name.'_remember';
 		$cookie=Route::$request->cookies->get($remember_cookie);
 		$login=Route::$request->session->get('_login',false);
+		$this->user=null;
 		if($cookie){
 			$login=false;
 			list($token,$time)=explode('_',$cookie);

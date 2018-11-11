@@ -16,6 +16,7 @@ $start = microtime(true);
 ini_set('html_errors', true);
 ini_set('display_errors', 1);//in case of linux server
 error_reporting(E_ALL);
+//error_reporting(E_STRICT);
 
 include __DIR__ . '/../classes/ExceptionHandler.php';
 //throw new Exception("Just invoking the exception handler.", 2);
@@ -44,7 +45,6 @@ $public_path=__DIR__;
 
 	date_default_timezone_set(date_default_timezone_get ());
 	
-include __DIR__ . '/../classes/helpers.php';
 include __DIR__ . '/../classes/ParameterBag.php';
 	if(count($_FILES)>0){
 		include __DIR__ . '/../classes/UploadedFile.php';
@@ -53,7 +53,8 @@ include __DIR__ . '/../classes/ParameterBag.php';
 include __DIR__ . '/../classes/Request.php';
 include __DIR__ . '/../classes/Illuminate_Request.php';
 include __DIR__ . '/../classes/Route.php';	
-	
+include __DIR__ . '/../classes/helpers.php';
+
 	//header('X-Powered-By:PHP/7.1.8');
 
 $file_env=__DIR__ .  '/../.env';
@@ -87,7 +88,15 @@ include __DIR__ . '/../classes/Cookie.php';
 
 //$request = new Request;
 $request = new Illuminate\Http\Request;
-
+	
+var_dump($request->url());
+var_dump($request->root());
+var_dump($request->fullUrl());
+var_dump($request->method());
+var_dump($request->getHost());
+var_dump($_SERVER['REQUEST_URI']);
+	exit;
+	
 $current_route=null;
 
 	$GLOBALS['current_route']=$current_route;

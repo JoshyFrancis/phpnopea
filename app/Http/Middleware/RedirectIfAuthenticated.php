@@ -40,6 +40,7 @@ class RedirectIfAuthenticated{
 					$request->session()->put('backUrl',url()->current());
 					//$request->session->save();
 				}
+				
 				//return redirect('user2/login')->withInput();
 				return redirect('login');//->withInput();
 			}

@@ -3,7 +3,7 @@ class Auth{
 	public $user=null;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public function __construct(){
-		//$this->user=new \App\User;
+		$this->user=new \App\User;
     }
 	public static function __callStatic($method, $parameters){
 		if($method==='user'){
@@ -47,7 +47,7 @@ class Auth{
 		$remember_cookie=$session_name.'_remember';
 		$cookie=Route::$request->cookies->get($remember_cookie);
 		$login=Route::$request->session->get('_login',false);
-		$this->user=null;
+		//$this->user=null;
 		if($cookie){
 			$login=false;
 			list($token,$time)=explode('_',$cookie);

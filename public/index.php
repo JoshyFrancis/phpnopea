@@ -89,13 +89,8 @@ include __DIR__ . '/../classes/Cookie.php';
 //$request = new Request;
 $request = new Illuminate\Http\Request;
 	
-var_dump($request->url());
-var_dump($request->root());
-var_dump($request->fullUrl());
-var_dump($request->method());
-var_dump($request->getHost());
-var_dump($_SERVER['REQUEST_URI']);
-	exit;
+//var_dump($_SERVER['REQUEST_URI']);
+
 	
 $current_route=null;
 
@@ -130,6 +125,14 @@ $GLOBALS['routes']=$routes;
 
 include __DIR__ . '/../classes/View.php';
 
+var_dump($request->url());
+var_dump($request->root());
+var_dump($request->fullUrl());
+var_dump($request->method());
+var_dump($request->getHost());
+var_dump( url()->current());
+	exit;
+	
 /*
 	$csrf=true;
 	$session_csrf_name= $request->session()->session_name.'_csrf';

@@ -166,6 +166,10 @@ function url($route=null){
 		//	$route= $routes['get'][$route][0];
 		//}
 		$url=Route::$request->getBaseUri();
+		if(strpos($route,$url)!==false){
+			return $route;
+		}
+		
 		if(substr($url,-1,1)!=='/'){
 			$url.='/';
 		}

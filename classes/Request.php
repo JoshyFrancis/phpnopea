@@ -149,12 +149,22 @@ class Request{
 		return $_SERVER['REQUEST_METHOD'];
     }
     public function url(){
-        return $this->getBaseUri().'/'.$this->getCurrentUri();
+		$base_url=$this->getBaseUri();
+		$cur_url=$this->getCurrentUri();
+		if($base_url===$cur_url){
+			return $cur_url;
+		}
+        return $base_url.'/'.$cur_url;
     }
     public function fullUrl(){
 		$qs='';
 		if (strpos($_SERVER['REQUEST_URI'], '?')!==false){
 			$qs = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?'));
+		}
+		$base_url=$this->getBaseUri();
+		$cur_url=$this->getCurrentUri();
+		if($base_url===$cur_url){
+			return $cur_url.$qs;
 		}
         return $this->getBaseUri().'/'.$this->getCurrentUri().$qs;
     }

@@ -18,6 +18,8 @@ ini_set('display_errors', 1);//in case of linux server
 error_reporting(E_ALL);
 //error_reporting(E_STRICT);
 
+define('app_engine','laranopea');
+
 include __DIR__ . '/../classes/ExceptionHandler.php';
 //throw new Exception("Just invoking the exception handler.", 2);
 
@@ -124,7 +126,7 @@ $GLOBALS['routes']=$routes;
 	$route = new Route($request);
 
 include __DIR__ . '/../classes/View.php';
-
+	/*
 var_dump($request->url());
 var_dump($request->root());
 var_dump($request->fullUrl());
@@ -132,7 +134,7 @@ var_dump($request->method());
 var_dump($request->getHost());
 var_dump( url()->current());
 	exit;
-	
+	*/
 /*
 	$csrf=true;
 	$session_csrf_name= $request->session()->session_name.'_csrf';
@@ -163,11 +165,21 @@ var_dump( url()->current());
 					
 			load_classes();
 		
-		include __DIR__ . '/../routes/web.php' ;	
-
+		//include __DIR__ . '/../routes/web.php' ;	
+		class Web{
+			public function load(){
+				include __DIR__ . '/../routes/web.php' ;	
+	
+			}
+		}
+			$web=new Web();		
+			$web->load();
 		
 		$route=null;
 		
+		if (defined('make_app') && make_app===true) {
+			return $current_route;
+		}
 			if($current_route===null){
 				page_not_found();
 			}else{		 

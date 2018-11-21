@@ -1,7 +1,7 @@
 <?php
 class Request{
 	//public $server;
-	//public $request ;
+	public $request ;
 	public $files;
 	public $cookies;
 	public $session;
@@ -12,12 +12,24 @@ class Request{
 		//  $server{$this->toCamelCase($key)} = $value;
 		//}
 		//$this->server=new ParameterBag($server);  
-		//$this->request  = new ParameterBag($_REQUEST);
+		
 		if(count($_FILES)>0){
 			$this->files = new FileBag($_FILES);
 		}
-		//$this->headers = new ParameterBag(getallheaders ()); 
+		//$this->headers = new ParameterBag(getallheaders ());
+		$CONTENT_TYPE=isset($_SERVER['HTTP_CONTENT_TYPE'])?$_SERVER['HTTP_CONTENT_TYPE']:'application/form-unknown';
+		$REQUEST_METHOD=isset($_SERVER['REQUEST_METHOD'])?$_SERVER['REQUEST_METHOD']:'GET';
+		if (strpos('application/x-www-form-urlencoded,multipart/form-data-encoded',strtolower($CONTENT_TYPE))!==false
+            && strpos('PUT,DELETE,PATCH',strtoupper($REQUEST_METHOD))!==false
+			){
+            parse_str(file_get_contents('php://input'), $data);
+            //$request->request = new ParameterBag($data);
+            $_REQUEST=$data;
+        }
+        //$this->request  = new ParameterBag($_REQUEST);
+        $this->request  = $this;
 	}
+	
 	public function set_cookies($data){
 		$this->cookies=new ParameterBag($data);
 	}
@@ -140,8 +152,17 @@ class Request{
 		if($data!==null){
 			$_REQUEST=$data;
 		}
-        $this->request  = new ParameterBag($_REQUEST);
+        //$this->request=new ParameterBag($_REQUEST);
+        $this->request=$this;
     }
+    public function add($data){
+		foreach($data as $key=>$val){
+			$_REQUEST[$key]=$val;
+		}
+	}
+	public function replace($data){
+		$this->add($data);
+	}
     public function getrequestMethod(){
 		return $_SERVER['REQUEST_METHOD'];
     }

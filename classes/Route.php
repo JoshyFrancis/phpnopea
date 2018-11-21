@@ -54,6 +54,7 @@ function add_route($method, $parameters){
 		if(isset($_REQUEST['_method']) && $_REQUEST['_method']===strtoupper($method)){
 			$method='post';
 		}else{
+			//Route::$routes[$method][$parameters[0]]=$parameters;
 			return;
 		}
 	}elseif($method==='resource'){

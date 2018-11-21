@@ -94,6 +94,7 @@ Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
 Route::match(['get', 'post'], '/match', function(Request $request){
 	$url=$request->url();
 	if($request->getrequestMethod()=='POST'){
+		var_dump($request->field1);
 		return 'Mathced post<br/><a href="'.$url .'" >Back</a>';
 	}else{
 		
@@ -109,6 +110,7 @@ Route::match(['get', 'post'], '/match', function(Request $request){
 Route::any('/any', function(Request $request){
 		$url=$request->url();	
 	if($request->getrequestMethod()=='POST'){
+		var_dump($request->field1);
 		return 'Any post<br/><a href="'.$url.'" >Back</a>';
 	}else{
 
@@ -133,6 +135,7 @@ Route::get('/delete', function(Request $request){
 	";
 });
 Route::delete( '/delete', function(Request $request){
+	var_dump($request->field1);
 	$url=$request->url();	
 		return 'Deleted<br/><a href="'.$url.'" >Back</a>';
 });
@@ -232,7 +235,7 @@ Route::post('/data', function (Request $request ) {
 					//$newfilename = $file->store( );
 					//$newfilename = $file->store('docs' );
 					$newfilename = $file->store('docs', 'public' );//path,disk
-					Storage::move($newfilename,  'docs/moved.'.$file->getClientOriginalExtension());
+					Storage::move($newfilename,  'docs/moved_'.uniqid().'.'.$file->getClientOriginalExtension());
 					var_dump($newfilename);
 				}
 			}
@@ -241,7 +244,7 @@ Route::post('/data', function (Request $request ) {
   return count($request->files);
   
 });
-$route->get('photo', function (Request $request ) {
+Route::get('photo', function (Request $request ) {
 	//Storage::delete('avatars/logo.png' );
 	//$Photo=Storage::get('logo.png' );
 	//var_dump($Photo);

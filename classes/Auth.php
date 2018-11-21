@@ -74,6 +74,20 @@ class Auth{
 		}
 		return $login;
 	}
+	public static function loginUsingId($id,$remember=false){
+		$credentials=[];
+		DB::setFetchMode(\PDO::FETCH_ASSOC);
+		$rows =DB::select('SELECT email,password,active from users where ID=?',[$id]);
+		DB::setFetchMode(\PDO::FETCH_OBJ);
+		if(count($rows)>0){
+			$credentials=$rows[0];
+			$remember=$remember===true?'1':'';
+			Route::$auth->attempt($credentials,$remember);
+			Route::$auth->check();
+			return Route::$auth->user; 
+		}
+		return null;
+	}
 	public function attempt($credentials,$remember=''){
 		global $GLOBALS;
 			$app_key=$GLOBALS['app_key'];

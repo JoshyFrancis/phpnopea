@@ -47,7 +47,6 @@ $public_path=__DIR__;
 
 	date_default_timezone_set(date_default_timezone_get ());
 	
-include __DIR__ . '/../classes/helpers.php';
 include __DIR__ . '/../classes/ParameterBag.php';
 	if(count($_FILES)>0){
 		include __DIR__ . '/../classes/UploadedFile.php';
@@ -56,6 +55,7 @@ include __DIR__ . '/../classes/ParameterBag.php';
 include __DIR__ . '/../classes/Request.php';
 include __DIR__ . '/../classes/Illuminate_Request.php';
 include __DIR__ . '/../classes/Route.php';	
+include __DIR__ . '/../classes/helpers.php';
 
 	//header('X-Powered-By:PHP/7.1.8');
 

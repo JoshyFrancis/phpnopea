@@ -8,8 +8,8 @@ class View{
     protected $sectionStack=[];
     protected $contents='';
     protected $file='';
-    public $status=200;
-    protected $url='';
+    public $statusCode=200;
+    protected $targetUrl='';
     public static $shared_data=[];
     public static $use_array_merge=false;//false=better speed
     public static $main_view=null;
@@ -534,8 +534,8 @@ class View{
 		//header( 'refresh:0;url='.$url);//,true,302
 		//header('Connection: close');
 		//header_remove('Cache-Control');
-		if($this->status===302){
-			header('Location: '.$this->url,true,302 );
+		if($this->statusCode===302){
+			header('Location: '.$this->targetUrl,true,302 );
 		}
 	}
     private function getContentType($path){
@@ -700,8 +700,8 @@ class View{
 	}
 	public function redirect_url($url){
 		Route::$request->session->set('_back','false');
-		$this->status=302;
-		$this->url=$url;
+		$this->statusCode=302;
+		$this->targetUrl=$url;
 		$this->setContents(sprintf('<!DOCTYPE html>
 			<html>
 				<head>

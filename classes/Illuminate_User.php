@@ -10,8 +10,13 @@ Class User{
 		if($name==='ID'){
 			return;
 		}
-		$this->names[]=$name;
-		$this->values[]=$value;
+		$p=array_search($name,$this->names);
+		if($p===false){
+			$this->names[]=$name;
+			$p=count($this->names)-1;
+		}
+		
+		$this->values[$p]=$value;
     }
     public function __get($name){
 		if($name==='ID'){

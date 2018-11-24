@@ -119,24 +119,16 @@ function storage_link($target, $link){
 	return symlink($target, $link);
 }
 function storage_path($path='') {
-	global $GLOBALS;
-	$public_path=$GLOBALS['public_path'];
-	return $public_path. '/../storage/'.$path;
+	return App::$public_path. '/../storage/'.$path;
 }
 function public_path($path='') {
-	global $GLOBALS;
-	$public_path=$GLOBALS['public_path'];
-	return $public_path .($path!=''? '/'. $path:'') ;
+	return App::$public_path .($path!=''? '/'. $path:'') ;
 }
 function base_path($path='') {
-	global $GLOBALS;
-	$public_path=$GLOBALS['public_path'];
-	return $public_path. '/..'.($path!=''? '/'. $path:'');
+	return App::$public_path. '/..'.($path!=''? '/'. $path:'');
 }
 function app_path($path='') {
-	global $GLOBALS;
-	$public_path=$GLOBALS['public_path'];
-	return $public_path .'/../app' .($path!=''? '/'. $path:'') ;
+	return App::$public_path .'/../app' .($path!=''? '/'. $path:'') ;
 }
 function array_insert_assoc (&$array, $position, $insert_array) { 
   $first_array = array_splice ($array, 0, $position); 
@@ -151,16 +143,10 @@ function parse_ini_file_ext($file, $sections = false,$scanner_mode=INI_SCANNER_R
     return parse_ini_string($str, $sections,$scanner_mode);
 }
 function env($key,$def=null){
-	global $GLOBALS;
-		$env=$GLOBALS['env'];	 
+		$env=App::$env_data;	 
 	return isset($env[$key])?$env[$key]:$def;
 }
 function url($route=null){
-	global $GLOBALS;
-		//$routes=$GLOBALS['routes'];
-	//if(strpos($route,Route::$request->getBaseUri())!==false){
-	//	return $route;
-	//}
 	if($route!==null  ){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
@@ -225,8 +211,7 @@ function is_encrypted($json_data){
 	return $json!==null;
 }
 function asset($path){
-	global $GLOBALS;
-	$public_path=$GLOBALS['public_path'];
+	$public_path=App::$public_path;
 	$file=$public_path.'/'.$path;
 	return  url('/')  . trim( $path,'/') . '?t=' . filemtime($file) ;
 }
@@ -264,13 +249,11 @@ function bytes_formatted($size){
     return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
 }
 function create_nonce($optional_salt=''){//https://stackoverflow.com/a/20039787/6417678
-	global $GLOBALS;
-		$salt=$GLOBALS['app_key'];
+		$salt=App::$app_key;
     return hash_hmac('sha256', Route::$request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']);
 }
 function check_nonce($nonce, $optional_salt='',$hour=1){
-	global $GLOBALS;
-		$salt=$GLOBALS['app_key'];
+		$salt=App::$app_key;
     $lasthour = date('G')-$hour<0 ? date('Ymd').(24-$hour) : date('YmdG')-$hour;   
     if (hash_hmac('sha256', Route::$request->session->getId().$optional_salt, date('YmdG').$salt.$_SERVER['REMOTE_ADDR']) == $nonce || 
         hash_hmac('sha256', Route::$request->session->getId().$optional_salt, $lasthour.$salt.$_SERVER['REMOTE_ADDR']) == $nonce){

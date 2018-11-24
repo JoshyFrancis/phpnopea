@@ -57,9 +57,8 @@ class View{
     public function prepare_view($view,$inner_view=false){
 		$this->view=$view;
 		if($view!==null){
-			global $GLOBALS;
-				$public_path=$GLOBALS['public_path'];
-				$view_path=$GLOBALS['view_path'];  
+				$public_path=App::$public_path;
+				$view_path=App::$view_path;  
 					//mkdir views
 					//mkdir sessions
 					//mkdir errors
@@ -652,6 +651,9 @@ class View{
 			$this->setStatus();
 		return $this->contents;
 	}
+	public function getContent(){
+		return $this->toString();
+	}
 	public function withErrors($data){
 		if($data instanceof Validator){
 			$data=$data->errors();
@@ -765,9 +767,8 @@ function response($content=null,$code=null){
 	return $view;
 }
 function redirect($route=null){
-	global $GLOBALS;
-			$routes=$GLOBALS['routes'];
-			$current_route=$GLOBALS['current_route'];
+			$routes=App::$routes;
+			$current_route=App::$current_route;
 		
 	if($route===null){
 		return  new View();
@@ -788,31 +789,21 @@ function send_file($path){
 	fclose($file);  
 }
 function page_not_found(){
-	global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
-	
 	http_response_code(404);
-	 
-	send_file($public_path. '/../classes/page_not_found.html');
-
+	send_file(App::$public_path. '/../classes/page_not_found.html');
 }
 function token_mismatch(){
-	global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
-	
 	http_response_status(419,'Authentication Timeout');
-	
 	//send_file($public_path. '/../classes/token_mismatch.html');	
-	return file_get_contents($public_path. '/../classes/token_mismatch.html');	
+	return file_get_contents(App::$public_path. '/../classes/token_mismatch.html');	
 }
 function app(){
 	return new View();
 }
 class Blade{
 	public static function compileString($contents){
-		global $GLOBALS;
-				$public_path=$GLOBALS['public_path'];
-				$view_path=$GLOBALS['view_path'];  
+				$public_path=App::$public_path;
+				$view_path=App::$view_path;  
 				 
 			$storage_view_path= $public_path. '/../storage/views/' ;
 		$view=new View();

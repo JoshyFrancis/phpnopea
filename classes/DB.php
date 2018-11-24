@@ -19,8 +19,7 @@ class DB{
     }
     public static function createDB () {
         if(self::$DBH===null){
-			global $GLOBALS;
-			$env=$GLOBALS['env'];
+			$env=App::$env_data;
 			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].';charset=utf8';
 			$user=$env['DB_USERNAME'];
 			$pass=$env['DB_PASSWORD'];

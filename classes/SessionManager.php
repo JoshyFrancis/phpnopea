@@ -129,8 +129,7 @@ class SessionManager{// implements SessionHandlerInterface{
     }
     public function flash($key, $value = null){
 		if(!isset($this->attributes['flash_url'])){
-			global $GLOBALS;
-			$route_path=$GLOBALS['route_path'];
+			$route_path=App::$route_path;
 			$this->attributes['flash_url']=$route_path;
 		}
         $this->attributes['_flash'.$key]=$value;
@@ -185,8 +184,7 @@ class SessionManager{// implements SessionHandlerInterface{
 			if($this->attributes['flash_url']==='subsequent'){
 				$this->clear_flash();
 			}else{
-				global $GLOBALS;
-				$route_path=$GLOBALS['route_path'];
+				$route_path=App::$route_path;
 				//if($this->attributes['flash_url']!==$route_path){
 					$this->attributes['flash_url']='subsequent';
 				//}

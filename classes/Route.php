@@ -11,7 +11,6 @@ Jesus Christ is the only savior, who will redeem you.
 
 */
 class Route{
-	public static $routes=[];
 	public static $middleware_stack=[];
 	public static $group;
 	public static $pattern=[];
@@ -31,10 +30,6 @@ class Route{
 	function __destruct() {
         //echo "Destroying " . __CLASS__ . "\n";
 		//echo "<br>";
-		//var_dump(self::$routes);
-		global $GLOBALS;
-			$routes=& $GLOBALS['routes'];
-		$routes=self::$routes;
     }
     public static function pattern($key, $pattern)    {
 		Route::$pattern[$key]=$pattern ;
@@ -54,7 +49,7 @@ function add_route($method, $parameters){
 		if(isset($_REQUEST['_method']) && $_REQUEST['_method']===strtoupper($method)){
 			$method='post';
 		}else{
-			//Route::$routes[$method][$parameters[0]]=$parameters;
+			//App::$routes[$method][$parameters[0]]=$parameters;
 			return;
 		}
 	}elseif($method==='resource'){
@@ -67,13 +62,13 @@ function add_route($method, $parameters){
 		Route::post($parameters[0].'/{id}', $parameters[1].'@destroy') ;
 		return;
 	}
-	global $GLOBALS;
-			$route_method=$GLOBALS['route_method'];
+	
+			$route_method=App::$route_method;
 	if($method==='any'){
 		$method=$route_method;
 	}			
 				
-	//Route::$routes[$method][$parameters[0]]=$parameters;			
+	//App::$routes[$method][$parameters[0]]=$parameters;			
 	
 	//if( strpos(strtolower($method) ,$route_method)!==false || $method==='any'){
 	//if(strpos($method,$route_method)!==false || $method==='any'){			
@@ -108,7 +103,7 @@ function add_route($method, $parameters){
 				}
 			}
 			if($domain!==''){
-				$route_domain=$GLOBALS['route_domain'];
+				$route_domain=App::$route_domain;
 					$domain_match=false;
 				if(substr_count($route_domain,'.')===substr_count($domain,'.') ){
 						$domain_match=true;
@@ -124,7 +119,7 @@ function add_route($method, $parameters){
 		}
 				
 	//$a_path1=explode('/',$route_path);
-		$a_path1=$GLOBALS['a_path1'];
+		$a_path1=App::$a_path1;
 		$a_path2=explode('/',$path);
 				 			
 			$match=count($a_path1)===count($a_path2);
@@ -165,7 +160,7 @@ function add_route($method, $parameters){
 		}
 		
 		if($match===true){
-			$current_route=& $GLOBALS['current_route'];
+			$current_route=& App::$current_route;
 			if($current_route!==null){
 				return;
 			}
@@ -206,7 +201,7 @@ function add_route($method, $parameters){
 					}
 						load_laravel_classes();
 					 
-					$controllers_path=$GLOBALS['controllers_path'];
+					$controllers_path=App::$controllers_path;
 					
 					//include  $controllers_path . '/Controller.php';
 
@@ -286,11 +281,10 @@ function add_route($method, $parameters){
 	}
 }
 function load_classes(){
-	
-	global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
-		$lifetime=$GLOBALS['lifetime'];
-		$session_name=$GLOBALS['session_name'];
+	 
+		$public_path=App::$public_path;
+		$lifetime=App::$session_lifetime;
+		$session_name=App::$session_name;
 	
 	include $public_path . '/../classes/SessionManager.php';	
 
@@ -315,7 +309,7 @@ function load_classes(){
 	include $public_path . '/../classes/Illuminate_QueryException.php';//used in DB class
 	include $public_path . '/../classes/DB.php';
 		//$db=new DB();
-		//$GLOBALS['db']=$db;
+		//App::$db=$db;
 	
 	include $public_path . '/../classes/Auth.php';
 	include $public_path . '/../classes/Illuminate_User.php';
@@ -328,8 +322,7 @@ function load_classes(){
 			
 }
 function load_laravel_classes(){
-	global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
+		$public_path=App::$public_path;
 	include $public_path . '/../classes/Illuminate_Controller.php';	
 	include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
 	//include $public_path . '/../classes/Illuminate_Session.php';
@@ -338,9 +331,8 @@ function load_laravel_classes(){
 	
 }
 function through_middleware($func, $fire_args,$controller_class=null){
-	global $GLOBALS;
-	
-	include $GLOBALS['http_path'] . 'Kernel.php' ;
+	 	
+	include App::$http_path.App::$Kernel;
 		$class = 'App\\Http\\Kernel' ;
 		$kernel_class=new $class() ;
 		/*
@@ -360,12 +352,12 @@ function through_middleware($func, $fire_args,$controller_class=null){
 			//$kernel_class->middlewares[$key]=[load_middleware_class($public_path,$class)];
 			$kernel_class->middlewares[$key]=[  $class ];
 		}
-			 $GLOBALS['kernel_class']=$kernel_class;
+			 App::$kernel_class=$kernel_class;
 		//var_dump($kernel_class->middlewares);
 	
-		$kernel_class=$GLOBALS['kernel_class'];
+		$kernel_class=App::$kernel_class;
 		*/
-		$public_path=$GLOBALS['public_path'];
+		$public_path=App::$public_path;
 	$res=null;
 	$called=false;
 	$middleware_args=[];

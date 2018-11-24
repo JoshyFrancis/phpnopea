@@ -20,112 +20,11 @@ error_reporting(E_ALL);
 
 define('app_engine','laranopea');
 
-include __DIR__ . '/../classes/ExceptionHandler.php';
-//throw new Exception("Just invoking the exception handler.", 2);
+	include __DIR__ .'/../classes/App.php';
 
-if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
-	//header("404 not found",true,404);
-	header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
-	exit();	
-}
-$method=strtolower($_SERVER['REQUEST_METHOD']);
-if($method==='post' && isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
-		$_POST=json_decode(file_get_contents('php://input'),true);
-	if($_POST!==null){
-		$_REQUEST+=$_POST;
-	}
-}
+$app=new App();
+	$app->run();
 
-$public_path=__DIR__;
-	$GLOBALS['public_path']=$public_path;
-	$GLOBALS['http_path']=$public_path. '/../app/Http/';
-	$GLOBALS['controllers_path']=$public_path. '/../app/Http/Controllers/';
-	$GLOBALS['view_path']=$public_path. '/../resources/views/' ;
-	
-//$random_session_id=bin2hex(openssl_random_pseudo_bytes(122));
-//var_dump($random_session_id);
-
-	date_default_timezone_set(date_default_timezone_get ());
-	
-include __DIR__ . '/../classes/helpers.php';
-include __DIR__ . '/../classes/ParameterBag.php';
-	if(count($_FILES)>0){
-		include __DIR__ . '/../classes/UploadedFile.php';
-		include __DIR__ . '/../classes/FileBag.php';
-	}
-include __DIR__ . '/../classes/Request.php';
-include __DIR__ . '/../classes/Illuminate_Request.php';
-include __DIR__ . '/../classes/Route.php';	
-
-	//header('X-Powered-By:PHP/7.1.8');
-
-$file_env=__DIR__ .  '/../.env';
-/*
-	$data_env=explode(chr(10), file_get_contents($file_env));
-	$env_data=[];
-	for($i=0;$i<count($data_env);$i++){
-		$config_a=explode('=', $data_env[$i]);
-		$config_name=trim( $config_a[0]);
-		if(strlen($config_name)>0){
-			$config_value=isset($config_a[1])? trim( $config_a[1]):null;
-			$env_data[$config_name]=$config_value;
-		} 
-	}
-*/
-//$env_data=parse_ini_file_ext($file_env,false,INI_SCANNER_RAW ) ;
-$env_data=parse_ini_file($file_env,false,INI_SCANNER_RAW ) ;
-
-
-		$GLOBALS['env']=$env_data;
-
-$app_key=isset($env['APP_KEY'])?$env['APP_KEY']:'';// env('APP_KEY');
-if(strpos($app_key,'base64:')!==false){
-	//$app_key=base64_decode(explode('base64:',$app_key)[1]);	
-	$app_key=base64_decode(substr( $app_key,7) );	
-}
-	$GLOBALS['app_key']=$app_key;
-
-include __DIR__ . '/../classes/Cookie.php';	
-
-
-//$request = new Request;
-$request = new Illuminate\Http\Request;
-	
-//var_dump($_SERVER['REQUEST_URI']);
-
-	
-$current_route=null;
-
-	$GLOBALS['current_route']=$current_route;
-	$GLOBALS['app_key']=$app_key;
-	$GLOBALS['route_method']=$method;//strtolower($request->method());
-	//$GLOBALS['route_path']=strtolower(trim($request->getPathInfo(),'/'));
-	//$GLOBALS['route_path']= trim($request->getPathInfo(),'/') ;	
-	//$GLOBALS['route_path']= $request->path();
-	$GLOBALS['route_path']=$request->getCurrentUri();//fastest
-	$GLOBALS['a_path1']=explode('/',$GLOBALS['route_path']);
-	$GLOBALS['route_domain']=$request->getHost();
-
-
-
-
-	$session_name='laranopea_session';	
-	//$lifetime=(60*60)*2;//in seconds
-	$lifetime= 60 ;//in seconds
-		$GLOBALS['session_name']=$session_name;
-		$GLOBALS['session_lifetime']=$lifetime;
-	
-////var_dump(storage_path('app/public'));
-////storage_path('app/public'), public_path('storage')
-//if (!file_exists(public_path('storage'))) {//or php artisan storage:link
-//	storage_link(storage_path('app/public'),public_path('storage'));
-//}
-
-$routes=[];
-$GLOBALS['routes']=$routes;
-	$route = new Route($request);
-
-include __DIR__ . '/../classes/View.php';
 	/*
 var_dump($request->url());
 var_dump($request->root());
@@ -159,38 +58,7 @@ var_dump( url()->current());
 	} 
 	*/
 //if($csrf==true){
-	if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
-		page_not_found();
-	}else{
-					
-			load_classes();
-		
-		//include __DIR__ . '/../routes/web.php' ;	
-		class Web{
-			public function load(){
-				include __DIR__ . '/../routes/web.php' ;	
-	
-			}
-		}
-			$web=new Web();		
-			$web->load();
-		
-		$route=null;
-		
-		if (defined('make_app') && make_app===true) {
-			return $current_route;
-		}
-			if($current_route===null){
-				page_not_found();
-			}else{		 
-				echo through_middleware($current_route['func'],$current_route['args'],$current_route['controller_class']);				 
-			}
-		Route::$request->session->save();
-		$env_data=null;
-		$request=null;
-		
-		$db=null;		
-	}
+
 	
 //}
 

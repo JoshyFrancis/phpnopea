@@ -5,8 +5,7 @@ set_error_handler("error_handler");
 set_exception_handler("error_handler");
 register_shutdown_function("error_handler");
 function replace_file_mtime($file){
-	global $GLOBALS;
-		$base_path=$GLOBALS['base_path'];
+		$base_path=App::$base_path;
 	 
 	if(($pos=strrpos($file,'_'))!==false && ($pos2=strpos($file,'.blade.php',$pos))!==false){
 		$ext=substr($file,$pos2);
@@ -57,11 +56,10 @@ function error_handler($code=null,$message='',$file='',$line=0){
     // Output error page
     //echo $message;
     //var_dump($trace);
-			$public_path=$GLOBALS['public_path'];
+			$public_path=App::$public_path;
 			$class_path= $public_path. '/../classes/' ;
 			$storage_path= $public_path. '/../storage/' ;
-		$base_path=dirname($public_path);
-		$GLOBALS['base_path']=$base_path;
+		$base_path=App::$base_path;
 				
     $exception=file_get_contents($class_path.'exception.html');
     $code=$e->getCode();

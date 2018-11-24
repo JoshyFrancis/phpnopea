@@ -42,8 +42,7 @@ class Auth{
 		$this->user->password=$rows[0]->password;
 	}
 	public function check(){
-		global $GLOBALS;
-			$session_name=$GLOBALS['session_name'];
+			$session_name=App::$session_name;
 		$remember_cookie=$session_name.'_remember';
 		$cookie=Route::$request->cookies->get($remember_cookie);
 		$login=Route::$request->session->get('_login',false);
@@ -75,10 +74,9 @@ class Auth{
 		return $login;
 	}
 	public static function loginUsingId($id,$remember=false){
-		global $GLOBALS;
-			$app_key=$GLOBALS['app_key'];
-			$env=$GLOBALS['env'];
-			$session_name=$GLOBALS['session_name'];
+			$app_key=App::$app_key;
+			$env=App::$env_data;
+			$session_name=App::$session_name;
 			$remember_cookie=$session_name.'_remember';
 		Route::$request->session->put('_login',false);
 		DB::setFetchMode(\PDO::FETCH_ASSOC);
@@ -94,10 +92,9 @@ class Auth{
 		return null;
 	}
 	public function attempt($credentials,$remember=''){
-		global $GLOBALS;
-			$app_key=$GLOBALS['app_key'];
-			$env=$GLOBALS['env'];
-			$session_name=$GLOBALS['session_name'];
+			$app_key=App::$app_key;
+			$env=App::$env_data;
+			$session_name=App::$session_name;
 			$remember_cookie=$session_name.'_remember';
 		$login=false;
 		Route::$request->session->put('_login',false);
@@ -170,8 +167,7 @@ class Auth{
 		return $login;
 	}
 	public function logout(){
-		global $GLOBALS;
-		$session_name=$GLOBALS['session_name'];
+			$session_name=App::$session_name;
 		$remember_cookie=$session_name.'_remember';
 			remove_cookie($remember_cookie);
 		//Route::$request->session()->destroy_current();

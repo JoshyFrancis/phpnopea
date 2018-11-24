@@ -113,8 +113,7 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 }
 
 function decrypt_coookies(){
-	global $GLOBALS;
-	$app_key=$GLOBALS['app_key'];
+	$app_key=App::$app_key;
 	$cookie_vars=[];
 	foreach($_COOKIE as $key=>&$val){
 		$value=decrypt($val,$app_key);
@@ -175,12 +174,11 @@ function remove_cookie($name){
 	Route::$request->set_cookies($_COOKIE);
 }
 function encrypt_coookies(){
-	global $GLOBALS;
-	$app_key=$GLOBALS['app_key'];
-	if(!isset($GLOBALS['session_name'])){
+	$app_key=App::$app_key;
+	if(!isset(App::$session_name)){
 		return;
 	}
-	$session_name=$GLOBALS['session_name']; 
+	$session_name=App::$session_name; 
 			$cookies=[];
 	$date_found=false;
 	$Content_Type='';

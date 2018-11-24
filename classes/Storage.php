@@ -57,8 +57,7 @@ class Storage{
 		}
     }
     public static function default_disk($path,$disk=''){
-		global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
+		$public_path=App::$public_path;
 		$storage_config= require( $public_path . '/../config/filesystems.php');	
 		$disk=$disk===''?$storage_config['default']:$disk;
 		$path=$storage_config['disks'][$disk]['root']  .($path!=''? '/'. $path:'') ;
@@ -109,8 +108,7 @@ class Storage{
         return file_exists($path) ;
     }    
 	public static function disk($disk){
-		global $GLOBALS;
-		$public_path=$GLOBALS['public_path'];
+		$public_path=App::$public_path;
 		$storage_config= require( $public_path . '/../config/filesystems.php');	 
 		$path=$storage_config['disks'][$disk]['root'];
         return new disk($path);

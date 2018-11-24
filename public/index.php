@@ -18,8 +18,6 @@ ini_set('display_errors', 1);//in case of linux server
 error_reporting(E_ALL);
 //error_reporting(E_STRICT);
 
-define('app_engine','laranopea');
-
 	include __DIR__ .'/../classes/App.php';
 
 $app=new App();

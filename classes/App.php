@@ -1,5 +1,5 @@
 <?php
-
+define('app_engine','laranopea');
 class App{
 	public static $public_path;
 	public static $Kernel='Kernel.php';
@@ -45,11 +45,16 @@ class App{
 					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 
 				}
 			Route::$request->session->save();
-			App::$env_data=null;
-			App::$request=null;
 			
-			//App::$db=null;
+			$this->terminate();
+			
 		}
+	}
+	public function terminate(){
+		App::$env_data=null;
+		App::$request=null;
+		
+		//App::$db=null;
 	}
 }
 	//App::$public_path=__DIR__ .'/../public';

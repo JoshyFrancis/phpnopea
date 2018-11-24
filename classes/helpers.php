@@ -163,10 +163,10 @@ function url($route=null){
 		if(substr($route,0,1)==='/'){
 			$route=substr($route,1);
 		}
-		if(substr($route,-1,1)==='/'){
-			$route=substr($route,0,strrpos($route,'/'));
-		}
 		$url.= $route ;
+		if(substr($url,-1,1)==='/'){
+			$url=substr($url,0,strrpos($url,'/'));
+		}
 		return $url;
 	}
 	return Route::$request;

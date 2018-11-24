@@ -42,42 +42,75 @@ function class_get_protected($obj,$class=null){
 	return $new_obj;
 }
 
-function load_app($engine,$path,$uri,$index='index.php',Closure $run){
-		$index='/'.$index;
-		$new_path=str_replace($_SERVER['PHP_SELF'],$index,$_SERVER['SCRIPT_FILENAME']);
-		$new_uri=substr($index,0,strrpos($index,'/')+1).$uri;
-		$_SERVER['SCRIPT_FILENAME']=$new_path; 
-		$_SERVER['PHP_SELF']=$index; 
-		$_SERVER['SCRIPT_NAME']=$index;
-		$_SERVER['REQUEST_URI']=$new_uri; 
+class app_loader{
+	protected $server;
+	protected $engine;
+	protected $app;
+	protected $response;
+	public $request;
+	function __construct($engine,$path,$uri,$index='index.php',Closure $run){
+		$this->engine=$engine;
+			$index='/'.$index;
+			$new_path=str_replace($_SERVER['PHP_SELF'],$index,$_SERVER['SCRIPT_FILENAME']);
+			$new_uri=substr($index,0,strrpos($index,'/')+1).$uri;
+		$this->server=[];
+		foreach($_SERVER as $key=>$val){
+			$this->server[$key]=$val;
+		}
+			$_SERVER['SCRIPT_FILENAME']=$new_path; 
+			$_SERVER['PHP_SELF']=$index; 
+			$_SERVER['SCRIPT_NAME']=$index;
+			$_SERVER['REQUEST_URI']=$new_uri; 
 
-		$_SERVER['REQUEST_METHOD']='POST';
-	
-	if($engine==='laranopea'){
-		include $path .'/../classes/App.php';//for laranopea
-			$app=new App();
-				$app->load();
-		$request=Route::$request;
-				
-	}elseif($engine==='laravel-5.4'){
-		include $path.'/../bootstrap/autoload.php';	//for laravel-5.4
-		include $path.'/../bootstrap/app.php';	//for laravel-5.4
-		$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);			
-		$request = Illuminate\Http\Request::createFromGlobals();
-		$response = $kernel->handle($request);
-		
-	}
-		
-		if(call_user_func($run,$engine,$request)){
+		if($engine==='laranopea'){
+			include $path .'/../classes/App.php';//for laranopea
+				$app=new App();
+					$app->load();
+			$this->app=$app;
+			$request=Route::$request;
+					
+		}elseif($engine==='laravel-5.4'){
+			include $path.'/../bootstrap/autoload.php';	//for laravel-5.4
+			include $path.'/../bootstrap/app.php';	//for laravel-5.4
+			$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);			
+			
+			$request = Illuminate\Http\Request::createFromGlobals();
+			$response = $kernel->handle($request);
+			$this->app=$kernel;
+			$this->response=$response;
 			
 		}
-		
-	//if (defined('app_engine') && app_engine==='laranopea') {
-	if($engine==='laranopea'){
-		$app->terminate();
-	//if (defined('LARAVEL_START')) {//5.7
-	}elseif($engine==='laravel-5.4'){
-		$kernel->terminate($request, $response);				
+			$this->request=$request;
+		if(call_user_func($run,$engine,$request,$this)){
+			
+		}
+	}
+	public function post($class,$post,$method='store',$args=[]){
+		$_SERVER['REQUEST_METHOD']='POST';
+		$controller_class=new $class();
+		$this->request->replace($post);
+			if(count($args)===0){
+				$args=[$this->request];
+			}
+		return call_user_func_array([$controller_class, $method],$args);
+	}
+	public function get($class,$method='index',$args=[]){
+		$_SERVER['REQUEST_METHOD']='GET';
+		$controller_class=new $class();
+			if(count($args)===0){
+				$args=[$this->request];
+			}
+		return call_user_func_array([$controller_class, $method],$args);
+	}
+	public function terminate(){
+		//if (defined('app_engine') && app_engine==='laranopea') {
+		if($this->engine==='laranopea'){
+			$this->app->terminate();
+		//if (defined('LARAVEL_START')) {//5.7
+		}elseif($this->engine==='laravel-5.4'){
+			$this->app->terminate($this->request, $this->response);				
+		}		
+			$_SERVER=$this->server;
 	}
 }
 
@@ -89,7 +122,8 @@ function test_app(){
 		
 	//$app_engine='laravel-5.4';
 	$app_engine='laranopea';
-	load_app($app_engine,$app_path,$app_uri,$app_index,function($engine,$request){
+	
+	$app=new app_loader($app_engine,$app_path,$app_uri,$app_index,function($engine,$request,$app){
 		echo $engine;
 		
 		$user=Auth::loginUsingId(13);
@@ -110,8 +144,9 @@ function test_app(){
 
 			//$controller_file=$path.'/../app/Http/Controllers/customer/customerController.php';//ResourceController
 			//include $controller_file;
+		/*
 			$class = 'App\\Http\\Controllers\\customer\customerController';//ResourceController
-			$controller_class=new $class() ;
+			//$controller_class=new $class() ;
 			
 			$post=[];
 			$post['customerType']='1';
@@ -123,9 +158,10 @@ function test_app(){
 			$post['credit_days']='0';
 			$post['InvoiceTaxable']='1';
 		
-			$request->replace($post);
+		//	$request->replace($post);
 		//$res=through_middleware('store',$args,$controller_class);//works
-		$res= call_user_func_array([$controller_class, 'store'], [$request]);
+		//$res= call_user_func_array([$controller_class, 'store'], [$request]);
+		$res=$app->post($class,$post);
 		
 			//var_dump($res);
 		
@@ -142,7 +178,41 @@ function test_app(){
 				var_dump($obj->statusCode);
 			}
 		}
-		
+		*/
 	});	
+		$class = 'App\\Http\\Controllers\\customer\customerController';//ResourceController
+			//$controller_class=new $class() ;
+			
+			$post=[];
+			$post['customerType']='1';
+			$post['Customer_Name']='Test Customer 1';
+			$post['CountryCode']='4-AND';
+			$post['CityID']='Andorra la Vella';
+			$post['Address']='Address1';
+			$post['Telephone']='1234';
+			$post['credit_days']='0';
+			$post['InvoiceTaxable']='1';
+		
+		//	$request->replace($post);
+		//$res=through_middleware('store',$args,$controller_class);//works
+		//$res= call_user_func_array([$controller_class, 'store'], [$request]);
+		$res=$app->post($class,$post);
+		
+			//var_dump($res);
+		
+		if(is_object($res)){
+			 if($res instanceof View){
+				$obj=class_get_protected($res);//,View::class);
+				var_dump($obj->targetUrl);
+				var_dump($obj->statusCode);
+			}elseif($res instanceof Illuminate\Http\RedirectResponse){
+				//var_dump($res);
+				$obj=class_get_protected($res);//,Illuminate\Http\RedirectResponse::class);
+				
+				var_dump($obj->targetUrl);
+				var_dump($obj->statusCode);
+			}
+		}
+	$app->terminate();
 }
-	//test_app();
+	test_app();

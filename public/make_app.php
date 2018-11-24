@@ -82,7 +82,7 @@ function load_app($engine,$path,$uri,$index='index.php',Closure $run){
 }
 
 
-	 
+function test_app(){
 	$path=readlink($_SERVER['DOCUMENT_ROOT'].'/work') . '/HR/laravel-5.4.23/public';//'/var/www/base_path/public';
 	$index='work/HR/laravel-5.4.23/public/index.php';//'index.php';
 	$uri='customer';
@@ -143,5 +143,6 @@ function load_app($engine,$path,$uri,$index='index.php',Closure $run){
 			}
 		}
 		
-	});
-	
+	});	
+}
+	//test_app();

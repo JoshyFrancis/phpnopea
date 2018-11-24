@@ -19,7 +19,7 @@ class App{
 	public static $session_lifetime;
 	public static $routes=[];
 	public static $route;
-	function __construct($session_name='laranopea_session',$lifetime=60){//(60*60)*2;//in seconds
+	function __construct($session_name='laranopea_session',$lifetime=(60*60)*2){//(60*60)*2;//in seconds
 		App::$session_name=$session_name;
 		App::$session_lifetime=$lifetime;
 		

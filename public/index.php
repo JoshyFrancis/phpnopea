@@ -20,7 +20,7 @@ error_reporting(E_ALL);
 
 	include __DIR__ .'/../classes/App.php';
 
-$app=new App();
+$app=new App('laranopea_session',60);
 	$app->run();
 
 	/*

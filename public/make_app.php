@@ -83,13 +83,13 @@ function load_app($engine,$path,$uri,$index='index.php',Closure $run){
 
 
 function test_app(){
-	$path=readlink($_SERVER['DOCUMENT_ROOT'].'/work') . '/HR/laravel-5.4.23/public';//'/var/www/base_path/public';
-	$index='work/HR/laravel-5.4.23/public/index.php';//'index.php';
-	$uri='customer';
+	$app_path=readlink($_SERVER['DOCUMENT_ROOT'].'/work') . '/HR/laravel-5.4.23/public';//'/var/www/base_path/public';
+	$app_index='work/HR/laravel-5.4.23/public/index.php';//'index.php';
+	$app_uri='customer';
 		
-	//$engine='laravel-5.4';
-	$engine='laranopea';
-	load_app($engine,$path,$uri,$index,function($engine,$request){
+	//$app_engine='laravel-5.4';
+	$app_engine='laranopea';
+	load_app($app_engine,$app_path,$app_uri,$app_index,function($engine,$request){
 		echo $engine;
 		
 		$user=Auth::loginUsingId(13);

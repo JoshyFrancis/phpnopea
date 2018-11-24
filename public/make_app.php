@@ -87,7 +87,7 @@ function load_app($engine,$path,$uri,$index='index.php',Closure $run){
 	$index='work/HR/laravel-5.4.23/public/index.php';//'index.php';
 	$uri='customer';
 		
-	$engine='laravel-5.4';
+	//$engine='laravel-5.4';
 	$engine='laranopea';
 	load_app($engine,$path,$uri,$index,function($engine,$request){
 		echo $engine;

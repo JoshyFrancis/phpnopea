@@ -43,7 +43,8 @@ function class_get_protected($obj,$class=null){
 }
 
 class app_loader{
-	protected $server;
+	protected $_server;
+	protected $_cookie;
 	protected $engine;
 	protected $app;
 	protected $response;
@@ -53,15 +54,35 @@ class app_loader{
 			$index='/'.$index;
 			$new_path=str_replace($_SERVER['PHP_SELF'],$index,$_SERVER['SCRIPT_FILENAME']);
 			$new_uri=substr($index,0,strrpos($index,'/')+1).$uri;
-		$this->server=[];
+			$this->_server=[];
 		foreach($_SERVER as $key=>$val){
-			$this->server[$key]=$val;
+			$this->_server[$key]=$val;
+		}
+			$_request=[];
+		foreach($_REQUEST as $key=>$val){
+			$_request[$key]=$val;
+		}
+			$_get=[];
+		foreach($_GET as $key=>$val){
+			$_get[$key]=$val;
+		}
+			$_post=[];
+		foreach($_POST as $key=>$val){
+			$_post[$key]=$val;
+		}
+			$this->_cookie=[];
+		foreach($_COOKIE as $key=>$val){
+			$this->_cookie[$key]=$val;
 		}
 			$_SERVER['SCRIPT_FILENAME']=$new_path; 
 			$_SERVER['PHP_SELF']=$index; 
 			$_SERVER['SCRIPT_NAME']=$index;
 			$_SERVER['REQUEST_URI']=$new_uri; 
-
+			$_SERVER['QUERY_STRING']=(strpos($new_uri,'?')!==false?substr($new_uri,strrpos($new_uri,'?')+1):'');
+				$_REQUEST=[];
+				$_GET=[];
+				$_POST=[];
+				$_COOKIE=[];
 		if($engine==='laranopea'){
 			include $path .'/../classes/App.php';//for laranopea
 				$app=new App();
@@ -84,6 +105,10 @@ class app_loader{
 		if(call_user_func($run,$engine,$request,$this)){
 			
 		}
+			
+			$_REQUEST=$_request;
+			$_GET=$_get;
+			$_POST=$_post;
 	}
 	public function post($class,$post,$method='store',$args=[]){
 		$_SERVER['REQUEST_METHOD']='POST';
@@ -110,7 +135,8 @@ class app_loader{
 		}elseif($this->engine==='laravel-5.4'){
 			$this->app->terminate($this->request, $this->response);				
 		}		
-			$_SERVER=$this->server;
+			$_SERVER=$this->_server;
+			$_COOKIE=$this->_cookie;
 	}
 }
 
@@ -196,6 +222,7 @@ function test_app(){
 		//	$request->replace($post);
 		//$res=through_middleware('store',$args,$controller_class);//works
 		//$res= call_user_func_array([$controller_class, 'store'], [$request]);
+		
 		$res=$app->post($class,$post);
 		
 			//var_dump($res);
@@ -215,4 +242,4 @@ function test_app(){
 		}
 	$app->terminate();
 }
-//	test_app();
+	test_app();

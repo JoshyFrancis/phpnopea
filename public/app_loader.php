@@ -78,11 +78,15 @@ class app_loader{
 			$_SERVER['PHP_SELF']=$index; 
 			$_SERVER['SCRIPT_NAME']=$index;
 			$_SERVER['REQUEST_URI']=$new_uri; 
-			$_SERVER['QUERY_STRING']=(strpos($new_uri,'?')!==false?substr($new_uri,strrpos($new_uri,'?')+1):'');
+			$qs=(strpos($new_uri,'?')!==false?substr($new_uri,strrpos($new_uri,'?')+1):'');
+			$_SERVER['QUERY_STRING']=$qs;
 				$_REQUEST=[];
 				$_GET=[];
 				$_POST=[];
 				$_COOKIE=[];
+			if($qs!==''){
+				parse_str($qs,$_GET);
+			}
 		if($engine==='laranopea'){
 			include $path .'/../classes/App.php';//for laranopea
 				$app=new App();

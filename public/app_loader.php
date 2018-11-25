@@ -41,7 +41,24 @@ function class_get_protected($obj,$class=null){
 		$new_obj=new get_protected($obj);
 	return $new_obj;
 }
-
+function get_protected($obj,$property){
+	$array =(array)$obj;
+		/*
+		foreach($array AS $key=>$val){
+				$name = str_replace("\0*\0",'',$key);			
+			if($name===$property){
+				return $val;
+			}
+		}
+		*/
+	if(isset($array["\0*\0".$property])){
+		return $array["\0*\0".$property];
+	}
+	if(isset($array[$property])){
+		return $array[$property];
+	}
+	return null;
+}
 class app_loader{
 	public $_server;
 	public $_request;

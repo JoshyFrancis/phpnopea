@@ -43,8 +43,11 @@ function class_get_protected($obj,$class=null){
 }
 
 class app_loader{
-	protected $_server;
-	protected $_cookie;
+	public $_server;
+	public $_request;
+	public $_get;
+	public $_post;
+	public $_cookie;
 	protected $engine;
 	protected $app;
 	protected $response;
@@ -58,17 +61,17 @@ class app_loader{
 		foreach($_SERVER as $key=>$val){
 			$this->_server[$key]=$val;
 		}
-			$_request=[];
+			$this->_request=[];
 		foreach($_REQUEST as $key=>$val){
-			$_request[$key]=$val;
+			$this->_request[$key]=$val;
 		}
-			$_get=[];
+			$this->_get=[];
 		foreach($_GET as $key=>$val){
-			$_get[$key]=$val;
+			$this->_get[$key]=$val;
 		}
-			$_post=[];
+			$this->_post=[];
 		foreach($_POST as $key=>$val){
-			$_post[$key]=$val;
+			$this->_post[$key]=$val;
 		}
 			$this->_cookie=[];
 		foreach($_COOKIE as $key=>$val){
@@ -110,9 +113,6 @@ class app_loader{
 			
 		}
 			
-			$_REQUEST=$_request;
-			$_GET=$_get;
-			$_POST=$_post;
 	}
 	public function post($class,$post,$method='store',$args=[]){
 		$_SERVER['REQUEST_METHOD']='POST';
@@ -140,6 +140,9 @@ class app_loader{
 			$this->app->terminate($this->request, $this->response);				
 		}		
 			$_SERVER=$this->_server;
+			$_REQUEST=$this->_request;
+			$_GET=$this->_get;
+			$_POST=$this->_post;
 			$_COOKIE=$this->_cookie;
 	}
 }

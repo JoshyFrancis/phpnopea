@@ -242,4 +242,4 @@ function test_app(){
 		}
 	$app->terminate();
 }
-	test_app();
+	//test_app();

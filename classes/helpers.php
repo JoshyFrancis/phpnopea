@@ -164,7 +164,7 @@ function url($route=null){
 			$route=substr($route,1);
 		}
 		$url.= $route ;
-		if(substr($url,-1,1)==='/'){
+		if(substr($url,-1,1)==='/' && $route!==''){
 			$url=substr($url,0,strrpos($url,'/'));
 		}
 		return $url;

@@ -69,7 +69,7 @@ class app_loader{
 	protected $app;
 	protected $response;
 	public $request;
-	function __construct($engine,$path,$uri,$index='index.php',Closure $run){
+	function __construct($engine,$path,$uri,$index='index.php',Closure $run,$config=[]){
 		$this->engine=$engine;
 			$index='/'.$index;
 			$new_path=str_replace($_SERVER['PHP_SELF'],$index,$_SERVER['SCRIPT_FILENAME']);
@@ -110,26 +110,55 @@ class app_loader{
 		if($engine==='laranopea'){
 			include $path .'/../classes/App.php';//for laranopea
 				$app=new App();
-					$app->load();
+					$this->config($config);
+				$app->load();
 			$this->app=$app;
 			$request=Route::$request;
 					
 		}elseif($engine==='laravel-5.4'){
 			include $path.'/../bootstrap/autoload.php';	//for laravel-5.4
-			include $path.'/../bootstrap/app.php';	//for laravel-5.4
+			$app=include($path.'/../bootstrap/app.php');	//for laravel-5.4
+			
 			$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);			
 			
 			$request = Illuminate\Http\Request::createFromGlobals();
 			$response = $kernel->handle($request);
-			$this->app=$kernel;
+			$this->app=$app;
+			$this->kernel=$kernel;
 			$this->response=$response;
-			
+			$this->config($config);
 		}
 			$this->request=$request;
 		if(call_user_func($run,$engine,$request,$this)){
 			
 		}
 			
+	}
+	public function config($config=[]){
+		if($this->engine==='laranopea'){
+			foreach($config as $key=>$val){
+				switch($key){
+					case 'host':
+						App::$env_data['DB_HOST']=$val;
+					break;
+					case 'database':
+						App::$env_data['DB_DATABASE']=$val;
+					break;
+					case 'username':
+						App::$env_data['DB_USERNAME']=$val;
+					break;
+					case 'password':
+						App::$env_data['DB_PASSWORD']=$val;
+					break;
+				}
+			}
+		}elseif($this->engine==='laravel-5.4'){
+			foreach($config as $key=>$val){
+				//$this->app['config']['database.connections.mysql.'.$key]=$val;
+				Config::set('database.connections.mysql.'.$key, $val);
+			}
+			DB::purge('mysql');			
+		}
 	}
 	public function post($class,$post,$method='store',$args=[]){
 		$_SERVER['REQUEST_METHOD']='POST';
@@ -154,7 +183,7 @@ class app_loader{
 			$this->app->terminate();
 		//if (defined('LARAVEL_START')) {//5.7
 		}elseif($this->engine==='laravel-5.4'){
-			$this->app->terminate($this->request, $this->response);				
+			$this->kernel->terminate($this->request, $this->response);				
 		}		
 			$_SERVER=$this->_server;
 			$_REQUEST=$this->_request;
@@ -170,9 +199,13 @@ function test_app(){
 	$app_index='work/HR/laravel-5.4.23/public/index.php';//'index.php';
 	$app_uri='customer';
 		
-	//$app_engine='laravel-5.4';
-	$app_engine='laranopea';
-	
+	$app_engine='laravel-5.4';
+	//$app_engine='laranopea';
+	$config=[];//optional
+	//$config['host']='example_host_ip_or_domain';
+	//$config['database']='example_database';
+	//$config['username']='example_username';
+	//$config['password']='example_password';
 	$app=new app_loader($app_engine,$app_path,$app_uri,$app_index,function($engine,$request,$app){
 		echo $engine;
 		
@@ -229,7 +262,7 @@ function test_app(){
 			}
 		}
 		*/
-	});	
+	},$config);	
 		$class = 'App\\Http\\Controllers\\customer\customerController';//ResourceController
 			//$controller_class=new $class() ;
 			
@@ -246,6 +279,8 @@ function test_app(){
 		//	$request->replace($post);
 		//$res=through_middleware('store',$args,$controller_class);//works
 		//$res= call_user_func_array([$controller_class, 'store'], [$request]);
+		
+		var_dump(DB::select('select * from users'));
 		
 		$res=$app->post($class,$post);
 		

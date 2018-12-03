@@ -28,6 +28,13 @@ Class User{
 		}
 		return null;
     }
+    public static function create($data){
+		$user=new self;
+		foreach($data as $key=>$val){
+			$user->{$key}=$val;
+		}
+		return $user->save();
+	}
     public function save(){
 		if($this->ID===null){
 			$sql='INSERT INTO '.$this->table.'(';

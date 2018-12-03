@@ -289,10 +289,14 @@ Route::group(['middleware' => ['web']], function ( ) {
 	Route::get('validatortest/create', 'ValidatorTestController@create');
 	Route::post('validatortest', 'ValidatorTestController@store');
 
-
+	// Authentication Routes...
 	Route::get('/login', 'Auth\\LoginController@index') ;
 	Route::post('/login', 'Auth\\LoginController@login') ;
 	
+	// Registration Routes...
+	Route::get('/register', 'Auth\\RegisterController@showRegistrationForm') ;
+	Route::post('/register', 'Auth\\RegisterController@register') ;
+         
 	
 	//Route::get('/home', 'HomeController@index') ;
 	Route::resource('rc/resource', 'ResourceController',['parameters' => [ "extra" => 'template_1' ]]);
@@ -393,7 +397,10 @@ Route::group(['domain' => '{username}.fakebook.dev'], function(){
 //return;
 
 Route::get('/', function (Request $request) {
+	
+	return redirect('home');
 	var_dump($request->getHost());
+	
 	//var_dump(debug_backtrace());
 	echo "<pre>";
 		//debug_print_backtrace();

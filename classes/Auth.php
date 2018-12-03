@@ -10,6 +10,10 @@ class Auth{
 			Route::$auth->check();
 			return Route::$auth->user;
 		}
+		if($method==='login'){
+			$user=$parameters[0];
+			return Route::$auth->loginUsingId($user->ID);
+		}
 			Route::$auth->_guard();
 		return Route::$auth;
 	}
@@ -17,6 +21,10 @@ class Auth{
 		if($method==='user'){
 			Route::$auth->check();
 			return Route::$auth->user;
+		}
+		if($method==='login'){
+			$user=$parameters[0];
+			return Route::$auth->loginUsingId($user->ID);
 		}
 			Route::$auth->_guard();
 		return Route::$auth;

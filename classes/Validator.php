@@ -12,9 +12,15 @@ class Validator{
 	function __destruct() {
 		 
     }
-    public static function make($data,$rules,$messages){
+    public static function make($data,$rules=[],$messages=[]){
 		return new Validator($data,$rules,$messages); 
     }
+    public function validate(){
+		if(!$this->success){
+			echo back()->withInput()->withErrors($this->errors);
+			die();
+		}
+	}
     public function check($data){
 			$this->errors=[];
 			//$this->errors['username']='These credentials do not match our records.' ;

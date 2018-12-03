@@ -106,10 +106,16 @@ function add_route($method, $parameters){
 				$route_domain=App::$route_domain;
 					$domain_match=false;
 				if(substr_count($route_domain,'.')===substr_count($domain,'.') ){
-						$domain_match=true;
-					if( strpos($domain,'{')!==false){
-						$username_var=trim( explode('.',$domain)[0],'{}');
-						$username=[$username_var=> explode('.',$route_domain)[0]];
+					$a1=explode('.',$domain);
+					$a2=explode('.',$route_domain);
+							$s1=array_shift($a1);
+							$s2=array_shift($a2);
+					if(implode('.',$a1)===implode('.',$a2)){
+							$domain_match=true;
+						if( strpos($domain,'{')!==false){
+							$username_var=trim( $s1,'{}');//trim( explode('.',$domain)[0],'{}');
+							$username=[$username_var=> $s2];//[$username_var=> explode('.',$route_domain)[0]];
+						}
 					}
 				}				 
 			}

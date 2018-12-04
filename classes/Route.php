@@ -319,6 +319,7 @@ function load_classes(){
 	
 	include $public_path . '/../classes/Auth.php';
 	include $public_path . '/../classes/Model.php';
+	include $public_path . '/../classes/Illuminate_User.php';
 			$dir=$public_path. '/../app/';
 		if ($handle = opendir($dir)) {
 			while (false !== ($entry = readdir($handle))) {

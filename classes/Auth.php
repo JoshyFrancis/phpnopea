@@ -3,7 +3,7 @@ class Auth{
 	public $user=null;
 	public $remember_time=((60*60)*24)*365;//365 days
 	public function __construct(){
-		$this->user=new \App\User;
+		$this->user=new \Illuminate\Foundation\Auth\User;
     }
 	public static function __callStatic($method, $parameters){
 		if($method==='user'){
@@ -42,7 +42,7 @@ class Auth{
 	}
 	protected function _set_user($rows){
 		if(!$this->user){
-			$this->user=new \App\User;
+			$this->user=new \Illuminate\Foundation\Auth\User;
 		}
 		$this->user->ID=$rows[0]->ID;
 		$this->user->username=$rows[0]->username;

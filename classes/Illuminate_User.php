@@ -1,8 +1,7 @@
 <?php
-namespace App;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-Class User extends Authenticatable{
+namespace Illuminate\Foundation\Auth;
+use Model;
+Class User extends Model{
 	protected $table='users';
 	protected $primaryKey = 'ID';
 	protected $fillable = [
@@ -10,3 +9,4 @@ Class User extends Authenticatable{
     ];
 	//add updated_at(datetime) column to table users laravel requires it for changing password
 }
+

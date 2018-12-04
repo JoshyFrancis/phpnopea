@@ -318,8 +318,20 @@ function load_classes(){
 		//App::$db=$db;
 	
 	include $public_path . '/../classes/Auth.php';
-	include $public_path . '/../classes/Illuminate_User.php';
-		Route::$auth=new Auth();
+	include $public_path . '/../classes/Model.php';
+			$dir=$public_path. '/../app/';
+		if ($handle = opendir($dir)) {
+			while (false !== ($entry = readdir($handle))) {
+				if ($entry != "." && $entry != "..") {
+					$file=$dir.'/'.$entry;
+					if(!is_dir($file) && substr($entry,-4)==='.php' ){
+						include $file;
+					}
+				}
+			}
+			closedir($handle);
+		}
+			Route::$auth=new Auth();
 	include $public_path . '/../classes/Validator.php';
 	include $public_path . '/../classes/Session.php';
 	include $public_path . '/../classes/Illuminate_Session.php';

@@ -1,7 +1,5 @@
 <?php
-namespace App;
-use DB;
-Class User{
+Class Model{
 	protected $table='users';
 	protected $names=[];
 	protected $values=[];
@@ -72,14 +70,29 @@ Class User{
 		return $this;
 	}
 	public static function find($ID){
-		$user=new User;
-		$rows =DB::select('SELECT ID,password,username,first_name from users where ID=?' ,[$ID] );
+		$model=new self;
+//		$rows =DB::select('SELECT ID,password,username,first_name from users where ID=?' ,[$ID] );
+			$sql='SELECT ';
+			$c=0;
+			foreach($this->names as $name){
+				if($c>0){
+					$sql.=',';
+				}
+				$sql.=$name;
+				$c+=1;
+			}
+			$sql.=' FROM '.$this->table.' where ID=?';
+
+		$rows =DB::select($sql ,[$ID] );
 		if(count($rows)>0){
-			$user->ID=$rows[0]->ID;
-			$user->username=$rows[0]->username;
-			$user->first_name=$rows[0]->first_name;
-			$user->password=$rows[0]->password;
+			//$user->ID=$rows[0]->ID;
+			//$user->username=$rows[0]->username;
+			//$user->first_name=$rows[0]->first_name;
+			//$user->password=$rows[0]->password;
+			foreach($this->names as $name){
+				$model->{$name}=$rows[0]->{$name};
+			}
 		}
-		return $user;
+		return $model;
 	}
 }

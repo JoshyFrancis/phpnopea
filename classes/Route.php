@@ -321,6 +321,7 @@ function load_classes(){
 	include $public_path . '/../classes/Model.php';
 	include $public_path . '/../classes/Illuminate_User.php';
 			$dir=$public_path. '/../app/';
+		/*
 		if ($handle = opendir($dir)) {
 			while (false !== ($entry = readdir($handle))) {
 				if ($entry != "." && $entry != "..") {
@@ -332,6 +333,14 @@ function load_classes(){
 			}
 			closedir($handle);
 		}
+		*/
+		spl_autoload_register(function ($class) use($dir){
+				$file=$dir.'/'.$class.'.php';
+			if(is_file($file)){
+				include $file;
+			}
+		});
+		
 			Route::$auth=new Auth();
 	include $public_path . '/../classes/Validator.php';
 	include $public_path . '/../classes/Session.php';

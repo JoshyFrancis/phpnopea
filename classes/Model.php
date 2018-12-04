@@ -1,11 +1,13 @@
 <?php
 Class Model{
-	protected $table='users';
 	protected $names=[];
 	protected $values=[];
 	public $ID=null;
+	protected $table='users';
+	protected $primaryKey='ID';
+	protected $fillable=[];
 	public function __set($name, $value){
-		if($name==='ID'){
+		if($name===$this->primaryKey){
 			return;
 		}
 		$p=array_search($name,$this->names);
@@ -17,7 +19,7 @@ Class Model{
 		$this->values[$p]=$value;
     }
     public function __get($name){
-		if($name==='ID'){
+		if($name===$this->primaryKey){
 			return $this->ID;
 		}
 		$p=array_search($name,$this->names);
@@ -27,11 +29,11 @@ Class Model{
 		return null;
     }
     public static function create($data){
-		$user=new self;
+		$model=new self;
 		foreach($data as $key=>$val){
-			$user->{$key}=$val;
+			$model->{$key}=$val;
 		}
-		return $user->save();
+		return $model->save();
 	}
     public function save(){
 		if($this->ID===null){
@@ -62,7 +64,7 @@ Class Model{
 				$sql.=$name.'=?';
 				$c+=1;
 			}
-			$sql.=' where ID=?';
+			$sql.=' where '.$this->primaryKey.'=?';
 			$this->values[]=$this->ID;
 			DB::update($sql,$this->values);
 			array_pop($this->values);
@@ -71,25 +73,21 @@ Class Model{
 	}
 	public static function find($ID){
 		$model=new self;
-//		$rows =DB::select('SELECT ID,password,username,first_name from users where ID=?' ,[$ID] );
+		$fillable=$this->fillable+$this->names;
 			$sql='SELECT ';
 			$c=0;
-			foreach($this->names as $name){
+			foreach($fillable as $name){
 				if($c>0){
 					$sql.=',';
 				}
 				$sql.=$name;
 				$c+=1;
 			}
-			$sql.=' FROM '.$this->table.' where ID=?';
+			$sql.=' FROM '.$this->table.' where '.$this->primaryKey.'=?';
 
 		$rows =DB::select($sql ,[$ID] );
 		if(count($rows)>0){
-			//$user->ID=$rows[0]->ID;
-			//$user->username=$rows[0]->username;
-			//$user->first_name=$rows[0]->first_name;
-			//$user->password=$rows[0]->password;
-			foreach($this->names as $name){
+			foreach($fillable as $name){
 				$model->{$name}=$rows[0]->{$name};
 			}
 		}

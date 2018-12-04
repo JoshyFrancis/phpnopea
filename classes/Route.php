@@ -320,8 +320,16 @@ function load_classes(){
 	include $public_path . '/../classes/Auth.php';
 	include $public_path . '/../classes/Model.php';
 	include $public_path . '/../classes/Illuminate_User.php';
-			$dir=$public_path. '/../app/';
+		Route::$auth=new Auth();
+		
+}
+function load_laravel_classes(){
+		$public_path=App::$public_path;
+	
+	//@@@@@@@@@@@@@@ BEGIN Loading Model classes @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+	$dir=$public_path. '/..';
 		/*
+		 $dir=$public_path. '/../app/';
 		if ($handle = opendir($dir)) {
 			while (false !== ($entry = readdir($handle))) {
 				if ($entry != "." && $entry != "..") {
@@ -335,28 +343,32 @@ function load_classes(){
 		}
 		*/
 		spl_autoload_register(function ($class) use($dir){
+				$class=strtolower(substr($class,0,1)) .substr($class,1);
 				$file=$dir.'/'.$class.'.php';
 			if(is_file($file)){
 				include $file;
 			}
 		});
-		
-			Route::$auth=new Auth();
-	include $public_path . '/../classes/Validator.php';
-	include $public_path . '/../classes/Session.php';
+	//@@@@@@@@@@@@@@ END Loading Model classes @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+	
 	include $public_path . '/../classes/Illuminate_Session.php';
 	include $public_path . '/../classes/Illuminate_Hash.php';
+	include $public_path . '/../classes/Illuminate_VerifyCsrfToken.php';
+	include $public_path . '/../classes/Illuminate_EncryptCookies.php';
+	include $public_path . '/../classes/Illuminate_TrimStrings.php';
 	
-			
-}
-function load_laravel_classes(){
-		$public_path=App::$public_path;
-	include $public_path . '/../classes/Illuminate_Controller.php';	
-	include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
-	//include $public_path . '/../classes/Illuminate_Session.php';
-	include $public_path . '/../classes/Illuminate_Auth.php';
-	include $public_path . '/../classes/Illuminate_Storage.php';
+		
+	include $public_path . '/../classes/Validator.php';
+	include $public_path . '/../classes/Session.php';
+		
+		
+		include $public_path . '/../classes/Illuminate_Controller.php';	
+		include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
+		//include $public_path . '/../classes/Illuminate_Session.php';
+		include $public_path . '/../classes/Illuminate_Auth.php';
+		include $public_path . '/../classes/Illuminate_Storage.php';
 	
+		
 }
 function through_middleware($func, $fire_args,$controller_class=null){
 	 	

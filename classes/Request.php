@@ -45,7 +45,8 @@ class Request{
 		$basepath =substr( $_SERVER['SCRIPT_NAME'],0,strrpos($_SERVER['SCRIPT_NAME'],'/'));
 		$uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
 		if (strpos($uri, '?')!==false) $uri = substr($uri, 0, strpos($uri, '?'));
-		return trim($uri, '/');
+		$uri=trim($uri, '/');
+		return $uri;
 	}
 	public function getBaseUri(){
 		$secure=false;
@@ -96,7 +97,8 @@ class Request{
         return $host;
     }
     public function path(){
-		return $this->getCurrentUri();
+		$uri=trim($this->getCurrentUri(), '/');
+		return $uri===''?'/':$uri;
     }
 	private function toCamelCase($string){
 		$result = strtolower($string);
@@ -193,7 +195,7 @@ class Request{
         return  $this->getBaseUri();
     }
     public function current(){
-        return  $this->url()  ;
+        return  $this->url();
     }
     public function session(){
         return  $this->session  ;
@@ -208,6 +210,18 @@ class Request{
         }else{
             return url('/');
         }
+    }
+    public function is($pattern){//from laravel Str class
+		$value=rawurldecode($this->path());//decodedPath
+        if ($pattern == $value) {
+            return true;
+        }
+        $pattern = preg_quote($pattern, '#');
+        // Asterisks are translated into zero-or-more regular expression wildcards
+        // to make it convenient to check if the strings starts with the given
+        // pattern such as "library/*", making any string check convenient.
+        $pattern = str_replace('\*', '.*', $pattern);
+        return (bool) preg_match('#^'.$pattern.'\z#u', $value);
     }
     public function isXmlHttpRequest(){
         //return 'XMLHttpRequest' == $this->headers->get('X-Requested-With');

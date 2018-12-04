@@ -7,6 +7,7 @@ class App{
 	public static $controllers_path;
 	public static $base_path;
 	public static $view_path;
+	public static $file_env;
 	public static $env_data;
 	public static $app_key;
 	public static $request;
@@ -17,16 +18,56 @@ class App{
 	public static $route_domain;
 	public static $session_name;
 	public static $session_lifetime;
+	public static $file_web;
 	public static $routes=[];
 	public static $route;
-	function __construct($session_name='laranopea_session',$lifetime=(60*60)*2){//(60*60)*2;//in seconds
+	function __construct($session_name='laranopea_session',$lifetime=(60*60)*2){
 		App::$session_name=$session_name;
 		App::$session_lifetime=$lifetime;
 		
+		if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+			//header("404 not found",true,404);
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
+			exit();	
+		}
+		$method=strtolower($_SERVER['REQUEST_METHOD']);
+		if($method==='post' && isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
+				$_POST=json_decode(file_get_contents('php://input'),true);
+			if($_POST!==null){
+				$_REQUEST+=$_POST;
+			}
+		}
+		
+		App::$env_data=parse_ini_file(App::$file_env,false,INI_SCANNER_RAW ) ;
+
+			$app_key=isset(App::$env_data['APP_KEY'])?App::$env_data['APP_KEY']:'';// env('APP_KEY');
+		if(strpos($app_key,'base64:')!==false){
+			//$app_key=base64_decode(explode('base64:',$app_key)[1]);	
+			$app_key=base64_decode(substr( $app_key,7) );	
+		}
+		App::$app_key=$app_key;
+
+		include App::$public_path.'/../classes/Cookie.php';
+
+		//$request = new Request;
+		App::$request = new Illuminate\Http\Request;
+		
+		App::$route_method=$method;//strtolower(App::$request->method());
+		//App::$route_path=strtolower(trim(App::$request->getPathInfo(),'/'));
+		//App::$route_path= trim(App::$request->getPathInfo(),'/') ;	
+		//App::$route_path= App::$request->path();
+		App::$route_path=App::$request->getCurrentUri();//fastest
+		App::$a_path1=explode('/',App::$route_path);
+		App::$route_domain=App::$request->getHost();
+		App::$route = new Route(App::$request);
+
+		include App::$public_path.'/../classes/View.php';
 	}
 	public function load(){
+			
+		//@@@@@@@@@@@@@@@@@
 		load_classes();
-		include App::$public_path.'/../routes/web.php';	
+		include App::$file_web;
 		App::$route=null;
 	}
 	public function run(){
@@ -63,18 +104,8 @@ class App{
 	App::$base_path=dirname(App::$public_path);
 	include App::$public_path.'/../classes/ExceptionHandler.php';
 		//throw new Exception("Just invoking the exception handler.", 2);
-		if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
-			//header("404 not found",true,404);
-			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
-			exit();	
-		}
-		$method=strtolower($_SERVER['REQUEST_METHOD']);
-		if($method==='post' && isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE']==='application/json'){//https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make
-				$_POST=json_decode(file_get_contents('php://input'),true);
-			if($_POST!==null){
-				$_REQUEST+=$_POST;
-			}
-		}
+		
+		
 	App::$http_path=App::$public_path.'/../app/Http/';
 	App::$controllers_path=App::$public_path.'/../app/Http/Controllers/';
 	App::$view_path=App::$public_path.'/../resources/views/';
@@ -93,28 +124,6 @@ class App{
 	include App::$public_path.'/../classes/Illuminate_Request.php';
 	include App::$public_path.'/../classes/Route.php';	
 	
-	$file_env=App::$public_path.'/../.env';
-	App::$env_data=parse_ini_file($file_env,false,INI_SCANNER_RAW ) ;
-
-		$app_key=isset(App::$env_data['APP_KEY'])?App::$env_data['APP_KEY']:'';// env('APP_KEY');
-	if(strpos($app_key,'base64:')!==false){
-		//$app_key=base64_decode(explode('base64:',$app_key)[1]);	
-		$app_key=base64_decode(substr( $app_key,7) );	
-	}
-	App::$app_key=$app_key;
-
-	include App::$public_path.'/../classes/Cookie.php';
-
-	//$request = new Request;
-	App::$request = new Illuminate\Http\Request;
-	
-	App::$route_method=$method;//strtolower(App::$request->method());
-	//App::$route_path=strtolower(trim(App::$request->getPathInfo(),'/'));
-	//App::$route_path= trim(App::$request->getPathInfo(),'/') ;	
-	//App::$route_path= App::$request->path();
-	App::$route_path=App::$request->getCurrentUri();//fastest
-	App::$a_path1=explode('/',App::$route_path);
-	App::$route_domain=App::$request->getHost();
-	App::$route = new Route(App::$request);
-
-	include App::$public_path.'/../classes/View.php';
+	App::$file_env=App::$public_path.'/../.env';
+	App::$file_web=App::$public_path.'/../routes/web.php';
+	 

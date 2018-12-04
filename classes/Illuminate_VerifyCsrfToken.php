@@ -1,5 +1,6 @@
 <?php
 namespace Illuminate\Foundation\Http\Middleware;
+use Closure;
 class VerifyCsrfToken{
     protected $except=[];
     protected function inExceptArray($request){
@@ -14,9 +15,8 @@ class VerifyCsrfToken{
         }
         return false;
     }
-    public function handle($request, Closure $next, $middleware = 'user'){
+    public function handle($request, Closure $next, $middleware = 'user'){	
 		$csrf=true;
-		
 		$session_csrf_name= $request->session()->session_name.'_csrf';
 		//if(!in_array($request->method(), ['HEAD', 'GET', 'OPTIONS'])  ){
 		if(!in_array($_SERVER['REQUEST_METHOD'], ['HEAD', 'GET', 'OPTIONS']) || $this->inExceptArray($request) ){
@@ -29,7 +29,6 @@ class VerifyCsrfToken{
 				$csrf=hash_equals($request->session()->token(), $token) ;
 			}
 		}
-		 
 		if($csrf===false){
 				$request->session()->destroy_current();
 				remove_cookie($session_csrf_name);

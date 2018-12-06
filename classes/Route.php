@@ -321,7 +321,10 @@ function load_classes(){
 	include $public_path . '/../classes/Model.php';
 	include $public_path . '/../classes/Illuminate_User.php';
 		Route::$auth=new Auth();
-		
+	include $public_path . '/../classes/Illuminate_Session.php';	
+	include $public_path . '/../classes/Session.php';
+	include $public_path . '/../classes/Illuminate_VerifyCsrfToken.php';
+
 }
 function load_laravel_classes(){
 		$public_path=App::$public_path;
@@ -351,16 +354,13 @@ function load_laravel_classes(){
 		});
 	//@@@@@@@@@@@@@@ END Loading Model classes @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 	
-	include $public_path . '/../classes/Illuminate_Session.php';
 	include $public_path . '/../classes/Illuminate_Hash.php';
-	include $public_path . '/../classes/Illuminate_VerifyCsrfToken.php';
 	include $public_path . '/../classes/Illuminate_EncryptCookies.php';
 	include $public_path . '/../classes/Illuminate_TrimStrings.php';
 	
 		
 	include $public_path . '/../classes/Validator.php';
-	include $public_path . '/../classes/Session.php';
-		
+			
 		
 		include $public_path . '/../classes/Illuminate_Controller.php';	
 		include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';

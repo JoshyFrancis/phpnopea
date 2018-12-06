@@ -159,12 +159,12 @@ function url($route=null){
 		if(substr($url,-1,1)!=='/'){
 			$url.='/';
 		}
-		//$route=trim($route,'/');
-		if(substr($route,0,1)==='/'){
+		$route=trim($route);
+		if(substr($route,0,1)==='/' && $route!=='/'){
 			$route=substr($route,1);
 		}
 		$url.= $route ;
-		if(substr($url,-1,1)==='/' && $route!==''){
+		if(substr($url,-1,1)==='/'){//&& $route!=='' && $route!=='/'
 			$url=substr($url,0,strrpos($url,'/'));
 		}
 		return $url;

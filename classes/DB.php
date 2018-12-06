@@ -63,7 +63,8 @@ class DB{
             }elseif(is_string($value)){
 				$statement->bindValue($key,$value,\PDO::PARAM_STR);
             }elseif(is_bool($value)){
-				$statement->bindValue($key,$value,\PDO::PARAM_BOOL);
+				//$statement->bindValue($key,$value,\PDO::PARAM_BOOL);
+				$statement->bindValue($key,(int)$value,\PDO::PARAM_INT);
 			}elseif(is_int($value)){
 				$statement->bindValue($key,$value,\PDO::PARAM_INT);
 			}elseif(is_float($value)){

@@ -27,7 +27,7 @@ class DB{
 			$DBH->setAttribute(\PDO::ATTR_CASE,\PDO::CASE_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_ORACLE_NULLS,\PDO::NULL_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES,false);
-			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);//Default false
+			$DBH->setAttribute(\PDO::ATTR_EMULATE_PREPARES,false);//Default false
 			$DBH->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
 			self::$DBH=$DBH;
 			self::$connection=new connection(self::$DBH);

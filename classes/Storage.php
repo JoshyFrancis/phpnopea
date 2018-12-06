@@ -50,6 +50,9 @@ class Storage{
         
     }
     public static function delete($path){
+		if(trim($path)===''){
+			return;
+		}
 		//$path=storage_path($path);
 		$path=Storage::default_disk($path);
         if(file_exists($path)){

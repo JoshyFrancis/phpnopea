@@ -138,6 +138,15 @@ class View{
 		$last=View::$main_view->stopSection();
 		return View::$main_view->yieldContent('parent_'.$last);
     }
+    public function e($string){
+		//if($string!==strip_tags($string)){
+		/*if(preg_match("/<\s?[^\>]*\/?\s?>/i",$string)!==0){*/
+		if(preg_match("/<[^<]+>/i",$string)!==0){
+			return $string;
+		}else{
+			return htmlspecialchars($string, ENT_QUOTES, 'UTF-8', false);
+		}
+	}
     public function compile(){
 		//$contents= file_get_contents( $this->path);
 		//$contents='';
@@ -165,7 +174,7 @@ class View{
 			];
 		$shortcuts=[
 				['@{{','}}','<<','>>']
-				,['{{','}}','<?php echo ',';?>']
+				,['{{','}}','<?php echo $this->e(',');?>']/*,['{{','}}','<?php echo ',';?>']*/
 				,['{!!','!!}','<?php echo ',';?>']
 				,['<<','>>','{{','}}']
 				

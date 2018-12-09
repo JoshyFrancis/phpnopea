@@ -2,8 +2,8 @@
 class DB{
 	private static $DBH=null;
 	private static $fetchMode = \PDO::FETCH_OBJ;//\PDO::FETCH_ASSOC
-	//private static $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
-    //private static $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
+	private static $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
+    private static $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
     private static $connection;
 	function __construct(){
 		
@@ -49,9 +49,9 @@ class DB{
 			self::createDB();
         return self::$DBH->lastInsertId(); 
     }
-    //private static function escape($value){
-    //    return str_replace(self::$search, self::$replace, $value);
-    //}
+    private static function escape($value){
+        return str_replace(self::$search, self::$replace, $value);
+    }
     public static function bindValues ($statement,$bindings){		
 		foreach ($bindings as $key => $value) {
 			//$statement->bindValue(//taken from laravel
@@ -107,6 +107,37 @@ class DB{
     }
     public static function insert($sql,$bindings=[]){   
 		return self::update($sql,$bindings);
+    }
+    public static function updatew($_sql,$bindings=[]){
+			self::createDB();
+			$sql=$_sql;
+		foreach($bindings as $key=>$value){
+			if($value instanceof DateTimeInterface){
+				$value="'".$value->format('Y-m-d H:i:s')."'";
+			}elseif(is_bool($value)){
+				$value=(int)$value;
+			}elseif(is_object($value)){
+				$value='NULL';
+			}elseif($value===null){
+				$value='NULL';
+			}elseif($value === false){
+				$value=0;
+			}elseif(is_int($value)){
+			}elseif(is_float($value)){
+			}elseif(is_string($value)){
+				$value="'".str_replace(self::$search,self::$replace, $value)."'";
+			}else{
+				dd($value);
+			}
+			$pos = strpos($sql, '?');							
+			if($pos!==false){
+				$sql=substr($sql, 0, $pos) .$value.substr($sql,$pos+ 1);
+			}
+		}
+			//dd($sql);	
+			$rowCount = self::$DBH->exec($sql);
+			 
+		return [$rowCount,$sql];
     }
 }
 class connection{

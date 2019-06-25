@@ -21,6 +21,7 @@ Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null
 	var_dump($name);
 	var_dump($id);
 	var_dump($c);
+	echo '<br>';
     return 'optional'. $name;
 });
 $optional2=function ($name = null,$id = null,$c = null) {
@@ -58,7 +59,7 @@ Route::get('/routes/{id}/edit', function ($id1, Request $request ){
 	return 'routes/1/edit';
 });
 
-//return ;
+return ;
 
 Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
 	var_dump($id1);

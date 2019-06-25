@@ -57,6 +57,11 @@ class App{
 		//App::$route_path= trim(App::$request->getPathInfo(),'/') ;	
 		//App::$route_path= App::$request->path();
 		App::$route_path=App::$request->getCurrentUri();//fastest
+			$f='index.php';
+			$p=stripos(App::$route_path,$f);
+			if($p!==false){
+				App::$route_path=substr(App::$route_path,$p+strlen($f)+1);
+			}
 		App::$a_path1=explode('/',App::$route_path);
 		App::$route_domain=App::$request->getHost();
 		App::$route = new Route(App::$request);
@@ -71,7 +76,7 @@ class App{
 		App::$route=null;
 	}
 	public function run(){
-		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
+		if(stripos( $_SERVER['REQUEST_URI'],'index_.php')!==false){
 			page_not_found();
 		}else{
 							
@@ -81,6 +86,9 @@ class App{
 				return App::$current_route;
 			}
 				if(App::$current_route===null){
+					echo '<br>';
+					echo 'page_not_found';
+					 exit;
 					page_not_found();
 				}else{		 
 					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 

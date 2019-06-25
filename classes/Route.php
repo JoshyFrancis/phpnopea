@@ -69,13 +69,14 @@ function add_route($method, $parameters){
 	}			
 				
 	//App::$routes[$method][$parameters[0]]=$parameters;			
-	
+		
+		
 	//if( strpos(strtolower($method) ,$route_method)!==false || $method==='any'){
 	//if(strpos($method,$route_method)!==false || $method==='any'){			
 	if(strpos($method,$route_method)!==false ){
 		//$path=strtolower( trim($parameters[0],'/') );
 		$path=trim($parameters[0] ,'/');
-		
+			 
 		Route::$group=Route::$middleware_stack; 
 		$i=0;
 			
@@ -128,31 +129,37 @@ function add_route($method, $parameters){
 		$a_path1=App::$a_path1;
 		$a_path2=explode('/',$path);
 				 			
+			
+		
 			$match=count($a_path1)===count($a_path2);
-				/* //Optional parameters avoided to gain performance
-			$has_optional=false;
+				/* //Optional parameters avoided to gain performance*/
+			////$has_optional=false;
 				foreach($a_path2 as $k=>$v){
 					if( strpos($v,'?}' )!==false){//optional parameter
 						$match=true;
 						break;
 					}
 				}
-				*/
+				
 		if($match===true){
 			
+			
 			$fire_args=[];
-				//$has_optional=false;
+				$has_optional=false;
+				$arg_c=0;
+				$opt_arg_c=0;
+				
 			foreach($a_path2 as $k=>$v){
-				//if( strpos($v,'?}' )!==false){//optional parameter
-				//	$has_optional=$match;
-				//}
+				if( strpos($v,'?}' )!==false){//optional parameter
+					$has_optional=$match;
+				}
 				if(!isset($a_path1[$k])){ 
-				//	$match=$has_optional;
-					$match=false;
+					$match=$has_optional;
+				//	$match=false;
 					break;
 				}
 					$pos=strpos($v,'{' );
-				if($v===$a_path1[$k] || $pos!==false){// || $has_optional===true     ){
+				if($v===$a_path1[$k] || $pos!==false ){//|| $has_optional===true     ){//
 						$match=true;
 					if( $pos!==false){					
 						//$fire_args[$k]=$a_path1[$k];
@@ -163,9 +170,17 @@ function add_route($method, $parameters){
 					break;
 				}
 			}
+				echo json_encode($has_optional);
+				echo ' # ';
+				echo implode('/',$a_path1);
+				echo '=';
+			echo implode('/',$a_path2);
+			echo '<br>';
 		}
 		
+		
 		if($match===true){
+			
 			$current_route=& App::$current_route;
 			if($current_route!==null){
 				return;

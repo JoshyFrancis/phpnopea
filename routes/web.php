@@ -28,7 +28,7 @@ $optional2=function ($name = null,$id = null,$c = null) {
 	var_dump($name);
 	var_dump($id);
 	var_dump($c);
-    return 'optional'. $name;
+    return 'optiona2'. $name;
 };
 Route::get('optional2/arg2/',$optional2);
 Route::get('optional2/arg2/{name}',$optional2);
@@ -77,7 +77,7 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
 });
 
 
-return ;
+//return ;
 
 
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){

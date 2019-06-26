@@ -21,6 +21,7 @@
 						</div>
 					@endif
                 </div>
+				{{url('validatortest') }} 
                 <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="{{ url('validatortest') }}" >
 					{{ csrf_field() }}
 

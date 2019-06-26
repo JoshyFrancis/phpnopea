@@ -151,7 +151,11 @@ function url($route=null){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
 		//}
+		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
+			$route='index.php/'.$route;
+		}
 		$url=Route::$request->getBaseUri();
+
 		if(strpos($route,$url)!==false){
 			return $route;
 		}
@@ -213,7 +217,11 @@ function is_encrypted($json_data){
 function asset($path){
 	$public_path=App::$public_path;
 	$file=$public_path.'/'.$path;
-	return  url('/')  . trim( $path,'/') . '?t=' . filemtime($file) ;
+	$url=url('/');
+		if(stripos( $url,'index.php')!==false){
+			$url=str_replace('index.php','',$url);
+		}
+	return  $url  . trim( $path,'/') . '?t=' . filemtime($file) ;
 }
 function csrf_token(){
 		//Route::$request->session->save();

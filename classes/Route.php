@@ -142,11 +142,12 @@ function add_route($method, $parameters){
 		if($match===true){
 			
 			$fire_args=[];
-				$has_optional=false;
+				
 				$s_path1='';
 				$s_path2='';
 				
 			/*	
+			$has_optional=false;
 			foreach($a_path2 as $k=>$v){
 				
 				if( strpos($v,'?}' )!==false){//optional parameter

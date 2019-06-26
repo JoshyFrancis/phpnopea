@@ -71,7 +71,7 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
 	
 	//return 'ok';
 	$request->session->save( );
-	View::share('shared_data', 'share data on the fly');
+	//View::share('shared_data', 'share data on the fly');
 	$view = View::make('home',['test'=>$request->url(),'arr'=>[1,2,3,4] ]);
     return $view->render();
 });
@@ -247,7 +247,7 @@ Route::post('/data', function (Request $request ) {
 });
 Route::get('photo', function (Request $request ) {
 	//Storage::delete('avatars/logo.png' );
-	//$Photo=Storage::get('logo.png' );
+	$Photo=Storage::get('logo.png' );
 	//var_dump($Photo);
 	//header('Content-Type: image/jpeg');
 	//return $Photo;
@@ -256,7 +256,7 @@ Route::get('photo', function (Request $request ) {
 			
 		$employee = DB::select('select signature from employee where EmpId = ?',[5 ]);	
 			if($employee && count($employee)>0){
-				$Photo=$employee[0]->signature;
+			//	$Photo=$employee[0]->signature;
 			}
 		if(!isset($Photo)){
 			//url('/').'/assets/No_Image_200x150.png';

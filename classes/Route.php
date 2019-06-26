@@ -128,11 +128,9 @@ function add_route($method, $parameters){
 	//$a_path1=explode('/',$route_path);
 		$a_path1=App::$a_path1;
 		$a_path2=explode('/',$path);
-				 			
-			
-		
-			$match=count($a_path1)===count($a_path2);
-				/* //Optional parameters avoided to gain performance*/
+				 		 
+			//$match=count($a_path1)===count($a_path2);
+				/* //Optional parameters avoided to gain performance
 			////$has_optional=false;
 				foreach($a_path2 as $k=>$v){
 					if( strpos($v,'?}' )!==false){//optional parameter
@@ -140,18 +138,21 @@ function add_route($method, $parameters){
 						break;
 					}
 				}
-				
-		if($match===true){
+				*/
+		//if($match===true){
 			
 			
 			$fire_args=[];
 				$has_optional=false;
-				$arg_c=0;
-				$opt_arg_c=0;
+				$s_path1='';
+				$s_path2='';
 				
+			/*	
 			foreach($a_path2 as $k=>$v){
+				
 				if( strpos($v,'?}' )!==false){//optional parameter
 					$has_optional=$match;
+					$opt_arg_c+=1;
 				}
 				if(!isset($a_path1[$k])){ 
 					$match=$has_optional;
@@ -169,15 +170,39 @@ function add_route($method, $parameters){
 					$match=false;
 					break;
 				}
+				
+				
 			}
-				echo json_encode($has_optional);
-				echo ' # ';
-				echo implode('/',$a_path1);
-				echo '=';
-			echo implode('/',$a_path2);
-			echo '<br>';
-		}
+			*/ 
+			foreach($a_path1 as $k=>$v){
+				//if(!isset($a_path2[$k])){
+				//	break;
+				//}
+				$v2=isset($a_path2[$k])?$a_path2[$k]:'';
+				if(strpos($v2,'{' )!==false){
+					$s_path1.='{arg}#';
+					$s_path2.='{arg}#';
+					 
+					$fire_args[str_replace(['{','}'],'',$v2)]=$v;//named arguments				
+				}else{
+					$s_path1.=$v.'#';
+					$s_path2.=$v2.'#';
+				}
+			}	
+				//echo json_encode($s_path1);
+				//echo ' = ';
+				//echo json_encode($s_path2);
+				//echo ' # ';
+				//echo implode('/',$a_path1);
+				//echo '=';
+				//echo implode('/',$a_path2);
+			$match=$s_path1==$s_path2;
+				//echo json_encode($match);
+				//echo '<br>';
+			 
+		//}
 		
+				
 		
 		if($match===true){
 			

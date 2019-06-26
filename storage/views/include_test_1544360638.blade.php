@@ -9,10 +9,8 @@ Included View
 	
 	echo "<pre></pre>";
 	foreach(debug_backtrace() as $item){
-		if(isset($item['file'])){
-			echo "File : " . $item['file']  . ", line : " . $item['line'] . ", function : " . $item['function']."<br>"; 
-			//var_dump($item['args']);
-		}
+		echo "File : " . $item['file']  . ", line : " . $item['line'] . ", function : " . $item['function']."<br>"; 
+		//var_dump($item['args']);
 	}
 	echo "</pre>";
 	

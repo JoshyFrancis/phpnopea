@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo $this->e( csrf_token() );?>">
 
     <title>Laranopea</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="<?php echo $this->e( asset('css/app.css') );?>" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -28,12 +28,12 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
+                    <a class="navbar-brand" href="<?php echo $this->e( url('/') );?>">
                         Laranopea
                     </a>
 
-                    <a class="navbar-brand" href="{{ url('/') }}">
-						|    @yield('content3')
+                    <a class="navbar-brand" href="<?php echo $this->e( url('/') );?>">
+						|    <?php echo $this->yieldContent('content3'); ?>
                     </a>
                 </div>
 
@@ -47,44 +47,44 @@
                     <ul class="nav navbar-nav navbar-right">
 						
                         <!-- Authentication Links -->
-                        @guest
-                            <li><a href="{{ url('login') }}">Login</a></li>
-                            <li><a href="{{ url('register') }}">Register</a></li>
-                        @else
+                        <?php if(auth()->guard()->guest()){ ?>
+                            <li><a href="<?php echo $this->e( url('login') );?>">Login</a></li>
+                            <li><a href="<?php echo $this->e( url('register') );?>">Register</a></li>
+                        <?php }else{ ?>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    <?php echo $this->e( Auth::user()->name );?> <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{{ url('logout') }}"
+                                        <a href="<?php echo $this->e( url('logout') );?>"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ url('logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
+                                        <form id="logout-form" action="<?php echo $this->e( url('logout') );?>" method="POST" style="display: none;">
+                                            <?php echo $this->e( csrf_field() );?>
                                         </form>
                                     </li>
                                 </ul>
                             </li>
-                        @endguest
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
         </nav>
         <?php $action='index';?>
-        @if ($action =='index')
+        <?php if($action =='index'){ ?>
 			<h3>Index</h3>
-        @endif
+        <?php } ?>
         
         Here comes Links Section
         <br>
-		@section('links')
+		<?php $this->startSection('links'); ?>
 		
-		@show
+		<?php echo $this->showParent(); ?>
 		<?php
 			var_dump(get_class($this));
 			share_data_with_view();
@@ -93,15 +93,15 @@
 		<?php //echo $share_otf;?>
 		
 		<br>
-        @yield('content')
-        @section('links2')				
+        <?php echo $this->yieldContent('content'); ?>
+        <?php $this->startSection('links2'); ?>				
 			
-		@show
-		@yield('content2')
+		<?php echo $this->showParent(); ?>
+		<?php echo $this->yieldContent('content2'); ?>
 		
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="<?php echo $this->e( asset('js/app.js') );?>"></script>
 </body>
 </html>

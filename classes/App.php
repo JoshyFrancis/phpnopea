@@ -90,7 +90,8 @@ class App{
 					echo 'page_not_found';
 					 exit;
 					page_not_found();
-				}else{		 
+				}else{	
+						//exit;
 					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 
 				}
 			Route::$request->session->save();

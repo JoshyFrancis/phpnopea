@@ -59,8 +59,6 @@ Route::get('/routes/{id}/edit', function ($id1, Request $request ){
 	return 'routes/1/edit';
 });
 
-return ;
-
 Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
 	var_dump($id1);
 	var_dump($id2);
@@ -71,13 +69,15 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
 	//var_dump($request->session->get('asd',null) );
 	//var_dump($request->session->get('arr',null) );
 	
-	return 'ok';
+	//return 'ok';
 	$request->session->save( );
-	
+	View::share('shared_data', 'share data on the fly');
 	$view = View::make('home',['test'=>$request->url(),'arr'=>[1,2,3,4] ]);
     return $view->render();
 });
 
+
+return ;
 
 
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){

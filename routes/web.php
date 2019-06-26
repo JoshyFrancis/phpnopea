@@ -305,9 +305,8 @@ Route::group(['middleware' => ['web']], function ( ) {
 	Route::get('rc/resource/{id}/{id2}/m', 'ResourceController@method_test');
 	
 	Route::get('/test1', function ( Request $request ) {
-		//var_dump($middleware1);
-		//return 'middleware_web_ok' ;
-		return view('home') ;
+		 //return 'middleware_web_ok' ;
+		 return view('home',['test'=>$request->url(),'arr'=>[1,2,3,4] ]);
 	});
 	Route::group(['middleware' => ['admin']], function ( ) {
 		Route::get('/test2', function ( Request $request ) {
@@ -452,8 +451,8 @@ HTML;
 
 //return ;
 
-for($i=0;$i<10000;$i++){
-	//route999/asd/test/123/test2/qwe
+for($i=0;$i<10000;$i++){//10000
+	//route9999/321/test/123/test2/qwe
 	Route::get('/route'.$i .'/{id}/test/{id3}/test2/{id2}', function ($id,Request $request ) use($i) {
 		return $i .':' .  $id;
 	});

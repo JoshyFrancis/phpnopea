@@ -46,6 +46,7 @@ class ResourceController extends Controller{
 		</script>
 		</head>
 		<body>
+		'.url('API/'.$path).'
 		<form action="'.url($path).'" method="POST"  >
 			'.csrf_field().'
 			<input type="hidden" name="field1" value="form_data" /><br/>

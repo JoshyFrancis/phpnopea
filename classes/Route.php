@@ -213,15 +213,18 @@ function add_route($method, $parameters){
 			//var_dump($a_path1);
 			//var_dump($a_path2);	
 			
+			
 				$func=$parameters[1];
 					if(is_array($func)){				 
 						if(isset($func['uses'])){
 							$func=$func['uses'];
 						}else{
+							$error= 'Invalid route parameter!';
+							throw new Exception($error);
 							return;
 						}
 					}
-			 
+
 			//if(!is_object($func)){// handles controller
 			if(is_string($func)){// handles controller
 				$pos=strpos($func,'@');
@@ -264,7 +267,7 @@ function add_route($method, $parameters){
 				$controller_class=null;
 				$reflection = new ReflectionFunction( $func);
 				$func_args=$reflection->getParameters();				
-				
+							
 			}
 			$pattern_count=count(Route::$pattern);
 					 
@@ -289,12 +292,15 @@ function add_route($method, $parameters){
 						}
 						*/
 						if(isset(Route::$pattern[$func_args[$i]->name]) && !preg_match('/^'.Route::$pattern[$func_args[$i]->name].'$/', $fire_args[$func_args[$i]->name], $matches)){
+							$error= $func_args[$i]->name . ' pattern('.Route::$pattern[$func_args[$i]->name].') does not match!';
+							throw new Exception($error);
 							return;
 						}
 					}
 				}
 			}
 						
+			 
 			//$fire_args = array_values($fire_args);
 			//echo $controller_class->$func(...$fire_args);
 			

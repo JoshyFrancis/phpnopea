@@ -151,7 +151,11 @@ function url($route=null){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
 		//}
-		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false){
+		
+		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false ){
+			if( stripos( $route,'index.php/')!==false){
+				$route=str_replace('index.php/','',$route);
+			}
 			$route='index.php/'.$route;
 		}
 		$url=Route::$request->getBaseUri();

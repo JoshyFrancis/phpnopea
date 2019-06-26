@@ -10,6 +10,8 @@ Jesus Christ is the only savior, who will redeem you.
 
 
 */
+//echo $_SERVER['REQUEST_URI'];
+//exit;
 
 $start = microtime(true);
 

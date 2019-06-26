@@ -15,6 +15,8 @@ class View{
     public static $main_view=null;
     public static $views=[];
     public static $views_data=[];
+	public static $last_redirected_url='';
+	public static $redirect_count=[];
     public function __construct($view=null,$data=[],$inner_view=false){
 		if(View::$main_view===null){
 			View::$main_view=$this;
@@ -713,6 +715,26 @@ class View{
 		Route::$request->session->set('_back','false');
 		$this->statusCode=302;
 		$this->targetUrl=$url;
+		//if(View::$last_redirected_url===$url){
+		//	$error= 'redirected you too many times!';
+		//	throw new Exception($error);
+		//	exit;
+		//}
+		View::$last_redirected_url=$url;
+		if (array_key_exists($url,View::$redirect_count)===false){			
+			View::$redirect_count[$url]=0 ;
+			//echo $url;
+			//exit;
+		}
+			View::$redirect_count[$url]+=1;
+			 
+		
+			if(View::$redirect_count[$url]>1){
+				$error= 'redirected you too many times!';
+				//throw new Exception($error);
+				echo $url;
+				exit;
+			}
 		$this->setContents(sprintf('<!DOCTYPE html>
 			<html>
 				<head>

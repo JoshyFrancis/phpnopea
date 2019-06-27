@@ -152,7 +152,7 @@ function url($route=null){
 		//	$route= $routes['get'][$route][0];
 		//}
 		
-		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && stripos( $route,'index.php/')===false ){
+		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && substr( $route,0,9)!=='index.php' ){
 			//if(stripos( $route,'index.php/')!==false ){
 			//	$route=str_replace('index.php/','',$route);
 			//}

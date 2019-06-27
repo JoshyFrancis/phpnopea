@@ -59,7 +59,7 @@ Route::get('/routes/{id}/edit', function ($id1, Request $request ){
 	return 'routes/1/edit';
 });
 
-Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2 
+Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2
 	var_dump($id1);
 	var_dump($id2);
 	var_dump($id3);

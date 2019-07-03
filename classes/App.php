@@ -85,11 +85,34 @@ class App{
 			if (defined('make_app') && make_app===true) {
 				return App::$current_route;
 			}
+					//var_dump(public_path());
+					//dd(App::$route_path);
 				if(App::$current_route===null){
-					echo '<br>';
-					echo 'page_not_found';
-					 exit;
-					page_not_found();
+					$url=url(App::$route_path);
+					if(stripos( $url,'index.php/')!==false){
+						$url=str_replace('index.php/','',$url);
+					}
+					//$url=$url.App::$route_path;
+					//dd($url);
+					$file=public_path().'/'.App::$route_path;
+						//dd($file);
+						//dd(file_exists($file));
+						
+					if(file_exists($file)){
+						//download_file($file);
+						$qs='';
+						if (strpos($_SERVER['REQUEST_URI'], '?')!==false){
+							$qs = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?'));
+						}
+						//dd($url.$qs);
+						header('Location: ' . $url.$qs);
+						exit(0);
+					}else{
+						echo '<br>';
+						echo 'page_not_found';
+						 exit;
+						page_not_found();
+					}
 				}else{	
 						//exit;
 					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 

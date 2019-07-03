@@ -98,6 +98,9 @@ class Request{
     }
     public function path(){
 		$uri=trim($this->getCurrentUri(), '/');
+		if(stripos( $uri,'index.php/')!==false){
+			$uri=str_replace('index.php/','',$uri);
+		}
 		return $uri===''?'/':$uri;
     }
 	private function toCamelCase($string){

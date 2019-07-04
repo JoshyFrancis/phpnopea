@@ -110,6 +110,7 @@ class App{
 						exit(0);
 					}else{
 						var_dump(public_path());
+						var_dump(url('/'));
 						dd(App::$route_path);
 						echo '<br>';
 						echo 'page_not_found';

@@ -85,10 +85,11 @@ class App{
 			if (defined('make_app') && make_app===true) {
 				return App::$current_route;
 			}
-					//var_dump(public_path());
-					//dd(App::$route_path);
+					
 				if(App::$current_route===null){
+					
 					$url=url(App::$route_path);
+					
 					if(stripos( $url,'index.php/')!==false){
 						$url=str_replace('index.php/','',$url);
 					}
@@ -108,6 +109,8 @@ class App{
 						header('Location: ' . $url.$qs);
 						exit(0);
 					}else{
+						var_dump(public_path());
+						dd(App::$route_path);
 						echo '<br>';
 						echo 'page_not_found';
 						 exit;

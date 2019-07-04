@@ -729,10 +729,12 @@ class View{
 			View::$redirect_count[$url]+=1;
 			 
 		
-			if(View::$redirect_count[$url]>1){
-				$error= 'redirected you too many times!';
-				//throw new Exception($error);
-				echo $url;
+			if(View::$redirect_count[$url]>2){
+				View::$redirect_count[$url]=0;
+				$error= 'redirected too many times!';
+				throw new Exception($error);
+				//echo $url;
+				
 				exit;
 			}
 		$this->setContents(sprintf('<!DOCTYPE html>

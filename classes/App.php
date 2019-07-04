@@ -98,24 +98,31 @@ class App{
 					$file=public_path().'/'.App::$route_path;
 						//dd($file);
 						//dd(file_exists($file));
-						
-					if(file_exists($file)){
-						//download_file($file);
-						$qs='';
+					$qs='';
 						if (strpos($_SERVER['REQUEST_URI'], '?')!==false){
 							$qs = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?'));
-						}
+						}	
+					if(file_exists($file)){
+						//download_file($file);
+						
 						//dd($url.$qs);
 						header('Location: ' . $url.$qs);
 						exit(0);
 					}else{
-						var_dump(public_path());
-						var_dump(url('/'));
-						dd(App::$route_path);
-						echo '<br>';
-						echo 'page_not_found';
-						 exit;
-						page_not_found();
+						//var_dump(public_path());
+						//var_dump(url(''));
+						//dd(App::$route_path);
+						$url=url('');
+						if($url===App::$route_path){
+							header('Location: ' . $url.$qs);
+							exit(0);
+						}else{
+							
+							echo '<br>';
+							echo 'page_not_found';
+							 exit;
+							page_not_found();
+						}
 					}
 				}else{	
 						//exit;

@@ -155,18 +155,24 @@ function url($route=null){
 		//if(stripos( $url,'index.php/')!==false){
 		//	$url=str_replace('index.php/','',$url);
 		//}
-		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && stripos( $url,'index.php/')===false ){
-			 
-			$url=$url.'/index.php';
+	 
+		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && stripos( $url,'/index.php')===false ){
+			 if(substr($url,-1,1)!=='/'){
+				$url.='/';
+			} 
+			$url=$url.'index.php';
 		}
 				 
-		if(strpos($route,$url)!==false){
+		if(stripos($route.'/',$url)!==false){
+			if(substr($route,-1,1)!=='/'){
+				$route.='/';
+			}
+			 $route=trim($route);
 			return $route;
 		}
-		
 		if(substr($url,-1,1)!=='/'){
 			$url.='/';
-		}
+		} 		
 		$route=trim($route);
 		if(substr($route,0,1)==='/' && $route!=='/'){
 			$route=substr($route,1);

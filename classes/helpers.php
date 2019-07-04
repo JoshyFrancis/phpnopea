@@ -153,13 +153,16 @@ function url($route=null){
 		//}
 		
 		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && substr( $route,0,9)!=='index.php' ){
-			//if(stripos( $route,'index.php/')!==false ){
-			//	$route=str_replace('index.php/','',$route);
-			//}
+
 			$route='index.php/'.$route;
 		}
+			if(stripos( $route,'index.php/')!==false ){
+				$route=str_replace('index.php/','',$route);
+			}		
 		$url=Route::$request->getBaseUri();
-
+		if(stripos( $url,'index.php/')!==false){
+			$url=str_replace('index.php/','',$url);
+		}
 		if(strpos($route,$url)!==false){
 			return $route;
 		}
@@ -175,6 +178,7 @@ function url($route=null){
 		if(substr($url,-1,1)==='/'){//&& $route!=='' && $route!=='/'
 			$url=substr($url,0,strrpos($url,'/'));
 		}
+		
 		return $url;
 	}
 	return Route::$request;

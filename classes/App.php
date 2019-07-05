@@ -3,6 +3,7 @@ define('app_engine','laranopea');
 class App{
 	public static $public_path;
 	public static $Kernel='Kernel.php';
+	public static $file_view='';
 	public static $http_path;
 	public static $controllers_path;
 	public static $base_path;
@@ -65,8 +66,11 @@ class App{
 		App::$a_path1=explode('/',App::$route_path);
 		App::$route_domain=App::$request->getHost();
 		App::$route = new Route(App::$request);
-
-		include App::$public_path.'/../classes/View.php';
+		if(App::$file_view!==''){
+			include App::$file_view;
+		}else{
+			include App::$public_path.'/../classes/View.php';
+		}
 	}
 	public function load(){
 			

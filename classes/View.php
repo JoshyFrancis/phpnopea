@@ -443,9 +443,11 @@ class View{
 		//file_put_contents($this->storage_path,$contents);
 	}
 	public function render(){
+		dd($this->view);
 		$b=$this->expired();
 		//$b=true;
 		if($b===true){
+			
 			$this->compile();
 		}
 		return $this->_render();
@@ -846,8 +848,8 @@ class Blade{
 			$view->storage_path=$storage_path ; 
 		file_put_contents($path,$contents);
 		$contents=$view->render();
-			unlink($path);
-			unlink($storage_path);
+			//unlink($path);
+			//unlink($storage_path);
 		return $contents;
 	}
 }

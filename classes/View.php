@@ -846,7 +846,7 @@ class Blade{
 	public static function compileString($contents){
 				$public_path=App::$public_path;
 				$view_path=App::$view_path;  
-				 
+		/*
 			$storage_view_path= $public_path. '/../storage/views/' ;
 		$view=new View();
 			$path=$storage_view_path . uniqid() . '.blade.php' ;
@@ -858,5 +858,13 @@ class Blade{
 			//unlink($path);
 			//unlink($storage_path);
 		return $contents;
+		*/
+		$path=$view_path .  'ln__temp.blade.php' ;
+		file_put_contents($path,$contents);	 
+		$view= view('ln__temp');
+		$contents=$view->render();
+		unlink($view->storage_path);
+		//unlink($path);
+		return $contents; 
 	}
 }

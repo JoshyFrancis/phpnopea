@@ -859,9 +859,9 @@ class Blade{
 			//unlink($storage_path);
 		return $contents;
 		*/
-		$path=$view_path .  'ln__temp.blade.php' ;
+		$path=$view_path .  'lnpf__temp.blade.php' ;
 		file_put_contents($path,$contents);	 
-		$view= view('ln__temp');
+		$view= view('lnpf__temp');
 		$contents=$view->render();
 		unlink($view->storage_path);
 		//unlink($path);

@@ -218,7 +218,7 @@ class View{
 				*/
 				//$line="#  @if (errors->has('email')) {{var }} {!!var2 !!} @{{ var3 }} <e>@section ( 'links')@extends('layouts.app')e</e> @endsection @show#";
 				//$line="#@if (errors->has('email'))#";
-				var_dump( $line);
+				//var_dump( $line);
 				
 					$pos=strpos($line,'@extends');
 					$pos2=false;

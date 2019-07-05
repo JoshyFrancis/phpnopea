@@ -443,11 +443,9 @@ class View{
 		//file_put_contents($this->storage_path,$contents);
 	}
 	public function render(){
-		dd($this->view);
 		$b=$this->expired();
 		//$b=true;
 		if($b===true){
-			
 			$this->compile();
 		}
 		return $this->_render();

@@ -75,8 +75,12 @@ function add_route($method, $parameters){
 	//if(strpos($method,$route_method)!==false || $method==='any'){			
 	if(strpos($method,$route_method)!==false ){
 		//$path=strtolower( trim($parameters[0],'/') );
-		$path=trim($parameters[0] ,'/');
-			 
+		//$path=trim($parameters[0] ,'/');
+		if($parameters[0]==='/'){
+			$path= $parameters[0]  ;	
+		}else{
+			$path=trim($parameters[0] ,'/');
+		}
 		Route::$group=Route::$middleware_stack; 
 		$i=0;
 			
@@ -138,7 +142,7 @@ function add_route($method, $parameters){
 						break;
 					}
 				}
-				
+			
 		if($match===true){
 			
 			$fire_args=[];

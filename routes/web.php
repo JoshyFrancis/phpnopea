@@ -16,7 +16,26 @@ Route::post('forget_password', ['as'=>'user2.auth_forgot','uses'=>'User2LoginCon
 Route::resource('password_reset', 'password_reset\password_resetController');
 */
 	include_once(app_path().'/Http/Controllers/Common/helper.php');
+/*
+Route::get('/', function (Request $request) {
 	
+	 
+	var_dump($request->getHost());
+	
+	 
+	echo "url is " , url()->current() , "\n";
+	var_dump($request->url());
+	var_dump($request->root());
+	//var_dump($_SERVER);
+	//var_dump($request);
+  return <<<HTML
+  <h1>Hello world</h1>
+HTML;
+
+});
+*/
+//return ;
+//optional/arg2/asd/1/2
 Route::get('optional/arg2/{name?}/{id?}/{c?}', function ($name = null,$id = null,$c = null) {
 	var_dump($name);
 	var_dump($id);
@@ -28,8 +47,10 @@ $optional2=function ($name = null,$id = null,$c = null) {
 	var_dump($name);
 	var_dump($id);
 	var_dump($c);
+	echo '<br>';
     return 'optiona2'. $name;
 };
+//optional2/arg2/asd/1/2
 Route::get('optional2/arg2/',$optional2);
 Route::get('optional2/arg2/{name}',$optional2);
 Route::get('optional2/arg2/{name}/{id}',$optional2);
@@ -58,7 +79,7 @@ Route::get('/routes/{id}/edit', function ($id1, Request $request ){
 	 var_dump($request->url());	 
 	return 'routes/1/edit';
 });
-
+//routes/1/test/3/test2/2
 Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $request,$id3){///routes/1/test/3/test2/2
 	var_dump($id1);
 	var_dump($id2);
@@ -79,7 +100,7 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
 
 //return ;
 
-
+//admin/news
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
     Route::get('admin/news', [
         'uses' => 'NewsController@index'
@@ -140,8 +161,9 @@ Route::delete( '/delete', function(Request $request){
 	$url=$request->url();	
 		return 'Deleted<br/><a href="'.$url.'" >Back</a>';
 });
-
-
+//books/shelf/1
+//books/shelf/store/1
+//books/store/1
 Route::group(['prefix' => 'books'], function () {
 	Route::group(['prefix' => 'shelf'], function () {
 		// First Route
@@ -185,6 +207,7 @@ Route::get('/files/{id}', function ($id) {
     return $contents.':'.$id;
     return $id;
 });
+//files2/1?head=test
 Route::get('/files2/{id}', function (Request $request,$id) {
 	var_dump($request->input('head'));
 	var_dump($request->url());
@@ -286,7 +309,7 @@ Route::get('send_error_report', function (Request $request) {
 	//var_dump($request);
 });	
 Route::group(['middleware' => ['web']], function ( ) {
-	
+	//validatortest/create
 	Route::get('validatortest/create', 'ValidatorTestController@create');
 	Route::post('validatortest', 'ValidatorTestController@store');
 
@@ -300,6 +323,7 @@ Route::group(['middleware' => ['web']], function ( ) {
          
 	
 	//Route::get('/home', 'HomeController@index') ;
+	//rc/resource/123/asd/m
 	Route::resource('rc/resource', 'ResourceController',['parameters' => [ "extra" => 'template_1' ]]);
 	Route::any('API/rc/resource', 'ResourceController@API');
 	Route::get('rc/resource/{id}/{id2}/m', 'ResourceController@method_test');

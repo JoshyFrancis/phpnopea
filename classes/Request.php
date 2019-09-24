@@ -177,8 +177,8 @@ class Request{
         }
         return false;
     }
-	public function getBaseUrl(){
-		 $filename = basename($this->server('SCRIPT_FILENAME'));
+	protected function prepareBaseUrl(){
+		$filename = basename($this->server('SCRIPT_FILENAME'));
 
         if (basename($this->server('SCRIPT_NAME')) === $filename) {
             $baseUrl = $this->server('SCRIPT_NAME');
@@ -238,6 +238,12 @@ class Request{
         }
 
         return rtrim($baseUrl, '/'.DIRECTORY_SEPARATOR);
+	}
+	public function getBaseUrl(){
+		 if (null === $this->BaseUrl) {
+            $this->BaseUrl = $this->prepareBaseUrl();
+        }
+        return $this->BaseUrl;
 	}
 	public function getHost(){
 		if (!$host = $_SERVER['HTTP_HOST']) {

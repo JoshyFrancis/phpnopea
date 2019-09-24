@@ -56,13 +56,18 @@ class App{
 		App::$route_method=$method;//strtolower(App::$request->method());
 		//App::$route_path=strtolower(trim(App::$request->getPathInfo(),'/'));
 		//App::$route_path= trim(App::$request->getPathInfo(),'/') ;	
-		//App::$route_path= App::$request->path();
-		App::$route_path=App::$request->getCurrentUri();//fastest
+		App::$route_path= App::$request->path();
+		//App::$route_path=App::$request->getCurrentUri();//fastest
+		 
+			/*
 			$f='index.php';
 			$p=stripos(App::$route_path,$f);
 			if($p!==false){
 				App::$route_path=substr(App::$route_path,$p+strlen($f)+1);
 			}
+			*/
+		//dd(App::$route_path);
+		 
 		App::$a_path1=explode('/',App::$route_path);
 		App::$route_domain=App::$request->getHost();
 		App::$route = new Route(App::$request);
@@ -85,11 +90,29 @@ class App{
 		}else{
 							
 			$this->load();
-		 
+			
 			if (defined('make_app') && make_app===true) {
 				return App::$current_route;
 			}
+				$qs='';
+				if (strpos($_SERVER['REQUEST_URI'], '?')!==false){
+					$qs = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?'));
+				}
+				//dd(App::$current_route);
+				$file=public_path().'/'.App::$route_path;
+						//dd($file);
+						//dd(file_exists($file));
+						//dd(is_dir($file));
+						//dd(substr($file,-4));
+						
+				if(file_exists($file) && !is_dir($file) && strtolower(substr($file,-4))!=='.php' ){
+					//download_file($file);
 					
+					$url=asset(App::$route_path).str_replace('?','&', $qs);
+					//dd($url  );
+					header('Location: ' . $url );
+					exit(0);
+				}
 				if(App::$current_route===null){
 					
 					$url=url(App::$route_path);
@@ -99,13 +122,8 @@ class App{
 					}
 					//$url=$url.App::$route_path;
 					//dd($url);
-					$file=public_path().'/'.App::$route_path;
-						//dd($file);
-						//dd(file_exists($file));
-					$qs='';
-						if (strpos($_SERVER['REQUEST_URI'], '?')!==false){
-							$qs = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?'));
-						}	
+					
+						
 					if(file_exists($file)){
 						//download_file($file);
 						

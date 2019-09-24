@@ -1,6 +1,7 @@
 <?php
 define('app_engine','laranopea');
 class App{
+	public static $classes_path;
 	public static $public_path;
 	public static $Kernel='Kernel.php';
 	public static $file_view='';
@@ -48,7 +49,7 @@ class App{
 		}
 		App::$app_key=$app_key;
 
-		include App::$public_path.'/../classes/Cookie.php';
+		include App::$classes_path.'Cookie.php';
 
 		//$request = new Request;
 		App::$request = new Illuminate\Http\Request;
@@ -74,7 +75,7 @@ class App{
 		if(App::$file_view!==''){
 			include App::$file_view;
 		}else{
-			include App::$public_path.'/../classes/View.php';
+			include App::$classes_path.'View.php';
 		}
 	}
 	public function load(){
@@ -132,9 +133,10 @@ class App{
 					//dd($mimetype);
 					header("Content-Type: $mimetype");
 					header("Content-Length: ".filesize($file));
+					//header('Content-Disposition: attachment; filename="'.basename($file).'"');
 					readfile($file); // Reading the file into the output buffer
 					
-					//header('Content-Disposition: attachment; filename="'.basename($file).'"');
+					
 					exit(0);
 					
 					$url=asset(App::$route_path).str_replace('?','&', $qs);
@@ -192,11 +194,14 @@ class App{
 		//App::$db=null;
 	}
 }
+	App::$classes_path=__DIR__ .'/';
 	//App::$public_path=__DIR__ .'/../public';
 	App::$public_path=realpath(__DIR__ .'/../public');
 	
 	App::$base_path=dirname(App::$public_path);
-	include App::$public_path.'/../classes/ExceptionHandler.php';
+	 
+		
+	include App::$classes_path.'ExceptionHandler.php';
 		//throw new Exception("Just invoking the exception handler.", 2);
 		
 		
@@ -208,15 +213,15 @@ class App{
 	//$random_session_id=bin2hex(openssl_random_pseudo_bytes(122));
 	//var_dump($random_session_id);
 
-	include App::$public_path.'/../classes/helpers.php';
-	include App::$public_path.'/../classes/ParameterBag.php';
+	include App::$classes_path.'helpers.php';
+	include App::$classes_path.'ParameterBag.php';
 	if(count($_FILES)>0){
-		include App::$public_path.'/../classes/UploadedFile.php';
-		include App::$public_path.'/../classes/FileBag.php';
+		include App::$classes_path.'UploadedFile.php';
+		include App::$classes_path.'FileBag.php';
 	}
-	include App::$public_path.'/../classes/Request.php';
-	include App::$public_path.'/../classes/Illuminate_Request.php';
-	include App::$public_path.'/../classes/Route.php';	
+	include App::$classes_path.'Request.php';
+	include App::$classes_path.'Illuminate_Request.php';
+	include App::$classes_path.'Route.php';	
 	
 	App::$file_env=App::$public_path.'/../.env';
 	App::$file_web=App::$public_path.'/../routes/web.php';

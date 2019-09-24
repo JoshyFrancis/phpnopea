@@ -58,6 +58,9 @@ function error_handler($code=null,$message='',$file='',$line=0){
     //var_dump($trace);
 			$public_path=App::$public_path;
 			$class_path= $public_path. '/../classes/' ;
+				if(App::$classes_path){
+					$class_path=App::$classes_path;
+				}
 			$storage_path= $public_path. '/../storage/' ;
 		$base_path=App::$base_path;
 				

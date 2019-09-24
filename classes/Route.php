@@ -341,7 +341,7 @@ function load_classes(){
 		$lifetime=App::$session_lifetime;
 		$session_name=App::$session_name;
 	
-	include $public_path . '/../classes/SessionManager.php';	
+	include App::$classes_path.'SessionManager.php';	
 
 		$cookie_vars= decrypt_coookies();
 		 
@@ -360,19 +360,19 @@ function load_classes(){
 		Route::$request->session->set('_previous_url',$previous_url );
 		
 	
-	include $public_path . '/../classes/Storage.php';
-	include $public_path . '/../classes/Illuminate_QueryException.php';//used in DB class
-	include $public_path . '/../classes/DB.php';
+	include App::$classes_path.'Storage.php';
+	include App::$classes_path.'Illuminate_QueryException.php';//used in DB class
+	include App::$classes_path.'DB.php';
 		//$db=new DB();
 		//App::$db=$db;
 	
-	include $public_path . '/../classes/Auth.php';
-	include $public_path . '/../classes/Model.php';
-	include $public_path . '/../classes/Illuminate_User.php';
+	include App::$classes_path.'Auth.php';
+	include App::$classes_path.'Model.php';
+	include App::$classes_path.'Illuminate_User.php';
 		Route::$auth=new Auth();
-	include $public_path . '/../classes/Illuminate_Session.php';	
-	include $public_path . '/../classes/Session.php';
-	include $public_path . '/../classes/Illuminate_VerifyCsrfToken.php';
+	include App::$classes_path.'Illuminate_Session.php';	
+	include App::$classes_path.'Session.php';
+	include App::$classes_path.'Illuminate_VerifyCsrfToken.php';
 
 }
 function load_laravel_classes(){
@@ -403,19 +403,19 @@ function load_laravel_classes(){
 		});
 	//@@@@@@@@@@@@@@ END Loading Model classes @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 	
-	include $public_path . '/../classes/Illuminate_Hash.php';
-	include $public_path . '/../classes/Illuminate_EncryptCookies.php';
-	include $public_path . '/../classes/Illuminate_TrimStrings.php';
+	include App::$classes_path.'Illuminate_Hash.php';
+	include App::$classes_path.'Illuminate_EncryptCookies.php';
+	include App::$classes_path.'Illuminate_TrimStrings.php';
 	
 		
-	include $public_path . '/../classes/Validator.php';
+	include App::$classes_path.'Validator.php';
 			
 		
-		include $public_path . '/../classes/Illuminate_Controller.php';	
-		include $public_path . '/../classes/Illuminate_AuthenticatesUsers.php';
-		//include $public_path . '/../classes/Illuminate_Session.php';
-		include $public_path . '/../classes/Illuminate_Auth.php';
-		include $public_path . '/../classes/Illuminate_Storage.php';
+		include App::$classes_path.'Illuminate_Controller.php';	
+		include App::$classes_path.'Illuminate_AuthenticatesUsers.php';
+		//include App::$classes_path.'Illuminate_Session.php';
+		include App::$classes_path.'Illuminate_Auth.php';
+		include App::$classes_path.'Illuminate_Storage.php';
 	
 		
 }

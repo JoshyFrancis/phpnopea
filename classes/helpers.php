@@ -146,7 +146,14 @@ function env($key,$def=null){
 		$env=App::$env_data;	 
 	return isset($env[$key])?$env[$key]:$def;
 }
+function isValidUrl($path){
+	if (! preg_match('~^(#|//|https?://|mailto:|tel:)~', $path)) {
+		return filter_var($path, FILTER_VALIDATE_URL) !== false;
+	}
+	return true;
+}
 function url($route=null){
+	/*
 	if($route!==null  ){
 		//if(isset($routes['get'][$route])){
 		//	$route= $routes['get'][$route][0];
@@ -155,29 +162,33 @@ function url($route=null){
 		//if(stripos( $url,'index.php/')!==false){
 		//	$url=str_replace('index.php/','',$url);
 		//}
-	 
+		
+		
 		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && stripos( $url,'/index.php')===false ){
 			 if(substr($url,-1,1)!=='/'){
 				$url.='/';
 			} 
 			$url=$url.'index.php';
 		}
-				 
+			 
 		if(stripos($route.'/',$url)!==false){
-			if(substr($route,-1,1)!=='/'){
-				$route.='/';
-			}
+			//if(substr($route,-1,1)!=='/'){
+			//	$route.='/';
+			//}
 			 $route=trim($route);
 			return $route;
 		}
-		if(substr($url,-1,1)!=='/'){
+			
+		if( substr($url,-1,1)!=='/'){
 			$url.='/';
-		} 		
-		$route=trim($route);
-		if(substr($route,0,1)==='/' && $route!=='/'){
-			$route=substr($route,1);
 		}
+		
+		$route=trim($route);
+		//if(substr($route,0,1)==='/' && $route!=='/'){
+		//	$route=substr($route,1);
+		//}
 		$url.= $route ;
+		
 		if(substr($url,-1,1)==='/'){//&& $route!=='' && $route!=='/'
 			$url=substr($url,0,strrpos($url,'/'));
 		}
@@ -185,6 +196,38 @@ function url($route=null){
 		return $url;
 	}
 	return Route::$request;
+	*/
+	if($route===null  ){
+		return Route::$request;
+	}
+	if (isValidUrl($route)) {
+		return $route;
+	}
+	$root = Route::$request->root();
+	$route = '/'.trim($route, '/');
+	
+	return trim($root.$route, '/');
+	 
+}
+function asset($path){
+	$public_path=App::$public_path;
+	$file=$public_path.'/'.$path;	
+	/*
+
+	$url=url('/');
+		//if(stripos( $url,'index.php')!==false){
+		//	$url=str_replace('index.php','',$url);
+		//}
+		if(stripos( $_SERVER['REQUEST_URI'],'index.php')!==false && stripos( $url,'/index.php')===false ){
+			 if(substr($url,-1,1)!=='/'){
+				$url.='/';
+			} 
+			$url=$url.'index.php';
+		}
+	return  $url  . trim( $path,'/') . '?t=' . filemtime($file) ;
+	*/
+	$root = Route::$request->root();
+	return  $root .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
 }
 function request($name=null,$default=null){
 	if($name!==null){
@@ -224,15 +267,6 @@ function is_encrypted($json_data){
 	//ctype_xdigit( $decrypted)===false
 	$json= json_decode( base64_decode(  $json_data ));
 	return $json!==null;
-}
-function asset($path){
-	$public_path=App::$public_path;
-	$file=$public_path.'/'.$path;
-	$url=url('/');
-		if(stripos( $url,'index.php')!==false){
-			$url=str_replace('index.php','',$url);
-		}
-	return  $url  . trim( $path,'/') . '?t=' . filemtime($file) ;
 }
 function csrf_token(){
 		//Route::$request->session->save();

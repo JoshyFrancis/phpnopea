@@ -178,7 +178,6 @@ class Request{
         return false;
     }
 	public function getBaseUrl(){
-		//return $this->getBaseUri();
 		 $filename = basename($this->server('SCRIPT_FILENAME'));
 
         if (basename($this->server('SCRIPT_NAME')) === $filename) {

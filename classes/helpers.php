@@ -227,6 +227,11 @@ function asset($path){
 	return  $url  . trim( $path,'/') . '?t=' . filemtime($file) ;
 	*/
 	$root = Route::$request->root();
+	$base_path=Route::$request->getBasePath();
+	$p=strpos($root,$base_path);
+	if($p!==false){
+		$root =substr($root,0,$p).$base_path;
+	}
 	return  $root .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
 }
 function request($name=null,$default=null){

@@ -106,11 +106,40 @@ class App{
 						//dd(substr($file,-4));
 						
 				if(file_exists($file) && !is_dir($file) && strtolower(substr($file,-4))!=='.php' ){
+					$p_path=str_replace('\\','/', public_path());
+					$file=str_replace('\\','/', $file);
+					$r_file=str_replace($p_path,'', $file);
 					//download_file($file);
+					/*
+					$fp = fopen($file, 'rb');
+					// send the right headers
+					header("Content-Type: image/png");
+					header("Content-Length: " . filesize($file));
+					// dump the picture and stop the script
+					fpassthru($fp);
+					exit;
+					*/
+					//dd($file);
+					//dd($p_path);
+					//dd($r_file);
+					//$view=new View();
+					//echo  $view->file($file);		
+					//exit(0); 
+					
+					//header('X-Sendfile: ' . $file );
+					//header('X-Accel-Redirect: ' . $file );
+					$mimetype=View::getContentType($file);
+					//dd($mimetype);
+					header("Content-Type: $mimetype");
+					header("Content-Length: ".filesize($file));
+					readfile($file); // Reading the file into the output buffer
+					
+					//header('Content-Disposition: attachment; filename="'.basename($file).'"');
+					exit(0);
 					
 					$url=asset(App::$route_path).str_replace('?','&', $qs);
 					//dd($url  );
-					header('Location: ' . $url );
+					//header('Location: ' . $url );
 					exit(0);
 				}
 				if(App::$current_route===null){

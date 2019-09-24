@@ -557,7 +557,34 @@ class View{
 			header('Location: '.$this->targetUrl,true,302 );
 		}
 	}
-    private function getContentType($path){
+	public static function getContentType($path){
+		$ext='';
+			if(strpos($path,'.')){
+				$ext=substr($path,strrpos($path,'.')+1);
+			}
+		 
+		$formats =[
+			'html' => ['text/html', 'application/xhtml+xml']
+			,'txt' => ['text/plain']
+			,'js' => ['application/javascript', 'application/x-javascript', 'text/javascript']
+			,'css' => ['text/css']
+			,'json' => ['application/json', 'application/x-json']
+			,'jsonld' => ['application/ld+json']
+			,'xml' => ['text/xml', 'application/xml', 'application/x-xml']
+			,'rdf' => ['application/rdf+xml']
+			,'atom' => ['application/atom+xml']
+			,'rss' => ['application/rss+xml']
+			,'form' => ['application/x-www-form-urlencoded']
+			,'mp4'=>['video/mp4']
+			,'pdf'=>['application/pdf']
+			,'bin'=>['application/octet-stream']
+			//,'csv'=>['text/plain;charset=UTF-8']
+		];
+		//$result=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
+		$result=isset($formats[$ext])?$formats[$ext][0]:false;
+		if($result!==false){
+			return $result;
+		}
 			$result = false;
 		if (function_exists('finfo_open') === true){
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -570,37 +597,13 @@ class View{
 		} else if (function_exists('exif_imagetype') === true){
 			$result = image_type_to_mime_type(exif_imagetype($path));
 		}
+		
+		  
         return $result;
     }
     public function __tostring(){
 		if($this->file!==''){
-			
-			$ext='';
-				if(strpos($this->file,'.')){
-					$ext=substr($this->file,strrpos($this->file,'.')+1);
-				}
-			$mimetype=$this->getContentType($this->file);
-				if($mimetype===false){
-					$formats =[
-						'html' => ['text/html', 'application/xhtml+xml']
-						,'txt' => ['text/plain']
-						,'js' => ['application/javascript', 'application/x-javascript', 'text/javascript']
-						,'css' => ['text/css']
-						,'json' => ['application/json', 'application/x-json']
-						,'jsonld' => ['application/ld+json']
-						,'xml' => ['text/xml', 'application/xml', 'application/x-xml']
-						,'rdf' => ['application/rdf+xml']
-						,'atom' => ['application/atom+xml']
-						,'rss' => ['application/rss+xml']
-						,'form' => ['application/x-www-form-urlencoded']
-						,'mp4'=>['video/mp4']
-						,'pdf'=>['application/pdf']
-						,'bin'=>['application/octet-stream']
-						//,'csv'=>['text/plain;charset=UTF-8']
-					];
-					$mimetype=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
-				}
-			
+			$mimetype=View::getContentType($this->file);
 			 
 			$file = $this->file;
 			$fp = @fopen($file, 'rb');

@@ -21,6 +21,7 @@ error_reporting(E_ALL);
 //error_reporting(E_STRICT);
 
 	include __DIR__ .'/../classes/App.php';
+//sudo chown -R www-data:www-data /var/www/
 
 $app=new App('laranopea_session',60*60*2);
 	$app->run();

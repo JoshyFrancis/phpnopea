@@ -17,6 +17,8 @@ class View{
     public static $views_data=[];
 	public static $last_redirected_url='';
 	public static $redirect_count=[];
+	public static $trim_left_whitespace=true;//true : trim , false : rtrim
+	public static $preserve_line_numbers=false;//false: skip empty lines
     public function __construct($view=null,$data=[],$inner_view=false){
 		if(View::$main_view===null){
 			View::$main_view=$this;
@@ -184,6 +186,8 @@ class View{
 		$line='';
 		$line2='';
 		$php=false;
+		$js=false;
+		$css=false;
 		$single_line_comment=false;
 		$multi_line_comment=false;
 		$html_comment=false;//<!--  -->
@@ -221,27 +225,38 @@ class View{
 				//$line="#@if (errors->has('email'))#";
 				//var_dump( $line);
 				
-				////$line=trim($line);
+				////
 				
-				$line2='';
+				$eof='';
 				
 				//<!--  --> $html_comment also preserving line numbers and reduce file size
 				if(strstr($line, PHP_EOL)) {
-					$line2=PHP_EOL;
+					$eof=PHP_EOL;
 				}else if(strpos($line, "\n") !== false) {
-					$line2="\n";
+					$eof="\n";
 				}else if(strpos($line, "\r\n") !== false) {
-					$line2="\r\n";
+					$eof="\r\n";
 				}else if(strpos($line, "\r") !== false) {
-					$line2="\r";
+					$eof="\r";
 				}
-				
+				////$line=rtrim($line).$eof;
+				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
+					$line=trim($line);
+				}else{
+					$line=rtrim($line);
+				}
+				 
+					$line=$line.$eof;
+				 
 				if(strpos($line,'-->')!==false && $html_comment===true){
 					$line=substr($line, strpos($line,'-->')+3) ;
 					$html_comment=false;
 				}elseif($html_comment===true){
 					$line=''; 
-					$line=$line.$line2;
+					//$line=$line.$eof;
+					if(View::$preserve_line_numbers===true){//false: skip empty lines
+						$line=$line.$eof;
+					}
 				}
 				if(strpos($line,'<!--') !==false && $html_comment===false){
 						$pos=0;
@@ -256,13 +271,17 @@ class View{
 								$html_comment=false;
 							}else{
 								$line=substr($line, 0, $pos); 
-								$line=$line.$line2;
+								//$line=$line.$eof;
+								if(View::$preserve_line_numbers===true){//false: skip empty lines
+									$line=$line.$eof;
+								}
 								break;
 							}
 						}
 					}while($pos!==false);
 				}
-				 
+				
+				
 					$pos=strpos($line,'@extends');
 					$pos2=false;
 				if($pos!==false){
@@ -381,28 +400,75 @@ class View{
 						if(strpos($line,'<?php')!==false){
 							$php=true;
 						}
+						if(strpos($line,'<style>')!==false){
+							$css=true;
+						}
+						if(strpos($line,'<script>')!==false){
+							$js=true;
+						}
 				
-					if($php===true && $line!==''){// excluding comments
+					if($line!=='' && ($php===true || $css===true || $js===true ) ){// excluding comments
 						 
 						$single_line_comment=false;	
-						if(strpos($line,'//')!==false){
+						if(strpos($line,'//')!==false && $multi_line_comment===false){
 							$line2=substr($line, strpos($line,'//') );
 							$line=substr($line,0,strpos($line,'//'));
-							$single_line_comment=true;
-						}elseif(strpos($line,'/*')!==false && $multi_line_comment===false){
-							$line2=substr($line, strpos($line,'/*'));
-							$line=substr($line,0,strpos($line,'/*'));
-							$multi_line_comment=true;
-						}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
-							$line2=substr($line, strpos($line,'*/'));
-							$line=substr($line,0,strpos($line,'*/'));
+							//$single_line_comment=true;
+						} 
+						 
+						#if(strpos($line,'/*')!==false && $single_line_comment===false && $multi_line_comment===false){
+						#	$line2=substr($line, strpos($line,'/*'));
+						#	$line=substr($line,0,strpos($line,'/*'));
+						#	$multi_line_comment=true;
+						#}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
+						#	$line2=substr($line, strpos($line,'*/'));
+						#	$line=substr($line,0,strpos($line,'*/'));
+						#	$multi_line_comment=false;
+						#}elseif($multi_line_comment===true){
+						#	$line2=$line;
+						#	$line='';
+						#}
+						 
+						if(strpos($line,'*/')!==false && $multi_line_comment===true){
+							$line=substr($line, strpos($line,'*/')+2) ;
 							$multi_line_comment=false;
 						}elseif($multi_line_comment===true){
-							$line2=$line;
-							$line='';
+							$line=''; 
+							if(View::$preserve_line_numbers===true){//false: skip empty lines
+								$line=$line.$eof;
+							}
 						}
+						if(strpos($line,'/*') !==false && $single_line_comment===false && $multi_line_comment===false){
+								$pos=0;
+							do{
+								$pos = strpos($line, '/*',$pos);							
+								if($pos!==false){
+									$multi_line_comment=true;
+										$pos2 = strpos($line, '*/',$pos);
+									if( $pos2!==false ){
+										$line=substr($line, 0, $pos) .  substr($line,  $pos2+2 ) ; 
+										$pos=0;
+										$multi_line_comment=false;
+									}else{
+										$line=substr($line, 0, $pos); 
+										//$line=$line.$eof;
+										if(View::$preserve_line_numbers===true){//false: skip empty lines
+											$line=$line.$eof;
+										}
+										break;
+									}
+								}
+							}while($pos!==false);
+						}
+						  
 						if(strpos($line,'?>')!==false){
 							$php=false;
+						}
+						if(strpos($line,'</style>')!==false){
+							$css=false;
+						}
+						if(strpos($line,'</script>')!==false){
+							$js=false;
 						}
 					}
 					/*	  

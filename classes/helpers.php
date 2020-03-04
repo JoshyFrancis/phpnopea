@@ -232,6 +232,11 @@ function asset($path){
 	if($p!==false){
 		$root =substr($root,0,$p).$base_path;
 	}
+		/* Begin 04-Mar-2020 */
+		if(stripos( $root,'index.php')!==false){
+			$root=str_replace('index.php','',$root);
+		}
+		/* End 04-Mar-2020 */
 	return  $root .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
 }
 function request($name=null,$default=null){

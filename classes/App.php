@@ -105,21 +105,13 @@ class App{
 						//dd(file_exists($file));
 						//dd(is_dir($file));
 						//dd(substr($file,-4));
-						
+				/*
 				if(file_exists($file) && !is_dir($file) && strtolower(substr($file,-4))!=='.php' ){
 					$p_path=str_replace('\\','/', public_path());
 					$file=str_replace('\\','/', $file);
 					$r_file=str_replace($p_path,'', $file);
 					//download_file($file);
-					/*
-					$fp = fopen($file, 'rb');
-					// send the right headers
-					header("Content-Type: image/png");
-					header("Content-Length: " . filesize($file));
-					// dump the picture and stop the script
-					fpassthru($fp);
-					exit;
-					*/
+					 
 					//dd($file);
 					//dd($p_path);
 					//dd($r_file);
@@ -144,8 +136,9 @@ class App{
 					//header('Location: ' . $url );
 					exit(0);
 				}
+				*/
 				if(App::$current_route===null){
-					
+					/*
 					$url=url(App::$route_path);
 					
 					if(stripos( $url,'index.php/')!==false){
@@ -177,10 +170,13 @@ class App{
 							page_not_found();
 						}
 					}
+					*/
+					page_not_found();
 				}else{	
 						//exit;
 					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 
 				}
+			
 			Route::$request->session->save();
 			
 			$this->terminate();

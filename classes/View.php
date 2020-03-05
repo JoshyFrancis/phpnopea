@@ -397,10 +397,10 @@ class View{
 						 
 						$single_line_comment=false;	
 						$pos=strpos($line,'//') ;
-						if($pos!==false  && $multi_line_comment===false ){
+						if($pos!==false  && $multi_line_comment===false ){// (Only multiline comments allowed for single line php code eg:< ? php / *echo $share_otf; */ ? >)
 							if(substr($line, $pos-1,1)!=':'){	# http://
 								$line=substr($line,0,$pos).$eof;
-								//$single_line_comment=true;
+								$single_line_comment=true;
 							}
 						} 
 						 
@@ -423,7 +423,8 @@ class View{
 						}elseif($multi_line_comment===true){
 							$line=''; 
 						}
-						if(strpos($line,'/*') !==false && $single_line_comment===false && $multi_line_comment===false){
+							$pos=strpos($line,'/*') ;
+						if($pos !==false && $single_line_comment===false && $multi_line_comment===false){
 								$pos=0;
 							do{
 								$pos = strpos($line, '/*',$pos);							
@@ -470,7 +471,7 @@ class View{
 						}
 					}
 					*/					
-					 
+					
 					foreach($shortcuts as $key=>$val){
 							$open_brace=$val[0];
 							$close_brace=$val[1];

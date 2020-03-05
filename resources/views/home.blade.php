@@ -31,7 +31,7 @@
 					
 					var div=document.createElement('div');
 						div.innerHTML='Added by Javascript';
-						div.innerHTML+='<br>Added by <?php echo 'php';//comment {{skipped }} ?>';//comment {{skipped }} m
+						div.innerHTML+='<br>Added by <?php echo 'php';/*comment {{skipped }} */ ?>';//comment {{skipped }} m
 						div.innerHTML+='<br>data0:{{$data0}} m';
 						div.innerHTML+='<br>Javascript @{{var1}} : @{{var2}} m';
 					/*

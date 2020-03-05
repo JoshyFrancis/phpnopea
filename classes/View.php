@@ -256,27 +256,22 @@ class View{
 						 */
 						$extends=substr($line,$pos+8,($pos2-$pos)+1-8);
 						$extends='<?php echo $this->view_make(' . trim($extends,'()') . ',$this)->render(); ?>';
-						$line=substr($line, 0, $pos) .substr($line,  $pos2+ 1 );
+						$line=substr($line, 0, $pos) .substr($line,  $pos2+ 1 ); 
 					}
 				}				
-				if(trim($line)!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
-					$line=$line.$eof;
-				}else{
-					$line='';
-					$eof='';
-				}
-					 
+				//if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
+					//$line=$line.$eof;
+				//}else{
+				//	$line='';
+				//	$eof='';
+				//}
+					
 				if($line!==''){
 					if(strpos($line,'-->')!==false && $html_comment===true){
 						$line=substr($line, strpos($line,'-->')+3) ;
 						$html_comment=false;
 					}elseif($html_comment===true){
 						$line=''; 
-						if(View::$preserve_line_numbers===true){//false: skip empty lines
-							$line=$line.$eof;
-						}else{
-							$eof='';
-						}
 					}
 					if(strpos($line,'<!--') !==false && $html_comment===false){
 							$pos=0;
@@ -291,9 +286,6 @@ class View{
 									$html_comment=false;
 								}else{
 									$line=substr($line, 0, $pos); 
-									if(View::$preserve_line_numbers===true){//false: skip empty lines
-										$line=$line.$eof;
-									}
 									break;
 								}
 							}
@@ -430,11 +422,6 @@ class View{
 							$multi_line_comment=false;
 						}elseif($multi_line_comment===true){
 							$line=''; 
-							if(View::$preserve_line_numbers===true){//false: skip empty lines
-								$line=$line.$eof;
-							}else{
-								$eof='';
-							}
 						}
 						if(strpos($line,'/*') !==false && $single_line_comment===false && $multi_line_comment===false){
 								$pos=0;
@@ -449,9 +436,6 @@ class View{
 										$multi_line_comment=false;
 									}else{
 										$line=substr($line, 0, $pos); 
-										if(View::$preserve_line_numbers===true){//false: skip empty lines
-											$line=$line.$eof;
-										}
 										break;
 									}
 								}
@@ -541,9 +525,18 @@ class View{
 				//exit;
 				
 				$line=$line.$line2;
-				 
-				//$contents.=$line; 
-				fwrite($handlew,$line);
+				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
+					$line=trim($line);
+				}else{
+					$line=rtrim($line);
+				}
+				if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
+					$line=$line.$eof;
+				}
+				if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
+					//$contents.=$line; 
+					fwrite($handlew,$line);
+				}
 			} 
 			//if (!feof($handle)) {
 			//	echo "Error: unexpected fgets() fail\n";

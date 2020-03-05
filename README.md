@@ -8,6 +8,14 @@
 ## About Laranopea
 Laranopea is an alternative to laravel and excels in performance. It is based and built on same laravel principles. In our company, I was requested to speed up laravel and I came up with this.
 
+## Features
+* Classes are minimal and optimized but all the necessary functions incorporated.
+* Blade template have been optimized to skip empty lines, comments(php,js,css) etc.
+  It helps dramatic reduction in file size as well as the bandwidth usage.
+* Only 30 classes are required for the whole framework and to run a typical laravel project.
+* Simplified error logging. Tracking errors is easier than ever.
+
+
 Please visit <a href="http://joshyfrancis.rf.gd/laranopea/public" target="blank">http://joshyfrancis.rf.gd/laranopea/public</a> to get an overview. This is the playground.
 You can register as a new user.
 

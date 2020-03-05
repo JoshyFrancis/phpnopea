@@ -947,12 +947,20 @@ function send_file($path){
 }
 function page_not_found(){
 	http_response_code(404);
-	send_file(App::$public_path. '/../classes/page_not_found.html');
+	if(file_exists(__DIR__.'/page_not_found.html')){
+		send_file(__DIR__.  '/page_not_found.html');
+	}else{
+		send_file(App::$public_path. '/../classes/page_not_found.html');
+	}
 }
 function token_mismatch(){
 	http_response_status(419,'Authentication Timeout');
 	//send_file($public_path. '/../classes/token_mismatch.html');	
-	return file_get_contents(App::$public_path. '/../classes/token_mismatch.html');	
+	if(file_exists(__DIR__.'/token_mismatch.html')){
+		return file_get_contents(__DIR__. '/token_mismatch.html');	
+	}else{
+		return file_get_contents(App::$public_path. '/../classes/token_mismatch.html');	
+	}
 }
 function app(){
 	return new View();

@@ -19,9 +19,9 @@ Laranopea is an alternative to laravel and excels in performance. It is based an
 * Simplified error logging. Tracking errors is easier than ever.
 
 
-Please visit <a href="http://joshyfrancis.c1.biz" target="blank">http://joshyfrancis.c1.biz</a> to get an overview. This is the playground.
+Please visit <a href="http://joshyfrancis.c1.biz" target="_blank">http://joshyfrancis.c1.biz</a> to get an overview. This is the playground.
 You can register as a new user.
 
-Visit <a href="http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe" target="blank">http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe</a> to see the speed even on the 9999th route.
+Visit <a href="http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe" target="_blank">http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe</a> to see the speed even on the 9999th route.
 
 I am working on the documentation. Please wait...

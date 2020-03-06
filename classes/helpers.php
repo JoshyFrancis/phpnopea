@@ -245,7 +245,7 @@ function asset($path){
 	}
 		$p=strpos($http_path,$base_path);
 		if($p!==false){
-			$root .=trim( substr($http_path,$p+strlen($base_path)),'/') ;
+			$root .='/' .trim( substr($http_path,$p+strlen($base_path)),'/') ;
 		}	
 	
 		/* Begin 04-Mar-2020 */
@@ -255,7 +255,7 @@ function asset($path){
 		/* End 04-Mar-2020 */
 	
 	//return $base_path.'<br>'.$root.'<br>'.$path.'<br>'.$file;	
-	return  $root .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
+	return rtrim( $root,'/')  .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
 }
 function request($name=null,$default=null){
 	if($name!==null){

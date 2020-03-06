@@ -233,23 +233,20 @@ function asset($path){
 	$base_path=Route::$request->getBasePath();
 	 
 	$http_path=str_replace('\\','/',$public_path);
-	
+	 
 	if(!empty($base_path)){
 		$p=strpos($root,$base_path);
 		if($p!==false){
 			$root =substr($root,0,$p).$base_path;
 		}
+
+	}else{
+		$base_path=Route::$request->getHost();
+	}
 		$p=strpos($http_path,$base_path);
 		if($p!==false){
-			$root .=rtrim( substr($http_path,$p+strlen($base_path)),'/') ;
-		}
-	}else{
-		$p=strpos($http_path,$root);
-		if($p!==false){
-			$root .=rtrim( substr($http_path,$p+strlen($root)),'/') ;
-		}
-	}
-	
+			$root .=trim( substr($http_path,$p+strlen($base_path)),'/') ;
+		}	
 	
 		/* Begin 04-Mar-2020 */
 		if(stripos( $root,'index.php')!==false){
@@ -257,7 +254,7 @@ function asset($path){
 		}
 		/* End 04-Mar-2020 */
 	
-	//return $base_path.'<br>'.$root.'<br>'.$path'<br>'.$file;	
+	//return $base_path.'<br>'.$root.'<br>'.$path.'<br>'.$file;	
 	return  $root .'/' . trim( $path,'/') . (file_exists($file)? '?t=' . filemtime($file):'') ;
 }
 function request($name=null,$default=null){

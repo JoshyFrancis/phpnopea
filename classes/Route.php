@@ -379,7 +379,7 @@ function load_laravel_classes(){
 		$public_path=App::$public_path;
 	
 	//@@@@@@@@@@@@@@ BEGIN Loading Model classes @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
-	$dir=$public_path. '/..';
+	
 		/*
 		 $dir=$public_path. '/../app/';
 		if ($handle = opendir($dir)) {
@@ -394,9 +394,15 @@ function load_laravel_classes(){
 			closedir($handle);
 		}
 		*/
+		/*
+				foreach (glob(App::$public_path.'/../app/*.php') as $filename) {
+					include App::$public_path.'/../app/'.$filename;
+				}
+		*/
+		$dir=rtrim( $public_path,'/'). '/..';
 		spl_autoload_register(function ($class) use($dir){
 				$class=strtolower(substr($class,0,1)) .substr($class,1);
-				$file=$dir.'/'.$class.'.php';
+				$file=$dir.'/'. str_replace('\\','/', $class) .'.php';
 			if(is_file($file)){
 				include $file;
 			}

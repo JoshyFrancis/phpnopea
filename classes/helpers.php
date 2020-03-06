@@ -372,7 +372,8 @@ function assoc_array_merge_diff($array1, $array2){
 }
 function dd($var){
 	echo '<pre>';
-	var_dump($var);
+	//var_dump($var);
+	var_dump(func_get_args ());
 	echo '</pre>';
 	die();
 }

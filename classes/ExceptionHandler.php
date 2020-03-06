@@ -82,7 +82,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $file=replace_file_mtime($e->getFile());
     $file_name=$file;//basename($file);
     $line=$e->getLine();
-    if(Route::$request!==null){
+    if( class_exists('Route') && Route::$request!==null){
 		$url=url('/');
 		$back=Route::$request->previous();
 		$error_dispaly=Route::$request->ajax()?'':'none';

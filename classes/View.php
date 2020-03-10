@@ -485,6 +485,9 @@ class View{
 								$pos=0;
 								$pos2=false;
 							do{
+								if($pos>=strlen($line)){
+									$pos=0;
+								}
 								$pos = strpos($line, $open_brace,$pos);							
 								if($pos!==false){
 										$p_level=0;

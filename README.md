@@ -26,4 +26,5 @@ Visit <a href="http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe" targe
 Also check <a href="http://joshyfrancis.c1.biz/validatortest/create" target="_blank">http://joshyfrancis.c1.biz/validatortest/create</a> to see validator class in action.
 
 check *routes/web.php for more tests
+
 I am working on the documentation. Please wait...

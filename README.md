@@ -25,4 +25,5 @@ You can register as a new user.
 Visit <a href="http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe" target="_blank">http://joshyfrancis.c1.biz/route9999/23/test/123/test2/qwe</a> to see the speed even on the 9999th route.
 Also check <a href="http://joshyfrancis.c1.biz/validatortest/create" target="_blank">http://joshyfrancis.c1.biz/validatortest/create</a> to see validator class in action.
 
+check *routes/web.php for more tests
 I am working on the documentation. Please wait...

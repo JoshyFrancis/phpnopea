@@ -276,6 +276,9 @@ class View{
 					if(strpos($line,'<!--') !==false && $html_comment===false){
 							$pos=0;
 						do{
+							if($pos>=strlen($line)){
+								$pos=0;
+							}
 							$pos = strpos($line, '<!--',$pos);							
 							if($pos!==false){
 								$html_comment=true;
@@ -328,6 +331,9 @@ class View{
 								$len_replace_close=strlen($replace_close);
 							if($count===2){
 								do{
+									if($pos>=strlen($line)){
+										$pos=0;
+									}
 										$pos = strpos($line, $statement,$pos);							
 									if($pos!==false){
 										$line=substr($line, 0, $pos) .$replace_open .substr($line,$pos+ $len_statement);
@@ -336,6 +342,9 @@ class View{
 								}while($pos!==false);
 							}else{
 								do{
+									if($pos>=strlen($line)){
+										$pos=0;
+									}
 									$pos = strpos($line, $statement,$pos);							
 									if($pos!==false){
 											$p_level=0;
@@ -427,6 +436,9 @@ class View{
 						if($pos !==false && $single_line_comment===false && $multi_line_comment===false){
 								$pos=0;
 							do{
+								if($pos>=strlen($line)){
+									$pos=0;
+								}
 								$pos = strpos($line, '/*',$pos);							
 								if($pos!==false){
 									$multi_line_comment=true;

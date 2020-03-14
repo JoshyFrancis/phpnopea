@@ -124,4 +124,5 @@ echo('script took ' . $time . ' seconds to execute.');
 //    $unit=array('b','kb','mb','gb','tb','pb');
 //    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
 //}
-var_dump(bytes_formatted(memory_get_peak_usage(false)));
+echo "<br>";
+echo 'Memory usage : ' .bytes_formatted(memory_get_peak_usage(false)) ;

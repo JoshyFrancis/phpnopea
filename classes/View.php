@@ -17,8 +17,8 @@ class View{
     public static $views_data=[];
 	public static $last_redirected_url='';
 	public static $redirect_count=[];
-	public $trim_left_whitespace=true;//true : trim , false : rtrim
-	public $preserve_line_numbers=false;//false: skip empty lines
+	public static $trim_left_whitespace=true;//true : trim , false : rtrim
+	public static $preserve_line_numbers=false;//false: skip empty lines
     public function __construct($view=null,$data=[],$inner_view=false){
 		if(View::$main_view===null){
 			View::$main_view=$this;
@@ -241,7 +241,7 @@ class View{
 					$eof="\r";
 				}
 				////$line=rtrim($line).$eof;
-				if($this->trim_left_whitespace===true){//true : trim , false : rtrim
+				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
 					$line=trim($line);
 				}else{
 					$line=rtrim($line);
@@ -541,15 +541,15 @@ class View{
 				//exit;
 				
 				$line=$line.$line2;
-				if($this->trim_left_whitespace===true){//true : trim , false : rtrim
+				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
 					$line=trim($line);
 				}else{
 					$line=rtrim($line);
 				}
-				if($line!=='' || $this->preserve_line_numbers===true){//false: skip empty lines
+				if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
 					$line=$line.$eof;
 				}
-				if($line!=='' || $this->preserve_line_numbers===true){//false: skip empty lines
+				if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
 					//$contents.=$line; 
 					fwrite($handlew,$line);
 				}

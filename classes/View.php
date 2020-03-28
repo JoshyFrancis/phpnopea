@@ -19,6 +19,7 @@ class View{
 	public static $redirect_count=[];
 	public static $trim_left_whitespace=true;//true : trim , false : rtrim
 	public static $preserve_line_numbers=false;//false: skip empty lines
+	public static $paths=[];//custom locations
     public function __construct($view=null,$data=[],$inner_view=false){
 		if(View::$main_view===null){
 			View::$main_view=$this;
@@ -79,12 +80,23 @@ class View{
 				$view2=str_replace('.','/',$view);
 				
 			$path = $view_path .$view2 . '.blade.php' ;
+			if(!file_exists($path)){
+				foreach(View::$paths as $item){
+					$path = $item .$view2 . '.blade.php' ;
+					if(file_exists($path)){
+						break;
+					}
+				}
+			}
 			$storage_path=$storage_view_path .$view . '_'. filemtime($path) . '.blade.php' ;
 			
 			$this->storage_path = $storage_path ; 
 			$this->path = $path ;       
 		} 
     }
+	public function addLocation($path){
+		View::$paths[]=$path;
+	}
     public static function make($view,$data=[],$inner_view=false){
 			//foreach(View::$views as $v){//not used now
 			//	$data+=$v->data;
@@ -909,8 +921,12 @@ function http_response_status($code,$text){
 	$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
 	header($protocol . ' ' . $code . ' ' . $text);
 }
-function view($view,$data=[]){
-	$view = View::make($view,$data);
+function view($view=null,$data=[]){
+	if($view!==null){
+		$view = View::make($view,$data);
+	}else{
+		$view=new View();
+	}
 	return $view;
 }
 function back(){
@@ -985,6 +1001,14 @@ class Blade{
 		return $contents;
 		*/
 		$path=$view_path .  'lnpf__temp.blade.php' ;
+			if(!file_exists($path)){
+				foreach(View::$paths as $item){
+					$path = $item .$view2 . '.blade.php' ;
+					if(file_exists($path)){
+						break;
+					}
+				}
+			}
 		file_put_contents($path,$contents);	 
 		$view= view('lnpf__temp');
 		$contents=$view->render();

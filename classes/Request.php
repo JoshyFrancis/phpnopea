@@ -1,11 +1,11 @@
 <?php
 class Request{
-	//public $server;
+	public $server;
 	public $request ;
 	public $files;
 	public $cookies;
 	public $session;
-	//public $headers;
+	public $headers;
 	function __construct(){
 		//$server=[];
 		//foreach($_SERVER as $key => $value)    {
@@ -542,5 +542,50 @@ class Request{
 		}
 		return $result;
 	}
+	public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null){
+        $this->server = new ParameterBag($_SERVER);
+		$this->headers = new ParameterBag(getallheaders ());
+		$dup = clone $this;
+		
+        if (null !== $query) {
+            $dup->query = new ParameterBag($query);
+        }
+        if (null !== $request) {
+            $dup->request = new ParameterBag($request);
+        }
+        if (null !== $attributes) {
+            $dup->attributes = new ParameterBag($attributes);
+        }
+        if (null !== $cookies) {
+            $dup->cookies = new ParameterBag($cookies);
+        }
+        if (null !== $files) {
+            $dup->files = new FileBag($files);
+        }
+        if (null !== $server) {
+            $dup->server = new ParameterBag($server);
+            $dup->headers = new ParameterBag(getallheaders ());
+        }
+        $dup->languages = null;
+        $dup->charsets = null;
+        $dup->encodings = null;
+        $dup->acceptableContentTypes = null;
+        $dup->pathInfo = null;
+        $dup->requestUri = null;
+        $dup->baseUrl = null;
+        $dup->basePath = null;
+        $dup->method = null;
+        $dup->format = null;
+        //if (!$dup->get('_format') && $this->get('_format')) {
+        //    $dup->attributes->set('_format', $this->get('_format'));
+        //}
+        //if (!$dup->getRequestFormat(null)) {
+        //    $dup->setRequestFormat($this->getRequestFormat(null));
+        //}
+        return $dup;
+    }
+	public function setRequest(Request $request){
+        $this->request = $request;
+        return $this;
+    }
 }
-

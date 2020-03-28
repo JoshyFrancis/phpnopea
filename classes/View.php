@@ -82,7 +82,7 @@ class View{
 			$path = $view_path .$view2 . '.blade.php' ;
 			if(!file_exists($path)){
 				foreach(View::$paths as $item){
-					$path = $item .$view2 . '.blade.php' ;
+					$path = $item.'/'.$view2 . '.blade.php' ;
 					if(file_exists($path)){
 						break;
 					}
@@ -95,7 +95,7 @@ class View{
 		} 
     }
 	public function addLocation($path){
-		View::$paths[]=$path;
+		View::$paths[]=rtrim($path,'/');
 	}
     public static function make($view,$data=[],$inner_view=false){
 			//foreach(View::$views as $v){//not used now
@@ -1003,7 +1003,7 @@ class Blade{
 		$path=$view_path .  'lnpf__temp.blade.php' ;
 			if(!file_exists($path)){
 				foreach(View::$paths as $item){
-					$path = $item .$view2 . '.blade.php' ;
+					$path = $item.'/'.$view2 . '.blade.php' ;
 					if(file_exists($path)){
 						break;
 					}

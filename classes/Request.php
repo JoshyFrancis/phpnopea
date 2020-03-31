@@ -311,7 +311,7 @@ class Request{
         }
         return $this->pathInfo;
     }
-	 protected function prepareBasePath(){
+	protected function prepareBasePath(){
         $baseUrl = $this->getBaseUrl();
         if (empty($baseUrl)) {
             return '';
@@ -585,6 +585,10 @@ class Request{
         return $dup;
     }
 	public function setRequest(Request $request){
+		$this->requestUri =null;
+		$this->BaseUrl =null;
+		$this->pathInfo =null;
+		$this->basePath =null;
         $this->request = $request;
         return $this;
     }

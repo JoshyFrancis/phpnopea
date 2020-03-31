@@ -97,6 +97,7 @@ echo "</pre>";
 
 $end = microtime(true);
 $time = $end - $start;
+$time = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
 echo('script took ' . $time . ' seconds to execute.');
 //function bytes_formatted($size){
 //    $unit=array('b','kb','mb','gb','tb','pb');

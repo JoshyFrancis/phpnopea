@@ -8,6 +8,7 @@ class View{
     protected $sectionStack=[];
     protected $contents='';
     protected $file='';
+	protected $headers=[];
     public $statusCode=200;
     protected $targetUrl='';
     public static $shared_data=[];
@@ -704,7 +705,12 @@ class View{
 			,'mp4'=>['video/mp4']
 			,'pdf'=>['application/pdf']
 			,'bin'=>['application/octet-stream']
-			//,'csv'=>['text/plain;charset=UTF-8']
+			,'csv'=>['text/plain;charset=UTF-8']
+			,'xls'=>['application/vnd.ms-excel']
+			,'xlsx'=>['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+			,'ppt'=>['application/vnd.ms-powerpoint']
+			,'pptx'=>['application/vnd.openxmlformats-officedocument.presentationml.presentation']
+			,'docx'=>['application/vnd.openxmlformats-officedocument.wordprocessingml.document']
 		];
 		//$result=isset($formats[$ext])?$formats[$ext][0]:'application/octet-stream';
 		$result=isset($formats[$ext])?$formats[$ext][0]:false;
@@ -730,7 +736,8 @@ class View{
     public function __tostring(){
 		if($this->file!==''){
 			$mimetype=View::getContentType($this->file);
-			 
+				
+				
 			$file = $this->file;
 			$fp = @fopen($file, 'rb');
 			$size   = filesize($file); // File size
@@ -741,7 +748,7 @@ class View{
 				$date = DateTime::createFromFormat('U',filemtime($file));
 				$date->setTimezone(new \DateTimeZone('UTC'));
 				header('Last-Modified: '.$date->format('D, d M Y H:i:s').' GMT');
-				
+			//dd($mimetype);	
 			header('Content-type: '.$mimetype);
 			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			// The three lines below basically make the
@@ -752,6 +759,9 @@ class View{
 			header('Cache-Control: no-store, no-cache, must-revalidate');
 			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT');
 			header('Pragma: no-cache');
+			foreach($this->headers as $key=>$val){
+				header($key.': ' . $val,true);
+			}
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				$c_start = $start;
 				$c_end   = $end;
@@ -793,6 +803,11 @@ class View{
 			}
 			fclose($fp);
 			exit();
+		}
+		if(!headers_sent()){
+			foreach($this->headers as $key=>$val){
+				header($key.': ' . $val,true);
+			}
 		}
 		if($this->contents==='' && $this->view!==null){
 			$this->contents=$this->render();
@@ -841,12 +856,15 @@ class View{
 		return $this;
 	}
 	public function withHeaders($headers){
+		/*
 		if(!headers_sent()){
 			foreach($headers as $key=>$val){
 				header($key.': ' . $val);
 			}
 			//header('Content-Length: ' . strlen($this->contents));
 		}
+		*/
+		$this->headers=$headers;
 		return $this;
 	}
 	public function redirect_url($url){

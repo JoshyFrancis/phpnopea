@@ -736,7 +736,6 @@ class View{
     public function __tostring(){
 		if($this->file!==''){
 			//- turn off compression on the server
-			@apache_setenv('no-gzip', 1);
 			@ini_set('zlib.output_compression', 'Off');
 			$is_attachment =true;
 			$file = $this->file;
@@ -778,8 +777,56 @@ class View{
 					header($key.': ' . $val,true);
 				}
 			/*
+			//check if http_range is sent by browser (or download manager)
+			if(isset($_SERVER['HTTP_RANGE'])){
+				list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+				if ($size_unit == 'bytes'){
+					//multiple ranges could be specified at the same time, but for simplicity only serve the first range
+					//http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
+					list($range, $extra_ranges) = explode(',', $range_orig, 2);
+				}else{
+					$range = '';
+					header('HTTP/1.1 416 Requested Range Not Satisfiable');
+					exit;
+				}
+			}else{
+				$range = '';
+			}
+			//figure out download piece from range (if set)
+			list($seek_start, $seek_end) = explode('-', $range, 2);
+			//set start and end based on range (if set), else set defaults
+			//also check for invalid ranges.
+			$seek_end   = (empty($seek_end)) ? ($file_size - 1) : min(abs(intval($seek_end)),($file_size - 1));
+			$seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
+			//Only send partial content header if downloading a piece of the file (IE workaround)
+			if ($seek_start > 0 || $seek_end < ($file_size - 1)){
+				header('HTTP/1.1 206 Partial Content');
+				header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$file_size);
+				header('Content-Length: '.($seek_end - $seek_start + 1));
+			}else{
+			  header("Content-Length: $file_size");
+			}
+			header('Accept-Ranges: bytes');
+			set_time_limit(0);
+			fseek($file, $seek_start);
+			$buffer = 1024 * 8;
+			while(!feof($file)){
+				print(@fread($file,$buffer));
+				ob_flush();
+				flush();
+				if (connection_status()!=0){
+					@fclose($file);
+					exit;
+				}			
+			}
+			// file save was a success
+			@fclose($file);
+			exit;
+			*/
 			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			if (isset($_SERVER['HTTP_RANGE'])) {
+				echo json_encode($_SERVER);
+				exit;
 				$c_start = $start;
 				$c_end   = $end;
 				list( , $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
@@ -828,52 +875,7 @@ class View{
 			}
 			fclose($fp);
 			exit();
-			*/
-			//check if http_range is sent by browser (or download manager)
-			if(isset($_SERVER['HTTP_RANGE'])){
-				list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-				if ($size_unit == 'bytes'){
-					//multiple ranges could be specified at the same time, but for simplicity only serve the first range
-					//http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
-					list($range, $extra_ranges) = explode(',', $range_orig, 2);
-				}else{
-					$range = '';
-					header('HTTP/1.1 416 Requested Range Not Satisfiable');
-					exit;
-				}
-			}else{
-				$range = '';
-			}
-			//figure out download piece from range (if set)
-			list($seek_start, $seek_end) = explode('-', $range, 2);
-			//set start and end based on range (if set), else set defaults
-			//also check for invalid ranges.
-			$seek_end   = (empty($seek_end)) ? ($file_size - 1) : min(abs(intval($seek_end)),($file_size - 1));
-			$seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
-			//Only send partial content header if downloading a piece of the file (IE workaround)
-			if ($seek_start > 0 || $seek_end < ($file_size - 1)){
-				header('HTTP/1.1 206 Partial Content');
-				header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$file_size);
-				header('Content-Length: '.($seek_end - $seek_start + 1));
-			}else{
-			  header("Content-Length: $file_size");
-			}
-			header('Accept-Ranges: bytes');
-			set_time_limit(0);
-			fseek($file, $seek_start);
-			$buffer = 1024 * 8;
-			while(!feof($file)){
-				print(@fread($file,$buffer));
-				ob_flush();
-				flush();
-				if (connection_status()!=0){
-					@fclose($file);
-					exit;
-				}			
-			}
-			// file save was a success
-			@fclose($file);
-			exit;
+			
 		}
 		if(!headers_sent()){
 			foreach($this->headers as $key=>$val){

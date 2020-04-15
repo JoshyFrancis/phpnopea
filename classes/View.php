@@ -735,14 +735,20 @@ class View{
     }
     public function __tostring(){
 		if($this->file!==''){
-			$mimetype=View::getContentType($this->file);
-				 
+			//- turn off compression on the server
+			@apache_setenv('no-gzip', 1);
+			@ini_set('zlib.output_compression', 'Off');
+			$is_attachment =true;
 			$file = $this->file;
+			$mimetype=View::getContentType($file);
+			$path_parts = pathinfo($file);
+			$file_name  = $path_parts['basename'];
+			$file_ext   = $path_parts['extension'];
 			$fp = @fopen($file, 'rb');
-			$size   = filesize($file); // File size
-			$length = $size;           // Content length
+			$file_size   = filesize($file); // File size
+			$length = $file_size;           // Content length
 			$start  = 0;               // Start byte
-			$end    = $size - 1;       // End byte
+			$end    = $file_size - 1;       // End byte
 			 
 				$date = DateTime::createFromFormat('U',filemtime($file));
 				$date->setTimezone(new \DateTimeZone('UTC'));
@@ -757,40 +763,42 @@ class View{
 			#header('Cache-Control: no-store, no-cache, must-revalidate');
 			#header('Expires: Thu, 19 Nov 1981 00:00:00 GMT');
 			#header('Pragma: no-cache');
-			$filename=basename($file);
-				 
-			header("Content-Description: File Transfer");
-            header("Pragma: public");
-            header("Expires: 0");
-            header("Cache-Control: public, must-revalidate, post-check=0, pre-check=0");
-            header("Content-Transfer-Encoding: binary");
-			header("Content-Disposition: attachment; filename=\"$filename\"");
-            header("Content-Type: $mimetype");
-			
-			foreach($this->headers as $key=>$val){
-				header($key.': ' . $val,true);
+			// set the headers, prevent caching
+			header("Pragma: public");
+			header("Expires: -1");
+			header("Cache-Control: public, must-revalidate, post-check=0, pre-check=0");
+			// set appropriate headers for attachment or streamed file
+			if ($is_attachment){
+				header("Content-Disposition: attachment; filename=\"$file_name\"");
+			}else{
+				header('Content-Disposition: inline;');
+				header('Content-Transfer-Encoding: binary');
 			}
+				foreach($this->headers as $key=>$val){
+					header($key.': ' . $val,true);
+				}
+			/*
 			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				$c_start = $start;
 				$c_end   = $end;
-				list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+				list( , $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
 				if (strpos($range, ',') !== false) {
 					header('HTTP/1.1 416 Requested Range Not Satisfiable');
-					header("Content-Range: bytes $start-$end/$size");
+					header("Content-Range: bytes $start-$end/$file_size");
 					exit;
 				}
 				if ($range == '-') {
-					$c_start = $size - substr($range, 1);
+					$c_start = $file_size - substr($range, 1);
 				}else{
 					$range  = explode('-', $range);
 					$c_start = $range[0];
-					$c_end   = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+					$c_end   = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $file_size;
 				}
 				$c_end = ($c_end > $end) ? $end : $c_end;
-				if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+				if ($c_start > $c_end || $c_start > $file_size - 1 || $c_end >= $file_size) {
 					header('HTTP/1.1 416 Requested Range Not Satisfiable');
-					header("Content-Range: bytes $start-$end/$size");
+					header("Content-Range: bytes $start-$end/$file_size");
 					exit;
 				}
 				$start  = $c_start;
@@ -799,7 +807,7 @@ class View{
 				fseek($fp, $start);
 				header('HTTP/1.1 206 Partial Content');
 			}
-			header("Content-Range: bytes $start-$end/$size");
+			header("Content-Range: bytes $start-$end/$file_size");
 			header("Content-Length: ".$length);
 			header("Connection: Keep-Alive");
 			header("Keep-Alive: timeout=5");
@@ -820,6 +828,52 @@ class View{
 			}
 			fclose($fp);
 			exit();
+			*/
+			//check if http_range is sent by browser (or download manager)
+			if(isset($_SERVER['HTTP_RANGE'])){
+				list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+				if ($size_unit == 'bytes'){
+					//multiple ranges could be specified at the same time, but for simplicity only serve the first range
+					//http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
+					list($range, $extra_ranges) = explode(',', $range_orig, 2);
+				}else{
+					$range = '';
+					header('HTTP/1.1 416 Requested Range Not Satisfiable');
+					exit;
+				}
+			}else{
+				$range = '';
+			}
+			//figure out download piece from range (if set)
+			list($seek_start, $seek_end) = explode('-', $range, 2);
+			//set start and end based on range (if set), else set defaults
+			//also check for invalid ranges.
+			$seek_end   = (empty($seek_end)) ? ($file_size - 1) : min(abs(intval($seek_end)),($file_size - 1));
+			$seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
+			//Only send partial content header if downloading a piece of the file (IE workaround)
+			if ($seek_start > 0 || $seek_end < ($file_size - 1)){
+				header('HTTP/1.1 206 Partial Content');
+				header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$file_size);
+				header('Content-Length: '.($seek_end - $seek_start + 1));
+			}else{
+			  header("Content-Length: $file_size");
+			}
+			header('Accept-Ranges: bytes');
+			set_time_limit(0);
+			fseek($file, $seek_start);
+			$buffer = 1024 * 8;
+			while(!feof($file)){
+				print(@fread($file,$buffer));
+				ob_flush();
+				flush();
+				if (connection_status()!=0){
+					@fclose($file);
+					exit;
+				}			
+			}
+			// file save was a success
+			@fclose($file);
+			exit;
 		}
 		if(!headers_sent()){
 			foreach($this->headers as $key=>$val){

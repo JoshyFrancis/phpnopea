@@ -736,8 +736,7 @@ class View{
     public function __tostring(){
 		if($this->file!==''){
 			$mimetype=View::getContentType($this->file);
-				
-				
+				 
 			$file = $this->file;
 			$fp = @fopen($file, 'rb');
 			$size   = filesize($file); // File size
@@ -750,18 +749,28 @@ class View{
 				header('Last-Modified: '.$date->format('D, d M Y H:i:s').' GMT');
 			//dd($mimetype);	
 			header('Content-type: '.$mimetype);
-			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			// The three lines below basically make the
 			// download non-cacheable 
 			//header('Cache-control: private');
 			//header('Pragma: private');
 			//header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			header('Cache-Control: no-store, no-cache, must-revalidate');
-			header('Expires: Thu, 19 Nov 1981 00:00:00 GMT');
-			header('Pragma: no-cache');
+			#header('Cache-Control: no-store, no-cache, must-revalidate');
+			#header('Expires: Thu, 19 Nov 1981 00:00:00 GMT');
+			#header('Pragma: no-cache');
+			$filename=basename($file);
+				 
+			header("Content-Description: File Transfer");
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control: public, must-revalidate, post-check=0, pre-check=0");
+            header("Content-Transfer-Encoding: binary");
+			header("Content-Disposition: attachment; filename=\"$filename\"");
+            header("Content-Type: $mimetype");
+			
 			foreach($this->headers as $key=>$val){
 				header($key.': ' . $val,true);
 			}
+			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				$c_start = $start;
 				$c_end   = $end;
@@ -792,14 +801,22 @@ class View{
 			}
 			header("Content-Range: bytes $start-$end/$size");
 			header("Content-Length: ".$length);
+			header("Connection: Keep-Alive");
+			header("Keep-Alive: timeout=5");
+			set_time_limit(0);
 			$buffer = 1024 * 8;
 			while(!feof($fp) && ($p = ftell($fp)) <= $end) {
 				if ($p + $buffer > $end) {
 					$buffer = $end - $p + 1;
 				}
-				set_time_limit(0);
+				//set_time_limit(0);
 				echo fread($fp, $buffer);
+				ob_flush();
 				flush();
+				if (connection_status()!=0){
+                    fclose($fp);
+                    exit;
+                }
 			}
 			fclose($fp);
 			exit();

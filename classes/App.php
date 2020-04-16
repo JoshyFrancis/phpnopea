@@ -26,8 +26,18 @@ class App{
 	function __construct($session_name='laranopea_session',$lifetime=(60*60)*2){
 		App::$session_name=$session_name;
 		App::$session_lifetime=$lifetime;
-		
-		if($_SERVER['HTTP_ACCEPT']==='*/*' && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+		$user_agent = $_SERVER['HTTP_USER_AGENT']; 
+		if($_SERVER['HTTP_ACCEPT']==='*/*' && preg_match('/Edge/i', $user_agent) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+			$public_path=App::$public_path;
+			$storage_path= $public_path. '/../storage/' ;
+			$path= $storage_path.'logs'  ;  
+			if(!is_dir($path)){
+				mkdir($path);
+			}
+			$file_name= 'log_'.date("d-M-Y_H-i-s",time()).'.txt';
+			$file=$path.'/'.$file_name;
+			$log=array('server'=>$_SERVER,'request'=>$_REQUEST);
+			file_put_contents($file,json_encode($log ), FILE_APPEND);
 			//header("404 not found",true,404);
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found',true,404);
 			exit();	

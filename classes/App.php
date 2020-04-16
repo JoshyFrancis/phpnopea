@@ -27,7 +27,7 @@ class App{
 		App::$session_name=$session_name;
 		App::$session_lifetime=$lifetime;
 		$user_agent = $_SERVER['HTTP_USER_AGENT']; 
-		if($_SERVER['HTTP_ACCEPT']==='*/*' && preg_match('/Edge/i', $user_agent) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
+		if($_SERVER['HTTP_ACCEPT']==='*/*' && preg_match('/Edge/i', $user_agent) && !isset($_SERVER['HTTP_COOKIE']) ){//Microsoft Edge 42.17134.1.0(Microsoft EdgeHTML 17.17134) and without any cookie, this will break our session handling
 			$public_path=App::$public_path;
 			$storage_path= $public_path. '/../storage/' ;
 			$path= $storage_path.'logs'  ;  

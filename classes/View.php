@@ -1108,3 +1108,26 @@ class Blade{
 		return $contents; 
 	}
 }
+class Response{
+	public static function make($contents,$status=null){
+		if($status!=null){
+			http_response_code($status);
+		}
+				$public_path=App::$public_path;
+				$view_path=App::$view_path;  
+		$path=$view_path .  'lnpf__temp.blade.php' ;
+			if(!file_exists($path)){
+				foreach(View::$paths as $item){
+					$path = $item.'/'.$view2 . '.blade.php' ;
+					if(file_exists($path)){
+						break;
+					}
+				}
+			}
+		file_put_contents($path,$contents);	 
+		$view= view('lnpf__temp');
+		$contents=$view->render();
+		unlink($view->storage_path);
+		return $contents; 
+	}
+}

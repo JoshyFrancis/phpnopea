@@ -1109,9 +1109,14 @@ class Blade{
 	}
 }
 class Response{
-	public static function make($contents,$status=null){
+	public static function make($contents,$status=null,$headers=[]){
 		if($status!=null){
 			http_response_code($status);
+		}
+		if(!headers_sent()){
+			foreach($headers as $key=>$val){
+				header($key.': ' . $val,true);
+			}
 		}
 		return Blade::compileString($contents); 
 	}

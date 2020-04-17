@@ -318,9 +318,9 @@ function add_route($method, $parameters){
 			//if($group_count>0){
 				//echo call_user_func(__CLASS__.'::through_middleware',$request, $func, $fire_args,$controller_class );
 				//if(isset($controller_class)){
-				//	echo through_middleware($func, $fire_args,$controller_class );
+				//	echo through_middleware($func, $fire_args,$controller_class,Route::$group );
 				//}else{
-				//	echo through_middleware($func, $fire_args );
+				//	echo through_middleware($func, $fire_args,null,Route::$group );
 				//}
 								 
 			//}else{
@@ -425,8 +425,7 @@ function load_laravel_classes(){
 	
 		
 }
-function through_middleware($func, $fire_args,$controller_class=null){
-	 	
+function through_middleware($func, $fire_args,$controller_class=null,$groups=[]){
 	include App::$http_path.App::$Kernel;
 		$class = 'App\\Http\\Kernel' ;
 		$kernel_class=new $class() ;
@@ -458,24 +457,24 @@ function through_middleware($func, $fire_args,$controller_class=null){
 	$middleware_args=[];
 	$middleware_args[]= Route::$request;
 	$middleware_args[]= function($request) use($func, $fire_args,&$res,$controller_class, &$called){
-							if($res===null && error_get_last()['type']<2 && $called===false){
-								if($controller_class!==null){
-									$res= call_user_func_array([$controller_class, $func], $fire_args);
-								}else{
-									$res= call_user_func_array($func, $fire_args);
-								}
-								$called=true;
-							}
-							return $res;
-						};
+				if($res===null && error_get_last()['type']<2 && $called===false){
+					if($controller_class!==null){
+						$res= call_user_func_array([$controller_class, $func], $fire_args);
+					}else{
+						$res= call_user_func_array($func, $fire_args);
+					}
+					$called=true;
+				}
+				return $res;
+			};
 			//$middleware_args[]= Route::$group[count(Route::$group)-1]['middleware'][0] ;
-			$middleware_args[]=null;
+		$middleware_args[]=null;
 			 
 	//$middleware_groups=[];
 	//	$middleware_groups[]='_default';
 	$middleware_groups='_default,';
 	//foreach(Route::$group as $items){
-	foreach(Route::$group as $items){
+	foreach($groups as $items){
 		foreach($items as $key=>$val){
 			if($key==='middleware'){
 				if(is_array($val)){

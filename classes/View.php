@@ -165,10 +165,7 @@ class View{
 		}
 	}
     public function compile(){
-		//$contents= file_get_contents( $this->path);		
-		//$contents='';
 		$extends='';
-		
 		$conditions=[
 				['@include','(',')','<?php $_view=$this->view_include(',',get_defined_vars());echo $_view->render(); ?>']
 				,['@section','(',')','<?php $this->startSection(','); ?>']
@@ -212,37 +209,8 @@ class View{
 		if ($handle) {
 			//while (!feof($handle) ) {
 			while (($line = fgets($handle)) !== false) {
-			//while (($line = fgets($handle, 4096)) !== false) {
-			//while($line=stream_get_line($handle,4000,"\n")) {	
-				 
-			//	$line=fread($handle,100  );
-			//	var_dump($line);
-			//	$line=stream_get_line($handle,4000,"\r");
-			//	var_dump($line);
-			//	$line=stream_get_line($handle,4000,"\r\n");
-			//	dd($line);
-			//while($line=stream_get_line($handle,4000,"\r\n\r\n")) {	 
-				 
-				//$line="# @section ( 'links') @section('content1')@section('content2')@section ( 'links2')#";
-				//$line="#@foreach (errors->all() as error)@foreach (errors->all() as error)#";
-				//$line="# @section('links') @section('scripts') @section('content')@include   (Route,tabs[i]['data'] )	#";
-				/*
-				$line="@section('content') @section('content2')@include(Route,tabs[i]['data'] )@section('links')
-					# {{var }} @section('links2') @section('scripts') @section('content3')@include   (Route,tabs[i]['data'] )	#
-					@foreach (errors->all() as error)
-						<li>{{ error }}</li>
-					@endforeach
-				";
-				*/
-				//$line="#  @if (errors->has('email')) {{var }} {!!var2 !!} @{{ var3 }} <e>@section ( 'links')@extends('layouts.app')e</e> @endsection @show#";
-				//$line="#@if (errors->has('email'))#";
-				//var_dump( $line);
-				
-				////
-				
 				$line2='';
 				$eof='';
-				
 				//<!--  --> $html_comment also preserving line numbers and reduce file size
 				if(strstr($line, PHP_EOL)) {
 					$eof=PHP_EOL;
@@ -253,7 +221,6 @@ class View{
 				}else if(strpos($line, "\r") !== false) {
 					$eof="\r";
 				}
-				////$line=rtrim($line).$eof;
 				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
 					$line=trim($line);
 				}else{
@@ -264,21 +231,11 @@ class View{
 				if($pos!==false){ 	
 					$pos2=strrpos($line, ')',$pos);
 					if($pos2!==false){
-						/*
-						 $line=substr($line, 0, $pos2) . ',$this)->render(); ?>' .substr($line,  $pos2+ 1 ) ;
-						 */
 						$extends=substr($line,$pos+8,($pos2-$pos)+1-8);
 						$extends='<?php echo $this->view_make(' . trim($extends,'()') . ',$this)->render(); ?>';
 						$line=substr($line, 0, $pos) .substr($line,  $pos2+ 1 ); 
 					}
-				}				
-				//if($line!=='' || View::$preserve_line_numbers===true){//false: skip empty lines
-					//$line=$line.$eof;
-				//}else{
-				//	$line='';
-				//	$eof='';
-				//}
-					
+				}	
 				if($line!==''){
 					if(strpos($line,'-->')!==false && $html_comment===true){
 						$line=substr($line, strpos($line,'-->')+3) ;
@@ -309,7 +266,6 @@ class View{
 					}
 				}
 
-				
 				if($line!==''){
 					foreach($conditions as $val){
 							$count=count($val);
@@ -366,24 +322,17 @@ class View{
 											$pos3=false;
 										 
 										for($p=$pos+$len_statement;$p<$length;$p++){
-											//var_dump(substr($line, $p, $len_open));
 											if(substr($line,$p,$len_open)===$open_brace){
 												if($p_level===0){
 													$pos2=$p;
-													//$line=substr($line, 0, $pos) .$replace_open.substr($line,  $p+$len_open ) ;
-													//$p=$pos+$len_replace_open;
-													//$length=strlen($line);
 												}
 												$p+=$len_open-1;
 												$p_level+=1;
-												//var_dump($p_level);
 											}
 											if(substr($line,$p,$len_close)===$close_brace){
 												$p_level-=1;
-												//var_dump($p_level);
 												if($p_level===0){
 													$pos3=$p;
-													//$line=substr($line, 0, $p) .$replace_close.substr($line,  $p+$len_close ) ;
 													break;
 												}
 												$p+=$len_close-1;
@@ -397,7 +346,6 @@ class View{
 										}else{
 											$pos+=$len_statement;
 										}
-										//var_dump($pos);
 										break;
 									}
 								}while($pos!==false);
@@ -425,20 +373,7 @@ class View{
 								$single_line_comment=true;
 							}
 						} 
-						 
-						#if(strpos($line,'/*')!==false && $single_line_comment===false && $multi_line_comment===false){
-						#	$line2=substr($line, strpos($line,'/*'));
-						#	$line=substr($line,0,strpos($line,'/*'));
-						#	$multi_line_comment=true;
-						#}elseif(strpos($line,'*/')!==false && $multi_line_comment===true){
-						#	$line2=substr($line, strpos($line,'*/'));
-						#	$line=substr($line,0,strpos($line,'*/'));
-						#	$multi_line_comment=false;
-						#}elseif($multi_line_comment===true){
-						#	$line2=$line;
-						#	$line='';
-						#}
-						 
+
 						if(strpos($line,'*/')!==false && $multi_line_comment===true){
 							$line=substr($line, strpos($line,'*/')+2) ;
 							$multi_line_comment=false;
@@ -550,9 +485,6 @@ class View{
 				 
 				}
 				
-				//var_dump($line);
-				//exit;
-				
 				$line=$line.$line2;
 				if(View::$trim_left_whitespace===true){//true : trim , false : rtrim
 					$line=trim($line);
@@ -571,12 +503,9 @@ class View{
 			//	echo "Error: unexpected fgets() fail\n";
 			//}
 			fclose($handle);
-			//$contents.=$extends; 
 			fwrite($handlew,$extends);
 			fclose($handlew);
 		}
-		
-		//file_put_contents($this->storage_path,$contents);
 	}
 	public function render(){
 		$b=$this->expired();

@@ -330,7 +330,7 @@ function add_route($method, $parameters){
 			//		echo call_user_func_array($func, $fire_args);
 			//	}
 			//}
-			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class,'params'=>$parameters];
+			$current_route=['func'=>$func, 'args'=>$fire_args,'controller_class'=>$controller_class,'params'=>$parameters,'group'=>Route::$group];
 			
 		}
 	}

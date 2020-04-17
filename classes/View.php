@@ -752,10 +752,10 @@ class View{
 			@fclose($file);
 			exit;
 			*/
+			
+			
 			header('Accept-Ranges: bytes');//header("Accept-Ranges: 0-$length");
 			if (isset($_SERVER['HTTP_RANGE'])) {
-				echo json_encode($_SERVER);
-				exit;
 				$c_start = $start;
 				$c_end   = $end;
 				list( , $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
@@ -783,6 +783,7 @@ class View{
 				fseek($fp, $start);
 				header('HTTP/1.1 206 Partial Content');
 			}
+			
 			header("Content-Range: bytes $start-$end/$file_size");
 			header("Content-Length: ".$length);
 			header("Connection: Keep-Alive");

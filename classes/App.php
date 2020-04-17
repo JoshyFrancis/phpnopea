@@ -184,7 +184,15 @@ class App{
 					page_not_found();
 				}else{	
 						//exit;
-					echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class']);				 
+					if(count(App::$current_route['group'])>0){						
+						echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class'],App::$current_route['group']);				 
+					}else{
+						if(isset(App::$current_route['controller_class'])){
+							echo call_user_func_array([App::$current_route['controller_class'], App::$current_route['func']], App::$current_route['args']);
+						}else{
+							echo call_user_func_array(App::$current_route['func'], App::$current_route['args']);
+						}
+					}
 				}
 			
 			Route::$request->session->save();

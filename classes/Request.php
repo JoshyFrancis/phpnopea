@@ -26,9 +26,9 @@ class Request{
             //$request->request = new ParameterBag($data);
             $_REQUEST=$data;
         }
-        //$this->request  = $this;
-       $this->request  = new ParameterBag($_REQUEST);
- 	}
+        //$this->request  = new ParameterBag($_REQUEST);
+        $this->request  = $this;
+	}
 	
 	public function set_cookies($data){
 		$this->cookies=new ParameterBag($data);
@@ -434,12 +434,10 @@ class Request{
 		unset($_SERVER[$name]) ;
 	}
 	public function has($name){
-		//return isset($_REQUEST[$name]) && $_REQUEST[$name]!=='';//!empty($_REQUEST[$name]);
-		return $this->request->has($name) && $this->request->get($name,'')!=='';
+		return isset($_REQUEST[$name]) && $_REQUEST[$name]!=='';//!empty($_REQUEST[$name]);
 	}
 	public function input($name,$default=null){
-		//return isset($_REQUEST[$name])? $_REQUEST[$name]:$default  ;
-		return $this->request->get($name,$default);
+		return isset($_REQUEST[$name])? $_REQUEST[$name]:$default  ;
 	}
 	public function hasFile($name){
 		return isset($_FILES[$name]) && $this->files->get($name)!==null;
@@ -458,40 +456,32 @@ class Request{
 	public function __get($name){
 		if(isset($_FILES[$name])){
 			return $this->files->get($name);
-		//}elseif(isset($_REQUEST[$name])){
-			//return $_REQUEST[$name];
-		}elseif($this->request->has($name)){
-			return $this->request->get($name);
+		}elseif(isset($_REQUEST[$name])){
+			return $_REQUEST[$name];
 		}
 			return null;
 	}
 	public function all(){
         //return array_merge($_REQUEST,$_FILES);
-        //return  $_REQUEST+$_FILES;//better speed
-        return  $this->request->all()+$_FILES;//better speed
+        return  $_REQUEST+$_FILES;//better speed
     }
     public function all_input(){
-        //return $_REQUEST;
-        return $this->request->all();
+        return $_REQUEST;
     }
     public function setInput($data=null){
-		//if($data!==null){
-		//	$_REQUEST=$data;
-		//}
-        //$this->request=$this;
 		if($data!==null){
-			$this->request=new ParameterBag($data);
+			$_REQUEST=$data;
 		}
+        //$this->request=new ParameterBag($_REQUEST);
+        $this->request=$this;
     }
     public function add($data){
-		//foreach($data as $key=>$val){
-		//	$_REQUEST[$key]=$val;
-		//}
-		$this->request->add($data);
+		foreach($data as $key=>$val){
+			$_REQUEST[$key]=$val;
+		}
 	}
 	public function replace($data){
-		//$this->add($data);
-		$this->request->replace($data);
+		$this->add($data);
 	}
     public function getrequestMethod(){
 		return $_SERVER['REQUEST_METHOD'];
@@ -599,7 +589,7 @@ class Request{
 		$this->BaseUrl=null;
 		$this->pathInfo=null;
 		$this->basePath=null;
-        $this->request=$request->request;
+        $this->request=$request;
         return $this;
     }
 }

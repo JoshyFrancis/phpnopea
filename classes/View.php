@@ -27,6 +27,9 @@ class View{
 		}
 			//View::$views[]=$this;//not used now
 			View::$views_data=$data;
+		
+			//dd($this->data);
+			//dd(Route::$request->session->get('_errors',[]));
         $this->data=$data;
         /*
         $erros=isset( $this->data['errors'])?$this->data['errors']->all():[];
@@ -39,12 +42,22 @@ class View{
 			}
 			*/
 			if($inner_view===false){
+				//echo '<pre>';
+				//var_dump( debug_backtrace(false));
+				//echo '</pre>';
+				//die();
+				//dd(Route::$request->session->get('_errors',[]));
 				if(Route::$request->session->has('_input')){
 					Route::$request->setInput(Route::$request->session->get('_input'));
 				}
 				$this->data+=Route::$request->session->get('_data',[]);
-				$this->data+=['errors'=>new ParameterBag(Route::$request->session->get('_errors',[]))];
-					
+				//$this->data+=['errors'=>new ParameterBag(Route::$request->session->get('_errors',[]))];
+				if(isset($this->data['errors'])){
+					$this->data['errors']=new ParameterBag($this->data['errors']->all()+Route::$request->session->get('_errors',[]));
+				}else{
+					$this->data['errors']=new ParameterBag( Route::$request->session->get('_errors',[]));
+				}
+				//dd($this->data);
 					Route::$request->session->remove('_input');
 					Route::$request->session->remove('_data');
 					Route::$request->session->remove('_errors');
@@ -516,6 +529,12 @@ class View{
 		return $this->_render();
 	}
     private function _render(){
+		//dd($this->data);
+		//echo '<pre>';
+		//var_dump( debug_backtrace(false));
+		//echo '</pre>';
+		//die();
+		 
 			//use Exception;
 			//use Throwable;
 		$__path=$this->storage_path;
@@ -833,10 +852,20 @@ class View{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
 		}
 		Route::$request->session->set('_errors',$data);
+		//if(isset($this->data['errors'])){
+		//	$this->data['errors']=new ParameterBag($this->data['errors']->all()+$data);
+		//}else{
+		//	$this->data['errors']=new ParameterBag( $data);
+		//}
+		//dd($data);
+		//dd($this->data);
+		Route::$request->session->save();
+		//dd(Route::$request->session->get('_errors',[]));
 		return $this;
 	}
 	public function withInput(){
 		Route::$request->session->set('_input',Route::$request->all_input());
+		Route::$request->session->save();
 		return $this;
 	}
 	public function with($data,$val=null){
@@ -846,6 +875,7 @@ class View{
 		foreach($data as $k=>$v){
 			Route::$request->session->flash($k,$v);
 		}
+		Route::$request->session->save();
 		return $this;
 	}
 	public function __call($method,$args){

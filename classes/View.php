@@ -827,6 +827,8 @@ class View{
 		}
 		if(View::$use_array_merge===true){
 			$data=array_merge( isset( $this->data['errors'])?$this->data['errors']->all():[],$data);
+		}else if($data instanceof ParameterBag){
+			
 		}else{
 			$data= (isset( $this->data['errors'])?$this->data['errors']->all():[]) +$data;
 		}

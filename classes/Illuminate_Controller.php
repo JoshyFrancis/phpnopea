@@ -10,7 +10,7 @@ class Controller{
 	public function validate($request, $rules,$messages=[]){
 		$validator = Validator::make($request->all(),$rules,$messages);
 		if ($validator->fails()) {
-            echo redirect($request->path())->withErrors($validator)->withInput();
+            echo redirect($request->path())->withInput()->withErrors($validator);
             die();
         }
 	}

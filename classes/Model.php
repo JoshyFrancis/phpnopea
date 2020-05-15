@@ -76,9 +76,9 @@ Class Model{
 		return $this;
 	}
 	public static function find($ID){
-		//$model=new self;
-		$model=new Model;
-		$instance=Model::$instance;
+		$model=new self;
+		//$instance=Model::$instance;
+		$instance=$this;
 		$fillable=$instance->fillable+$instance->names;
 		$no_fillable=false;
 		if(count($fillable)==0){
@@ -112,6 +112,7 @@ Class Model{
 					$model->{$key}=$val;
 				}
 			}
+			$model->{$model->primaryKey}=$ID;
 		}
 		return $model;
 	}

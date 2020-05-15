@@ -6,6 +6,10 @@ Class Model{
 	protected $table='users';
 	protected $primaryKey='ID';
 	protected $fillable=[];
+	protected static $instance =null;
+	public function __construct(){
+		Model::$instance=$this;
+    }
 	public function __set($name, $value){
 		if($name===$this->primaryKey){
 			return;
@@ -72,8 +76,16 @@ Class Model{
 		return $this;
 	}
 	public static function find($ID){
-		$model=new self;
-		$fillable=$this->fillable+$this->names;
+		//$model=new self;
+		$model=new Model;
+		$instance=Model::$instance;
+		$fillable=$instance->fillable+$instance->names;
+		$no_fillable=false;
+		if(count($fillable)==0){
+			$fillable=['*'];
+			$no_fillable=true;
+		}
+		
 			$sql='SELECT ';
 			$c=0;
 			foreach($fillable as $name){
@@ -83,12 +95,22 @@ Class Model{
 				$sql.=$name;
 				$c+=1;
 			}
-			$sql.=' FROM '.$this->table.' where '.$this->primaryKey.'=?';
+			$sql.=' FROM '.$instance->table.' where '.$instance->primaryKey.'=?';
 
 		$rows =DB::select($sql ,[$ID] );
 		if(count($rows)>0){
-			foreach($fillable as $name){
-				$model->{$name}=$rows[0]->{$name};
+			if($no_fillable==false){
+				foreach($fillable as $name){
+					$model->{$name}=$rows[0]->{$name};
+				}
+			}else{
+				$model->names=isset($model->names)?$model->names:[];
+				$model->values=isset($model->values)?$model->values:[];
+				foreach($rows as $key=>$val){
+					array_push($model->names,$key);
+					array_push($model->values,$val);
+					$model->{$key}=$val;
+				}
 			}
 		}
 		return $model;

@@ -77,8 +77,8 @@ Class Model{
 	}
 	public static function find($ID){
 		$model=new self;
-		//$instance=Model::$instance;
-		$fillable=$this->fillable+$this->names;
+		$instance=Model::$instance;
+		$fillable=$instance->fillable+$instance->names;
 		$no_fillable=false;
 		if(count($fillable)==0){
 			$fillable=['*'];
@@ -94,7 +94,7 @@ Class Model{
 				$sql.=$name;
 				$c+=1;
 			}
-			$sql.=' FROM '.$this->table.' where '.$this->primaryKey.'=?';
+			$sql.=' FROM '.$instance->table.' where '.$instance->primaryKey.'=?';
 
 		$rows =DB::select($sql ,[$ID] );
 		if(count($rows)>0){

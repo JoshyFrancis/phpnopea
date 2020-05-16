@@ -7,9 +7,9 @@ Class Model{
 	protected $primaryKey='ID';
 	protected $fillable=[];
 	protected static $instance =null;
-	public function __construct(){
-		static::$instance=$this;
-    }
+	//public function __construct(){
+	//	static::$instance=$this;
+   // }
 	public function __set($name, $value){
 		if($name===$this->primaryKey){
 			return;
@@ -77,7 +77,13 @@ Class Model{
 	}
 	public static function find($ID){
 		$model=new self;
+		//dd(static::$instance instanceof self);
+			if(static::$instance === null) {
+				$class=get_called_class();
+				static::$instance =new $class;
+			}
 		$instance=static::$instance;
+		//dd($instance);
 		$fillable=$instance->fillable+$instance->names;
 		$no_fillable=false;
 		if(count($fillable)==0){
@@ -114,6 +120,7 @@ Class Model{
 				$model->{$model->primaryKey}=$ID;
 			}
 		}
+		static::$instance =null;
 		return $model;
 	}
 }

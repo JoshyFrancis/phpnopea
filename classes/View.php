@@ -57,7 +57,12 @@ class View{
 				}else{
 					$this->data['errors']=new ParameterBag( Route::$request->session->get('_errors',[]));
 				}
-				//dd($this->data);
+				$all_session= Route::$request->session->all();
+				foreach($all_session as $key=>$val){
+					if(substr($key,0,6)=='_flash'){
+						$this->data[substr($key,6)]=$val;
+					}
+				}
 					Route::$request->session->remove('_input');
 					Route::$request->session->remove('_data');
 					Route::$request->session->remove('_errors');

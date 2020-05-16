@@ -8,7 +8,7 @@ Class Model{
 	protected $fillable=[];
 	protected static $instance =null;
 	public function __construct(){
-		Model::$instance=$this;
+		static::$instance=$this;
     }
 	public function __set($name, $value){
 		if($name===$this->primaryKey){
@@ -77,14 +77,15 @@ Class Model{
 	}
 	public static function find($ID){
 		$model=new self;
-		$instance=Model::$instance;
+		$instance=static::$instance;
 		$fillable=$instance->fillable+$instance->names;
 		$no_fillable=false;
 		if(count($fillable)==0){
 			$fillable=['*'];
 			$no_fillable=true;
+		}else{
+			$fillable[]=$instance->primaryKey;
 		}
-		
 			$sql='SELECT ';
 			$c=0;
 			foreach($fillable as $name){
@@ -110,8 +111,8 @@ Class Model{
 					array_push($model->values,$val);
 					$model->{$key}=$val;
 				}
+				$model->{$model->primaryKey}=$ID;
 			}
-			$model->{$model->primaryKey}=$ID;
 		}
 		return $model;
 	}

@@ -49,8 +49,11 @@ class App{
 				$_REQUEST+=$_POST;
 			}
 		}
-		
-		App::$env_data=parse_ini_file(App::$file_env,false,INI_SCANNER_RAW ) ;
+		if (function_exists('parse_ini_file')){
+			App::$env_data=parse_ini_file(App::$file_env,false,INI_SCANNER_RAW ) ;
+		}else{
+			App::$env_data=parse_ini_file_quotes_safe(App::$file_env ) ;
+		}
 
 			$app_key=isset(App::$env_data['APP_KEY'])?App::$env_data['APP_KEY']:'';// env('APP_KEY');
 		if(strpos($app_key,'base64:')!==false){

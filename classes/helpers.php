@@ -112,8 +112,8 @@ if (!function_exists('getallheaders')){
     }
 }
 function parse_ini_file_quotes_safe($f){
-    $r=$null;
-    $sec=$null;
+    $r=null;
+    $sec=null;
     $f=@file($f);
     for($i=0;$i<@count($f);$i++){
         $newsec=0;

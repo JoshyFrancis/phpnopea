@@ -17,7 +17,15 @@ class DB{
     }
     public function __call( $name, $args ) {
     }
+	public static function closeDB () {
+		self::$DBH=null;
+	}
+	public static function override ($func) {
+		self::$DBH=call_user_func_array($func, [App::$env_data]);
+		self::$connection=new connection(self::$DBH);
+	}
     public static function createDB () {
+		
         if(self::$DBH===null){
 			$env=App::$env_data;
 			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].';charset=utf8';

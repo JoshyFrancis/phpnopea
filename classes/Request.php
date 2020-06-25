@@ -117,7 +117,12 @@ class Request{
         if (('http' == $scheme && 80 == $port) || ('https' == $scheme && 443 == $port)) {
             return $this->getHost();
         }
-        return $this->getHost().':'.$port;
+		$host_=$this->getHost();
+		if(strpos($host_,':'.$port)===false){
+			return $host_.':'.$port;
+		}else{
+			return $host_;
+		}
     }
 	public function getSchemeAndHttpHost(){
         return $this->getScheme().'://'.$this->getHttpHost();

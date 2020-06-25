@@ -88,7 +88,7 @@ class Request{
     }
 	public function getScheme(){
 		$secure=false;
-		if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') || (isset($_SERVER['SERVER_PORT']) && intval($_SERVER['SERVER_PORT'])==443) || $_SERVER['REQUEST_SCHEME']==='https'){
+		if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') || (isset($_SERVER['SERVER_PORT']) && intval($_SERVER['SERVER_PORT'])==443) || (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME']==='https')){
 			$secure=true;
 		}
 		$scheme=$secure?'https':'http';

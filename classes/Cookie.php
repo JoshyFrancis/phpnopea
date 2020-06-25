@@ -30,7 +30,7 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 	}
 	$secure=false;
 //	if ( (isset($_SERVER['HTTPS']) && in_array(strtolower($_SERVER['HTTPS']), array('on','1' ,'ssl')) ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" )		{
-	if((isset($_SERVER['HTTPS']) && strpos('on,1,ssl', strtolower($_SERVER['HTTPS']) )!==false ) || intval($_SERVER['SERVER_PORT'])==443 || $_SERVER['REQUEST_SCHEME'] == "https" ){
+	if((isset($_SERVER['HTTPS']) && strpos('on,1,ssl', strtolower($_SERVER['HTTPS']) )!==false ) || intval($_SERVER['SERVER_PORT'])==443 || (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == "https") ){
 		$secure=true;
 	}
 	$secureOnly=$secure;

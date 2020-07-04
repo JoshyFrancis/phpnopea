@@ -5,6 +5,7 @@ class DB{
 	private static $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
     private static $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
     private static $connection;
+	public static $before_sql=null;
 	function __construct(){
 		
 		self::createDB();
@@ -91,9 +92,13 @@ class DB{
     public static function select($sql,$bindings=[]){
 			self::createDB();
 		try{
+			if(self::$before_sql){
+				call_user_func_array(self::$before_sql,[$sql,$bindings] );
+			}
 			$STH = self::$DBH->prepare($sql); 
 			//$STH->execute( self::prepareBindings($bindings));
 			//self::bindValues($STH,self::prepareBindings($bindings));
+			
 			self::bindValues($STH,$bindings);
 			$STH->execute();
 		}catch(Exception $e){
@@ -103,6 +108,9 @@ class DB{
     }
     public static function update($sql,$bindings=[]){
 			self::createDB();
+		if(self::$before_sql){
+			call_user_func_array(self::$before_sql,[$sql,$bindings] );
+		}
         $STH = self::$DBH->prepare($sql);
 		//$STH->execute( self::prepareBindings($bindings));
 		//self::bindValues($STH,self::prepareBindings($bindings));

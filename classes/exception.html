@@ -358,7 +358,8 @@
 					};
 				var a_send_error_report=document.getElementById('a_send_error_report');
 					function send_error_report(el){
-						 
+						document.body.style.cursor = 'wait';
+						a_send_error_report.style.cursor = 'wait';
 						ajax({
 							url: '{{url}}/send_error_report?error_file={{error_file}}&error_subject='+encodeURIComponent('{{subject}}'),
 							type: 'get',
@@ -367,10 +368,14 @@
 									error_subject:'{{subject}}',
 								},
 							success:  function (data,xhr) {
+								document.body.style.cursor = 'auto';
+								a_send_error_report.style.cursor = 'auto';
 								 //alert(data);
 								  a_send_error_report.innerHTML=data;
 							} ,
 							error:  function (xhr, e) {
+								document.body.style.cursor = 'auto';
+								a_send_error_report.style.cursor = 'auto';
 								//alert('Error ' + e + ' ' +  xhr.responseText);	
 								 a_send_error_report.innerHTML='Error ' + e + ' ' +  xhr.responseText;								
 							} ,

@@ -223,6 +223,10 @@ class View{
 		$pos2=false; 
 		//ini_set("auto_detect_line_endings", true);
 		$handle = fopen($this->path, 'rb');
+		$dir=dirname($this->storage_path);
+		if(!file_exists($dir)){
+			Storage::makeDirectory($dir,0755,true,true);
+		}
 		$handlew = fopen($this->storage_path, 'w');
 		if ($handle) {
 			//while (!feof($handle) ) {

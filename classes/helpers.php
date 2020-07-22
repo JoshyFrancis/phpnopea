@@ -391,9 +391,18 @@ function assoc_array_merge_diff($array1, $array2){
   return $diff;
 }
 function dd($var){
+	$bt = debug_backtrace();
+	$caller = array_shift($bt);
+  // echo $caller['file'];
+  // echo $caller['line'];
+	$info=isset($caller['file'])?'File : ' .$caller['file']:'';
+	$info.=isset($caller['line'])?' Line : ' .$caller['line']:'';
 	echo '<pre>';
 	//var_dump($var);
-	var_dump(func_get_args ());
+	
+	var_dump(func_get_args (),$info);
+	
 	echo '</pre>';
+	
 	die();
 }

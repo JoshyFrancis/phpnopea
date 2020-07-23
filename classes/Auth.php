@@ -42,7 +42,9 @@ class Auth{
 		if(intval(phpversion())>=7){//7.4.8
 			return $this->user[$name];
 		}else{
-			return $this->user{$name};
+			$user=null;
+			eval("$user=$this->user{$name}");
+			return $user;
 		}
 	}
 	protected function _set_user($rows){

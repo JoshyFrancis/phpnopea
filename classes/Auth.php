@@ -38,7 +38,12 @@ class Auth{
 		return $this;
 	}
 	public function __get($name){
-		return $this->user{$name};
+		//return $this->user{$name};
+		if(intval(phpversion())>=7){//7.4.8
+			return $this->user[$name];
+		}else{
+			return $this->user{$name};
+		}
 	}
 	protected function _set_user($rows){
 		if(!$this->user){

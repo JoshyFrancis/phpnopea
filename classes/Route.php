@@ -457,18 +457,19 @@ function through_middleware($func, $fire_args,$controller_class=null,$groups=[])
 	$middleware_args=[];
 	$middleware_args[]= Route::$request;
 	$middleware_args[]= function($request) use($func, $fire_args,&$res,$controller_class, &$called){
-				if($res===null && error_get_last()['type']<2 && $called===false){
-					if($controller_class!==null){
-						$res= call_user_func_array([$controller_class, $func], $fire_args);
-					}else{
-						$res= call_user_func_array($func, $fire_args);
-					}
-					$called=true;
-				}
-				return $res;
-			};
-			//$middleware_args[]= Route::$group[count(Route::$group)-1]['middleware'][0] ;
-		$middleware_args[]=null;
+		$last_error=error_get_last();
+		if($res===null && ($last_error?$last_error['type']<2:true) && $called===false){
+			if($controller_class!==null){
+				$res= call_user_func_array([$controller_class, $func], $fire_args);
+			}else{
+				$res= call_user_func_array($func, $fire_args);
+			}
+			$called=true;
+		}
+		return $res;
+	};
+		//$middleware_args[]= Route::$group[count(Route::$group)-1]['middleware'][0] ;
+	$middleware_args[]=null;
 			 
 	//$middleware_groups=[];
 	//	$middleware_groups[]='_default';
@@ -553,7 +554,8 @@ function through_middleware($func, $fire_args,$controller_class=null,$groups=[])
 	}
 	
 	//var_dump($res);
-	if($res===null && error_get_last()['type']<2 && $called===false){
+	$last_error=error_get_last();
+	if($res===null && ($last_error?$last_error['type']<2:true) && $called===false){
 		//var_dump($res);
 		$res=$middleware_args[1](Route::$request);
 	}

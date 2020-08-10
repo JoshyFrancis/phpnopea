@@ -70,7 +70,7 @@ function add_route($method, $parameters){
 				
 	//App::$routes[$method][$parameters[0]]=$parameters;			
 		
-		
+		//dd($method,$route_method);
 	//if( strpos(strtolower($method) ,$route_method)!==false || $method==='any'){
 	//if(strpos($method,$route_method)!==false || $method==='any'){			
 	if(strpos($method,$route_method)!==false ){
@@ -142,7 +142,7 @@ function add_route($method, $parameters){
 						break;
 					}
 				}
-			
+			//dd($a_path1,$a_path2);
 		if($match===true){
 			
 			$fire_args=[];
@@ -201,7 +201,7 @@ function add_route($method, $parameters){
 				//echo implode('/',$a_path2);
 				//echo json_encode($fire_args);	
 				
-			 
+			//dd($a_path1,$a_path2); 
 		}
 		
 				//echo json_encode($match);
@@ -216,7 +216,7 @@ function add_route($method, $parameters){
 			
 			//var_dump($a_path1);
 			//var_dump($a_path2);	
-			
+			//dd($a_path1,$a_path2); 
 			
 				$func=$parameters[1];
 					if(is_array($func)){				 

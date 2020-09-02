@@ -184,6 +184,7 @@ function error_handler($code=null,$message='',$file='',$line=0){
 					if(is_string($item)){
 						$item="'".replace_file_mtime($item)."'";
 					}elseif(is_numeric($item)){
+						
 					}else{
 						$item='('.gettype($item).')';
 					}

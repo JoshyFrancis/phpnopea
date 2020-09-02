@@ -113,7 +113,11 @@ function error_handler($code=null,$message='',$file='',$line=0){
 			</td>
 		</tr>
 	';
-		
+	if ( !function_exists(  'is_iterable' ) ){
+		function is_iterable( $obj ){
+			return is_array( $obj ) || ( is_object( $obj ) && ( $obj instanceof \Traversable ) );
+		}
+	}	
 	foreach($trace as $key=>$val){
 		 
 		$file=replace_file_mtime(isset($val['file'])?$val['file']:'');
@@ -138,30 +142,32 @@ function error_handler($code=null,$message='',$file='',$line=0){
 							<abbr title="Illuminate\Http\Request">Request</abbr>), 
 							<em>object</em>(<abbr title="Closure">Closure</abbr>)
 			';
-			if($class==='DB' && count($args)>1){
+			if($class==='DB' && count($args)>1 ){
 					$sql=$args[0];
 				if(is_string($sql)){
 						$bindings=$args[1];
-					foreach($bindings as $value){
-						if(is_string($value)){
-							$value="'".$value."'";
-						}elseif($value instanceof DateTimeInterface){
-							$value="'".$value->format('Y-m-d H:i:s')."'";
-						}elseif(is_bool($value)){
-							$value=(int)$value;
-						}elseif(is_object($value)){
-							$value=get_class($value);
-						}elseif(is_numeric($value)){
-							$value=$value;
-						}else{
-							$value=gettype($value);
-						}
-						
-								$pos=strpos($sql,'?');
-							if($pos!==false){
-								$sql=substr($sql, 0, $pos) .$value.substr($sql,  $pos+ 1 ) ;	 	
+					if(is_iterable($bindings) ){
+						foreach($bindings as $value){
+							if(is_string($value)){
+								$value="'".$value."'";
+							}elseif($value instanceof DateTimeInterface){
+								$value="'".$value->format('Y-m-d H:i:s')."'";
+							}elseif(is_bool($value)){
+								$value=(int)$value;
+							}elseif(is_object($value)){
+								$value=get_class($value);
+							}elseif(is_numeric($value)){
+								$value=$value;
+							}else{
+								$value=gettype($value);
 							}
-						
+							
+									$pos=strpos($sql,'?');
+								if($pos!==false){
+									$sql=substr($sql, 0, $pos) .$value.substr($sql,  $pos+ 1 ) ;	 	
+								}
+							
+						}
 					}
 					$s_args='"'.$sql.';"';
 				}else{

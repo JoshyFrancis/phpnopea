@@ -67,6 +67,23 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $exception=file_get_contents($class_path.'exception.html');
     $code=$e->getCode();
     $message=str_replace($base_path,'',$e->getMessage());
+    $message=str_replace($public_path,'',$message);
+	$pos=strpos($message,'include');
+		if($pos!==false){
+			$pos=strpos($message,'(',$pos+1);
+			if($pos!==false){
+				$file=substr($message,$pos+1) ;
+				$pos=strpos($file,')',$pos+1);
+				$file=substr($file,0,$pos-1) ;
+				$file_name=basename($file);
+				if(($pos=strrpos($file_name,'\\'))!==false){
+					$file_name=substr($file_name,  $pos+1) ;	 	
+				}elseif(($pos=strrpos($file_name,'/'))!==false){
+					$file_name=substr($file_name,  $pos+1) ;	 	
+				}
+				$message=str_replace($file,$file_name,$message);
+			}
+		}
     $description=$message;
     $Exception=$message;
     $subject=str_replace("'","\'",$message);
@@ -82,6 +99,11 @@ function error_handler($code=null,$message='',$file='',$line=0){
     $file=replace_file_mtime($e->getFile());
     //$file_name=$file;//basename($file);
     $file_name=basename($file);
+		if(($pos=strrpos($file_name,'\\'))!==false){
+			$file_name=substr($file_name,  $pos+1) ;	 	
+		}elseif(($pos=strrpos($file_name,'/'))!==false){
+			$file_name=substr($file_name,  $pos+1) ;	 	
+		}
     $line=$e->getLine();
     if( class_exists('Route') && Route::$request!==null){
 		$url=url('/');
@@ -125,17 +147,22 @@ function error_handler($code=null,$message='',$file='',$line=0){
 				
 		//$file_name=$file;
 		$file_name=basename($file);
+				if(($pos=strrpos($file_name,'\\'))!==false){
+					$file_name=substr($file_name,  $pos+1) ;	 	
+				}elseif(($pos=strrpos($file_name,'/'))!==false){
+					$file_name=substr($file_name,  $pos+1) ;	 	
+				}
 		$line=isset($val['line'])?$val['line']:0;
 		$function=isset($val['function'])?$val['function']:'';
 			if($function==='error_handler'){
 				continue;
 			}
 				$s_name=$file_name;
-				if(($pos=strrpos($file_name,'\\'))!==false){
-					$s_name=substr($file_name,  $pos+1) ;	 	
-				}elseif(($pos=strrpos($file_name,'/')+1)!==false){
-					$s_name=substr($file_name,  $pos) ;	 	
-				}
+				//if(($pos=strrpos($file_name,'\\'))!==false){
+				//	$s_name=substr($file_name,  $pos+1) ;	 	
+				//}elseif(($pos=strrpos($file_name,'/')+1)!==false){
+				//	$s_name=substr($file_name,  $pos) ;	 	
+				//}
 				
 		$class=isset($val['class'])?$val['class']:explode('.',$s_name)[0];
 		$type=isset($val['type'])?$val['type']:'';
@@ -184,7 +211,14 @@ function error_handler($code=null,$message='',$file='',$line=0){
 					}
 					
 					if(is_string($item)){
-						$item="'".replace_file_mtime($item)."'";
+						$item=replace_file_mtime($item);
+						$item=basename($item);
+						if(($pos=strrpos($item,'\\'))!==false){
+							$item=substr($item,  $pos+1) ;	 	
+						}elseif(($pos=strrpos($item,'/'))!==false){
+							$item=substr($item,  $pos+1) ;	 	
+						}
+						$item="'".$item."'";
 					}elseif(is_numeric($item)){
 						
 					}else{

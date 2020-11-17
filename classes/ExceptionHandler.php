@@ -80,7 +80,8 @@ function error_handler($code=null,$message='',$file='',$line=0){
 			}
 
     $file=replace_file_mtime($e->getFile());
-    $file_name=$file;//basename($file);
+    //$file_name=$file;//basename($file);
+    $file_name=basename($file);
     $line=$e->getLine();
     if( class_exists('Route') && Route::$request!==null){
 		$url=url('/');
@@ -122,13 +123,14 @@ function error_handler($code=null,$message='',$file='',$line=0){
 		 
 		$file=replace_file_mtime(isset($val['file'])?$val['file']:'');
 				
-		$file_name=$file;
+		//$file_name=$file;
+		$file_name=basename($file);
 		$line=isset($val['line'])?$val['line']:0;
 		$function=isset($val['function'])?$val['function']:'';
 			if($function==='error_handler'){
 				continue;
 			}
-				 
+				$s_name=$file_name;
 				if(($pos=strrpos($file_name,'\\'))!==false){
 					$s_name=substr($file_name,  $pos+1) ;	 	
 				}elseif(($pos=strrpos($file_name,'/')+1)!==false){

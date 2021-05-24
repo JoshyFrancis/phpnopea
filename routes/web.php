@@ -308,6 +308,10 @@ Route::get('send_error_report', function (Request $request) {
 	var_dump($request->input('error_file'));
 	//var_dump($request);
 });	
+	// Registration Routes...
+	Route::get('/register', 'Auth\\RegisterController@showRegistrationForm') ;
+	Route::post('/register', 'Auth\\RegisterController@register') ;
+
 Route::group(['middleware' => ['web']], function ( ) {
 	//validatortest/create
 	Route::get('validatortest/create', 'ValidatorTestController@create');
@@ -317,9 +321,6 @@ Route::group(['middleware' => ['web']], function ( ) {
 	Route::get('/login', 'Auth\\LoginController@index') ;
 	Route::post('/login', 'Auth\\LoginController@login') ;
 	
-	// Registration Routes...
-	Route::get('/register', 'Auth\\RegisterController@showRegistrationForm') ;
-	Route::post('/register', 'Auth\\RegisterController@register') ;
          
 	
 	//Route::get('/home', 'HomeController@index') ;

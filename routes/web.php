@@ -102,13 +102,9 @@ Route::get('/routes/{id1}/test/{id3}/test2/{id2}', function ($id1,$id2,Request $
 
 //admin/news
 Route::group(['namespace' => 'Admin','middleware'=>['demo','web']], function(){
-    Route::get('admin/news', [
-        'uses' => 'NewsController@index'
-    ]);
+    Route::get('admin/news', [ 'uses' => 'NewsController@index' ]);
 
-    Route::get('admin/users', [
-        'uses' => 'UserController@index'
-    ]);
+    Route::get('admin/users', [ 'uses' => 'UserController@index' ]);
 
 });
 
@@ -117,13 +113,13 @@ Route::match(['get', 'post'], '/match', function(Request $request){
 	$url=$request->url();
 	if($request->getrequestMethod()=='POST'){
 		var_dump($request->field1);
-		return 'Mathced post<br/><a href="'.$url .'" >Back</a>';
+		return 'Match post<br/><a href="'.$url .'" >Back</a>';
 	}else{
 		
 		  return "
 			<form action=\"$url\" method=\"POST\"  >
 				<input type=\"hidden\" name=\"field1\" value=\"form_data\" /><br/>
-				Matched get
+				Match get
 				<input type=\"button\" onclick=\"document.forms[0].submit();\" value=\"submit\" />
 		   </form>
 		";
@@ -188,14 +184,14 @@ Route::group(['prefix' => 'books'], function () {
 		});
 	});
 });
-
+//files/1
 Route::get('/files/{id}', function ($id) {
 	
 	var_dump($id);
 	//var_dump( asset('storage/file.txt'));
 	
 	Storage::disk('local')->put('file.txt', 'Contents');
-	Storage::put('files/file.txt', 'Contents2');
+	Storage::put('files/file.txt', 'File Contents');
 	$contents = Storage::get('files/file.txt');
 	//$url = Storage::temporaryUrl( 'files/file.txt', now()->addMinutes(5) );
 	
@@ -277,10 +273,10 @@ Route::get('photo', function (Request $request ) {
 			//$contents = Storage::get('logo.png');
 			//$affected = DB::update('update employee set signature=? where EmpId = ?', [$contents, 5]);
 			
-		$employee = DB::select('select signature from employee where EmpId = ?',[5 ]);	
-			if($employee && count($employee)>0){
+		//$employee = DB::select('select signature from employee where EmpId = ?',[5 ]);	
+		//	if($employee && count($employee)>0){
 			//	$Photo=$employee[0]->signature;
-			}
+		//	}
 		if(!isset($Photo)){
 			//url('/').'/assets/No_Image_200x150.png';
 			//storage_path().
@@ -312,22 +308,20 @@ Route::get('send_error_report', function (Request $request) {
 	Route::get('/register', 'Auth\\RegisterController@showRegistrationForm') ;
 	Route::post('/register', 'Auth\\RegisterController@register') ;
 
-Route::group(['middleware' => ['web']], function ( ) {
-	//validatortest/create
-	Route::get('validatortest/create', 'ValidatorTestController@create');
-	Route::post('validatortest', 'ValidatorTestController@store');
-
 	// Authentication Routes...
 	Route::get('/login', 'Auth\\LoginController@index') ;
 	Route::post('/login', 'Auth\\LoginController@login') ;
-	
-         
-	
+	//validatortest/create
+	Route::get('validatortest/create', 'ValidatorTestController@create');
+	Route::post('validatortest', 'ValidatorTestController@store');
+	 
 	//Route::get('/home', 'HomeController@index') ;
 	//rc/resource/123/asd/m
 	Route::resource('rc/resource', 'ResourceController',['parameters' => [ "extra" => 'template_1' ]]);
 	Route::any('API/rc/resource', 'ResourceController@API');
 	Route::get('rc/resource/{id}/{id2}/m', 'ResourceController@method_test');
+
+Route::group(['middleware' => ['web']], function ( ) {
 	
 	Route::get('/test1', function ( Request $request ) {
 		 //return 'middleware_web_ok' ;

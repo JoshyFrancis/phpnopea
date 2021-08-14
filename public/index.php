@@ -12,6 +12,12 @@ Jesus Christ is the only savior, who will redeem you.
 */
 //echo $_SERVER['REQUEST_URI'];
 //exit;
+/*
+echo '<pre>';
+var_dump($_SERVER);
+echo '</pre>';
+exit;
+*/
 
 $start = microtime(true);
 

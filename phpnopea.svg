@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<svg width="240" height="64" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <metadata id="metadata3749">image/svg+xml</metadata>
+ <defs>
+  <style>.cls-1{fill:none;stroke:#ffb90b;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style>
+ </defs>
+ <g class="layer">
+  <title>Layer 1</title>
+  <text fill="#000000" font-family="sans-serif" font-size="32.613823px" font-style="normal" font-weight="normal" id="text3753" stroke-width="0.815346" style="cursor: move;" transform="scale(1.23045 0.812708)" x="43.357822" xml:space="preserve" y="49.182011">Phpnopea</text>
+  <polygon class="cls-1" fill="none" id="polygon4727" points="23.39,56.38 43.92,26 34.66,26 39.6,8 22.08,8 20.08,35 28.14,35 " stroke="#ffb90b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" transform="translate(-3.6206702,-0.58815159)"/>
+ </g>
+</svg>

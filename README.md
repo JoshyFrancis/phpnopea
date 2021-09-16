@@ -1,13 +1,13 @@
-<p align="center"><img src="laranopea.svg"></p>
+<p align="center"><img src="phpnopea.svg"></p>
 
 <p align="center">
- <a href="https://github.com/JoshyFrancis/laranopea"><img src="https://img.shields.io/github/downloads/JoshyFrancis/laranopea/total.svg" alt="Total Downloads"></a>
+ <a href="https://github.com/JoshyFrancis/phpnopea"><img src="https://img.shields.io/github/downloads/JoshyFrancis/phpnopea/total.svg" alt="Total Downloads"></a>
  <img src="MIT.svg" alt="License"> 
 </p>
 
 
-## About Laranopea
-Laranopea is an alternative to laravel and excels in performance. It is based and built on same laravel principles. In our company, I was requested to speed up laravel and I came up with this.
+## About Phpnopea
+Phpnopea is an alternative to laravel and excels in performance. It is based and built on same laravel principles. In our company, I was requested to speed up laravel and I came up with this.
 
 #### Based on Laravel version 5.4.23
 

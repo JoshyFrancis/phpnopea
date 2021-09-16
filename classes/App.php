@@ -1,5 +1,5 @@
 <?php
-define('app_engine','laranopea');
+define('app_engine','phpnopea');
 class App{
 	public static $classes_path;
 	public static $public_path;
@@ -23,7 +23,7 @@ class App{
 	public static $file_web;
 	public static $routes=[];
 	public static $route;
-	function __construct($session_name='laranopea_session',$lifetime=(60*60)*2){
+	function __construct($session_name=app_engine.'_session',$lifetime=(60*60)*2){
 		App::$session_name=$session_name;
 		App::$session_lifetime=$lifetime;
 		$user_agent = $_SERVER['HTTP_USER_AGENT']; 
@@ -187,7 +187,7 @@ class App{
 					page_not_found();
 				}else{	
 						//exit;
-					if(count(App::$current_route['group'])>0){						
+					if(isset(App::$current_route['group']) && count(App::$current_route['group'])>0){						
 						echo through_middleware(App::$current_route['func'],App::$current_route['args'],App::$current_route['controller_class'],App::$current_route['group']);				 
 					}else{
 						if(isset(App::$current_route['controller_class'])){

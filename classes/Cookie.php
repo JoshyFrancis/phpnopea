@@ -89,9 +89,11 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 	if ($secureOnly) {
 		if (!empty($domain) || $domain === 0) {
 			if(strpos($domain,':')!==false){
-				$domain=explode(':',$domain)[0];
+				$domain=explode(':',$domain)[0];//do not include port number
 			}
-			$headerStr .= '; domain=' . $domain;
+			if (!filter_var($domain, FILTER_VALIDATE_IP)){//do not set session.cookie_domain if domain is an IP address
+				$headerStr .= '; domain=' . $domain;
+			}
 		}
 	}
 	if ($secureOnly) {

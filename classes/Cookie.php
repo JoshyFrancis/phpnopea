@@ -88,6 +88,9 @@ function set_cookie($name, $value = null, $expiryTime = 0, $path = '/', $domain 
 	}
 	if ($secureOnly) {
 		if (!empty($domain) || $domain === 0) {
+			if(strpos($domain,':')!==false){
+				$domain=explode(':',$domain)[0];
+			}
 			$headerStr .= '; domain=' . $domain;
 		}
 	}

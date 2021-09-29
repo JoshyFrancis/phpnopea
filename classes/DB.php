@@ -29,7 +29,8 @@ class DB{
 		
         if(self::$DBH===null){
 			$env=App::$env_data;
-			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].';charset=utf8';
+			$port=intval($env['DB_PORT']);
+			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].($port!=0?';port='.$port:'').';charset=utf8';
 			$user=$env['DB_USERNAME'];
 			$pass=$env['DB_PASSWORD'];
 			$DBH = new \PDO($connection, $user, $pass);

@@ -30,10 +30,19 @@ class DB{
         if(self::$DBH===null){
 			$env=App::$env_data;
 			$port=intval($env['DB_PORT']);
-			$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].($port!=0?';port='.$port:'').';charset=utf8';
 			$user=$env['DB_USERNAME'];
 			$pass=$env['DB_PASSWORD'];
-			$DBH = new \PDO($connection, $user, $pass);
+			switch($env['DB_CONNECTION']){
+				case 'mysql':
+					$connection= 'mysql:host='.$env['DB_HOST'].';dbname='.$env['DB_DATABASE'].($port!=0?';port='.$port:'').';charset=utf8';
+					$DBH = new \PDO($connection, $user, $pass);
+				break;
+				case 'sqlite':
+					$dbname=App::$public_path.'/../'. $env['DB_DATABASE'];
+					$connection= 'sqlite:'.$dbname;
+					$DBH = new \PDO($connection);
+				break;
+			}
 			$DBH->setAttribute(\PDO::ATTR_CASE,\PDO::CASE_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_ORACLE_NULLS,\PDO::NULL_NATURAL);
 			$DBH->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES,false);

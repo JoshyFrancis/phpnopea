@@ -85,9 +85,11 @@ class ParameterBag implements \IteratorAggregate, \Countable{
         }
         return filter_var($value, $filter, $options);
     }
+	#[\ReturnTypeWillChange]
     public function getIterator()    {
         return new \ArrayIterator($this->parameters);
     }
+	#[\ReturnTypeWillChange]
     public function count()    {
         return \count($this->parameters);
     }

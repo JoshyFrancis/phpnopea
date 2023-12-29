@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class SessionManager{// implements SessionHandlerInterface{
     protected $id;
     protected $path;
@@ -104,8 +105,8 @@ class SessionManager{// implements SessionHandlerInterface{
         $this->id = $this->isValidId($id) ? $id : $this->generateSessionId();
     }
     public function isValidId($id){
-        //return is_string($id) && ctype_alnum($id) ;
-        return  ctype_alnum($id) ;
+        //return  ctype_alnum($id) ;
+        return is_string($id) && ctype_alnum($id) ;
     }
     public function exists($key){
 		return isset($this->attributes[$key]);
@@ -172,7 +173,12 @@ class SessionManager{// implements SessionHandlerInterface{
     public function start(){
 		$data=$this->read($this->getId());
 		if($data!==''){
-			$this->attributes =   unserialize($data ) ;
+			try {
+				if(substr($data,0,2)==='a:'){
+					$this->attributes =   unserialize($data ) ;
+				}
+			}catch(Exception $e) {
+			}
 		}
 		if (! $this->has('_token')) {
             $this->regenerateToken();

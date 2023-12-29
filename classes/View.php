@@ -176,6 +176,9 @@ class View{
     public function e($string){
 		//if($string!==strip_tags($string)){
 		/*if(preg_match("/<\s?[^\>]*\/?\s?>/i",$string)!==0){*/
+		if(!$string){
+			return $string;
+		}
 		if(preg_match("/<[^<]+>/i",$string)!==0){
 			return $string;
 		}else{

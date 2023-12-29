@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class Request{
 	public $server;
 	public $request ;

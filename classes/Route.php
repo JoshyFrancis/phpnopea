@@ -460,6 +460,19 @@ function through_middleware($func, $fire_args,$controller_class=null,$groups=[])
 	$middleware_args[]= function($request) use($func, $fire_args,&$res,$controller_class, &$called){
 		$last_error=error_get_last();
 		if($res===null && ($last_error?$last_error['type']<2:true) && $called===false){
+			if (version_compare(PHP_VERSION, '8.3.1') >= 0) {
+				$fire_args2=[];
+				$rm = new ReflectionMethod($controller_class,$func);
+				foreach ($rm->getParameters() as $parameter) {
+					foreach($fire_args as $k=>$v){
+						if($parameter->getName()===$k){
+							$fire_args2[$k]=$v;
+							break;
+						}
+					}
+				}
+				$fire_args=$fire_args2;
+			}
 			if($controller_class!==null){
 				$res= call_user_func_array([$controller_class, $func], $fire_args);
 			}else{

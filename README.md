@@ -13,7 +13,7 @@ Phpnopea is an alternative to laravel and excels in performance. It is based and
 
 ## Features
 * Classes are minimal and optimized but all the necessary functions incorporated.
-* Blade template have been optimized to skip empty lines, comments(php,js,css) etc.(Only multiline comments allowed for single line php code eg:<?php /*echo $share_otf; */ ?>)
+* Blade template have been optimized to skip empty lines, comments(php,js) etc.(Only multiline comments allowed for single line php code eg:<?php /*echo $share_otf; */ ?>)
   It helps dramatic reduction in file size as well as the bandwidth usage.
 * Only 30 classes are required for the whole framework and to run a typical laravel project.
 * Simplified error logging. Tracking errors is easier than ever.

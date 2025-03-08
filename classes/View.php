@@ -388,7 +388,8 @@ class View{
 							$js=true;
 						}
 				
-					if( $php===true || $css===true || $js===true ){// excluding comments
+					//if( $php===true || $css===true || $js===true ){// excluding comments
+					if( $php===true || $js===true ){// excluding comments
 						 
 						$single_line_comment=false;	
 						$pos=strpos($line,'//') ;

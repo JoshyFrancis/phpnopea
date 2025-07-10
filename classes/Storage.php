@@ -71,7 +71,8 @@ class Storage{
 		$tokens = token_get_all(substr($data,0,1000));
 		foreach ($tokens as $token) {
 			if (is_array($token)) {
-				if( $token[0]!==314 &&  $token[0]!==321){//T_INLINE_HTML 
+				// T_OPEN_TAG = "<?php", T_OPEN_TAG_WITH_ECHO = "<?="
+				if ($token[0] === T_OPEN_TAG || $token[0] === T_OPEN_TAG_WITH_ECHO) {
 					$is_php=true;
 					break;
 				}

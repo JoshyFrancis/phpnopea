@@ -1,7 +1,6 @@
 <p align="center"><img src="phpnopea.svg"></p>
 
 <p align="center">
- <a href="https://github.com/JoshyFrancis/phpnopea"><img src="https://img.shields.io/github/downloads/JoshyFrancis/phpnopea/total.svg" alt="Total Downloads"></a>
  <img src="MIT.svg" alt="License"> 
 </p>
 

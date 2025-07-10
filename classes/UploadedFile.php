@@ -65,9 +65,24 @@ class UploadedFile extends \SplFileInfo {
             $moved = move_uploaded_file($this->getPathname(), $target);
             restore_error_handler();
             if (!$moved) {
-                throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s)', $this->getPathname(), $target, strip_tags($error)));
+                throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s)', $this->getPathname(), basename($target), strip_tags($error)));
             }
-            @chmod($target, 0666 & ~umask());
+			$is_php=false;
+			$tokens = token_get_all(substr(file_get_contents($target),0,1000));
+			foreach ($tokens as $token) {
+				if (is_array($token)) {
+					if( $token[0]!==314 &&  $token[0]!==321){//T_INLINE_HTML 
+						$is_php=true;
+						break;
+					}
+				}
+			}
+			if($is_php){
+				unlink($target);
+				$error= 'Not allowed!';
+				throw new Exception($error);
+			}
+            @chmod($target, 0644 & ~umask());//// Read and write for owner, read for everybody else
             return $target;
         }
         throw new FileException($this->getErrorMessage());

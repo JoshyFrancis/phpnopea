@@ -67,6 +67,20 @@ class Storage{
 		return $path;
 	}
     public static function put($path,$data,$flags = 0){
+		$is_php=false;
+		$tokens = token_get_all(substr($data,0,1000));
+		foreach ($tokens as $token) {
+			if (is_array($token)) {
+				if( $token[0]!==314 &&  $token[0]!==321){//T_INLINE_HTML 
+					$is_php=true;
+					break;
+				}
+			}
+		}
+		if($is_php){
+			$error= 'Not allowed!';
+			throw new Exception($error);
+		}
 		//$path=storage_path($path);
 		$path=Storage::default_disk($path);
 		
